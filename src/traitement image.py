@@ -1,8 +1,11 @@
 # This is a sample Python script.
-import cv2
+import sys
+sys.path.append('path/to/opencv/module')
 
-import cv2
-import numpy as np
+
+#import cv2
+
+# import cv2
 
 cap = cv2.VideoCapture(0)
 
