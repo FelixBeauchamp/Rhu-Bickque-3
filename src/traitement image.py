@@ -1,12 +1,8 @@
-# This is a sample Python script.
-import sys
-sys.path.append('path/to/opencv/module')
+# The file to analyze the colors on the cube
 
 
-#import cv2
-
-# import cv2
-
+import numpy as np
+import cv2
 cap = cv2.VideoCapture(0)
 
 YellowL_limit = np.array([30, 100, 70])  # setting the yellow lower limit

@@ -1,6 +1,0 @@
-[submodule "Libraries/DynamixelSDK"]
-	path = Libraries/DynamixelSDK
-	url = https://github.com/ROBOTIS-GIT/DynamixelSDK.git
-[submodule "Libraries/opencv-python"]
-	path = Libraries/opencv-python
-	url = https://github.com/opencv/opencv-python.git
