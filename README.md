@@ -14,20 +14,20 @@ If any packages are missing, a notification bar is displayed at the top of the e
 
 The other method is to do it manuallly like so:
 
-The libraries that have to be included are :
-
-  numpy
+  The libraries that have to be included are :
   
-  opencv-python
+    numpy
+    
+    opencv-python
+    
+    dynamixel-sdk
+    
+    Adafruit-PCA9865
+    
   
-  dynamixel-sdk
+  To add those Packages on Pycharm, go to Settings-> Project:NameofProject-> Python Interpreter-> click the + symbole (Install)->search for the Package to add-> Select it-> Install Package
   
-  Adafruit-PCA9865
-  
-
-To add those Packages on Pycharm, go to Settings-> Project:NameofProject-> Python Interpreter-> click the + symbole (Install)->search for the Package to add-> Select it-> Install Package
-
-Do those steps for each package, then the project is ready to go and it will build and execute.
+  Do those steps for each package, then the project is ready to go and it will build and execute.
 
 Those libraries will be in the External Libraries-> site-packages
 
