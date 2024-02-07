@@ -4,6 +4,7 @@ Projet S4 de la meilleure équipe
 After importing this code in your IDE it is important to add some libraries. We used PyCharm for this project, so the explanation will be based on that IDE.
 
 ###Import Packages###
+
 There are two ways to import the packages on PyCharm. The first one is through the requirements.txt file:
 
 1. When you open requirements.txt or a Python file on a project that contains requirements.txt, PyCharm checks whether all the packages specified in requirements.txt are installed for the current Python interpreter.
