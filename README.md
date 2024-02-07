@@ -1,7 +1,17 @@
 # Rhu-Bickque-3
 Projet S4 de la meilleure équipe
 
-After importing this code in your IDE it is important to add some libraries. We used PyCharm for this proect, so the explanation will be based on that IDE.
+After importing this code in your IDE it is important to add some libraries. We used PyCharm for this project, so the explanation will be based on that IDE.
+
+###Import Packages###
+There are two ways to import the packages on PyCharm. The first one is through the requirements.txt file:
+
+1. When you open requirements.txt or a Python file on a project that contains requirements.txt, PyCharm checks whether all the packages specified in requirements.txt are installed for the current Python interpreter.
+
+2. Notification on the requirements
+If any packages are missing, a notification bar is displayed at the top of the editor. Click Install requirements.
+
+The other method is to do it manuallly like so:
 
 The libraries that have to be included are :
 
@@ -21,3 +31,6 @@ Do those steps for each package, then the project is ready to go and it will bui
 Those libraries will be in the External Libraries-> site-packages
 
 There the documentation on each librairy and funciton will be available.
+
+
+### ###
