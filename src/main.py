@@ -1,19 +1,31 @@
-# This is a sample Python script.
-from Adafruit_PCA9685 import PCA9685
+import serial.tools.list_ports
 
-# Press Maj+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+ports = serial.tools.list_ports.comports()
+serialInst = serial.Serial()
 
+portsList = []
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+portVar = None
 
+for onePort in ports:
+    portsList.append(str(onePort))
+    print(str(onePort))
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+val = input("Select Port: COM")
 
-    Servo1 = PCA9685
+for x in range(0, len(portsList)):
+    if portsList[x].startswith("COM" + str(val)):
+        portVar = "COM" + str(val)
+        print(portVar)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+serialInst.baudrate = 9600
+serialInst.port = portVar
+serialInst.open()
+
+while True:
+    command = input("Enter command: ")
+    if command == 'exit':
+        exit()
+    serialInst.write(command.encode('utf-8'))
+    response = serialInst.readline().decode().strip()
+    print(f"Arduino response: {response}")
