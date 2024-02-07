@@ -1,6 +1,4 @@
 # The file to analyze the colors on the cube
-
-
 import numpy as np
 import cv2
 cap = cv2.VideoCapture(0)

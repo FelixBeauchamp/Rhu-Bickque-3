@@ -1,0 +1,7 @@
+Adafruit_PCA9685==1.0.1
+opencv-python==4.9.0.80
+numpy==1.26.4
+dynamixel-sdk==3.7.31
+pip==23.2.1
+argparse==1.4.0
+wheel==0.42.0
