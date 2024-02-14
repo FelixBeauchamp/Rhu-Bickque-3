@@ -1,4 +1,5 @@
 import cube
+import optimize
 from maths import Point
 
 DEBUG = False
@@ -503,16 +504,20 @@ class Solver:
         assert self.cube[cube.LEFT + cube.FRONT].colors[2] == self.cube.front_color() and \
                self.cube[cube.LEFT + cube.FRONT].colors[0] == self.cube.left_color()
 
+    def translate(self):
+        sequence_motors = []
+        for i in range(len(self.moves)):
+            if self.moves[i] ==
+
 
 if __name__ == '__main__':
     DEBUG = True
-    # c = cube.Cube("DLURRDFFUBBLDDRBRBLDLRBFRUULFBDDUFBRBBRFUDFLUDLUULFLFR")
     c = cube.Cube("RWORBORYOBBBWOWBBBYRYYYYBOGWWWBRGGGGYOYGGGWRWOWROGROYR")
     print("Solving:\n", c)
     orig = cube.Cube(c)
     solver = Solver(c)
     solver.solve()
-
+    solver.moves = optimize.optimize_moves(solver.moves)
     print(f"{len(solver.moves)} moves: {' '.join(solver.moves)}")
 
     check = cube.Cube(orig)
