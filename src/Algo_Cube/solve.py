@@ -507,7 +507,7 @@ class Solver:
 if __name__ == '__main__':
     DEBUG = True
     # c = cube.Cube("DLURRDFFUBBLDDRBRBLDLRBFRUULFBDDUFBRBBRFUDFLUDLUULFLFR")
-    c = cube.Cube("ROGORRRROYBBWGBYYWOYGWWWGGRBYWRBORYOGYBYWWOGWYGRBOBGOB")
+    c = cube.Cube("RWORBORYOBBBWOWBBBYRYYYYBOGWWWBRGGGGYOYGGGWRWOWROGROYR")
     print("Solving:\n", c)
     orig = cube.Cube(c)
     solver = Solver(c)
