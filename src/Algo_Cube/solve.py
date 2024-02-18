@@ -16,6 +16,35 @@ class Solver:
         self.right_piece = self.cube.find_piece(self.cube.right_color())
         self.up_piece    = self.cube.find_piece(self.cube.up_color())
         self.down_piece  = self.cube.find_piece(self.cube.down_color())
+        self.Dictio = dict(F=['M1_R'], Fi=['M1_L'], R=['M4_R'], Ri=['M4_L'], U=['M2M4_L_F', 'M3_R', 'M2M4_R_F'],
+                           Ui=['M2M4_L_F', 'M3_L', 'M2M4_R_F'], L=['M2_R'], Li=['M2_L'], B=['M3_R'], Bi=['M3_L'],
+                           D=['M2M4_L_F', 'M1_R', 'M2M4_R_F'], Di=['M2M4_L_F', 'M1_L', 'M2M4_R_F'],
+                           M=['M2M4_L_B', 'M2M4_R_F'], Mi=['M2M4_R_B', 'M2M4_L_F'],
+                           E=['M1M3_L_F', 'M2M4_R_B', 'M2M4_L_F', 'M1M3_R_F'],
+                           Ei=['M1M3_L_F', 'M2M4_L_B', 'M2M4_R_F', 'M1M3_R_F'], S=['M1M3_L_B', 'M1M3_R_F'],
+                           Si=['M1M3_R_B', 'M1M3_L_F'], f=['M3_R', 'M1M3_R_F'], fi=['M3_L', 'M1M3_L_F'],
+                           r=['M2_R', 'M2M4_L_F'], ri=['M2_L', 'M2M4_R_F'],
+                           u=['M2M4_L_F', 'M1_R', 'M1M3_L_F', 'M2M4_R_F'],
+                           ui=['M2M4_L_F', 'M1_L', 'M1M3_R_F', 'M2M4_R_F'],
+                           l=['M4_R', 'M2M4_R_F'], li=['M4_L', 'M2M4_L_F'],
+                           b=['M1_R', 'M1M3_L_F'], bi=['M1_L', 'M1M3_R_F'],
+                           d=['M2M4_L_F', 'M3_R', 'M1M3_R_F', 'M2M4_R_F'],
+                           di=['M2M4_L_F', 'M3_L', 'M1M3_L_F', 'M2M4_R_F'], X=['M2M4_L_F'], Xi=['M2M4_R_F'],
+                           Y=['M2M4_R_F', 'M1M3_R_F', 'M2M4_L_F'], Yi=['M1M3_L_F', 'M2M4_L_F', 'M1M3_R_F'],
+                           Z=['M1M3_R_F'], Zi=['M1M3_L_F'])
+        self.servo = dict(Start=['HOME_ALL', 'CXCY'], M1_R=['CXCY', 'M1_R', 'CXOY', 'M1_L'],
+                          M1_L=['CXCY', 'M1_L', 'CXOY', 'M1_R'], M2_R=['CXCY', 'M2_R', 'OXCY', 'M2_L'],
+                          M2_L=['CXCY', 'M2_L', 'OXCY', 'M2_R'], M3_R=['CXCY', 'M3_R', 'CXOY', 'M3_L'],
+                          M3_L=['CXCY', 'M3_L', 'CXOY', 'M3_R'], M4_R=['CXCY', 'M4_R', 'OXCY', 'M4_L'],
+                          M4_L=['CXCY', 'M4_L', 'OXCY', 'M4_R'],
+                          M1M3_R_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R'],
+                          M1M3_L_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_L', 'CXCY', 'CXOY', 'M1_R'],
+                          M1M3_R_B=['CXCY', 'M1M3_R', 'CXOY', 'M1M3_R'], M1M3_L_B=['CXCY', 'M1M3_L', 'CXOY', 'M1M3_R'],
+                          M2M4_R_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_R', 'CXCY', 'OXCY', 'M2_R'],
+                          M2M4_L_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_L', 'CXCY', 'OXCY', 'M2_R'],
+                          M2M4_R_B=['CXCY', 'M2M4_R', 'OXCY', 'M2M4_R'], M2M4_L_B=['CXCY', 'M2M4_L', 'OXCY', 'M2M4_R'],
+                          End=['OXOY'])
+        self.sequence_motors = []
 
         self.inifinite_loop_max_iterations = 12
 
@@ -505,9 +534,13 @@ class Solver:
                self.cube[cube.LEFT + cube.FRONT].colors[0] == self.cube.left_color()
 
     def translate(self):
-        sequence_motors = []
+        temp = []
         for i in range(len(self.moves)):
-            if self.moves[i] ==
+            temp.extend(self.Dictio[self.moves[i]])
+        self.sequence_motors.extend(self.servo['Start'])
+        for j in range(len(temp)):
+            self.sequence_motors.extend(self.servo[temp[j]])
+        self.sequence_motors.extend(self.servo['End'])
 
 
 if __name__ == '__main__':
@@ -518,7 +551,9 @@ if __name__ == '__main__':
     solver = Solver(c)
     solver.solve()
     solver.moves = optimize.optimize_moves(solver.moves)
+    solver.translate()
     print(f"{len(solver.moves)} moves: {' '.join(solver.moves)}")
+    print(f"{len(solver.sequence_motors)} motors moves: {' - '.join(solver.sequence_motors)}")
 
     check = cube.Cube(orig)
     check.sequence(" ".join(solver.moves))
