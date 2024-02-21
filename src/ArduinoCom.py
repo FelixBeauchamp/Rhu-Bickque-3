@@ -7,12 +7,12 @@ com_state = 'Closed'
 def openportarduino(com_port1):
 
     global com_state
-    global serial1
+    global serialArduino
 
-    serial1 = serial.Serial(com_port1, 230400)
+    serialArduino = serial.Serial(com_port1, 230400)
 
-    serial1.close()
-    serial1.open()
+    serialArduino.close()
+    serialArduino.open()
 
     com_state = 'Opened'
 
@@ -23,12 +23,12 @@ def openportarduino(com_port1):
     return end
 
 def closeportarduino():
-    global com_state
-    global serial1
+    global com_stateArduino
+    global serialArduino
 
-    serial1.close()
+    serialArduino.close()
 
-    com_state1 = 'Closed'
+    com_stateArduino = 'Closed'
 
     end = 'finished close port'
 
@@ -36,17 +36,17 @@ def closeportarduino():
 
 def sendmessage(megawhat):
 
-    global motor_state
+    global motor_stateArduino
 
     # Send a string to Arduino
     message = megawhat
-    serial1.write(message.encode())
+    serialArduino.write(message.encode())
 
     # Read the response from Arduino
-    motor_state = serial1.readline().decode()
+    motor_stateArduino = serialArduino.readline().decode()
 
     # Print the response
-    print("Response from Arduino:", motor_state)
+    print("Response from Arduino:", motor_stateArduino)
 
     end = 'finished servo-motor spin'
 

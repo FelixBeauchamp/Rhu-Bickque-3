@@ -1,34 +1,31 @@
 import serial
 import time
 
-# To change if different port
-com_port = 'COM7'
+com_stateRB = 'Closed'
 
-serial2 = serial.Serial(com_port, 57600)
+def openport(com_port):
 
-com_state2 = 'Closed'
+    global com_stateRB
+    global serialRB
 
-def openport():
+    serialRB = serial.Serial(com_port, 57600)
 
-    global com_state2
-    global serial2
+    serialRB.close()
+    serialRB.open()
 
-    serial2.close()
-    serial2.open()
-
-    com_state2 = 'Opened'
+    com_stateRB = 'Opened'
 
     end = 'finished open port 2'
 
     return end
 
 def closeport():
-    global com_state2
-    global serial2
+    global com_stateRB
+    global serialRB
 
-    serial2.close()
+    serialRB.close()
 
-    com_state2 = 'Closed'
+    com_stateRB = 'Closed'
 
     end = 'finished close port 2'
 
@@ -36,13 +33,15 @@ def closeport():
 
 def sendmessage(megawhat):
 
+    global motor_stateRB
+
     time.sleep(1)
     # Send a string to Arduino
     message = megawhat
-    serial2.write(message.encode())
+    serialRB.write(message.encode())
 
     # Read the response from Arduino
-    motor_state = serial2.readline().decode()
+    motor_stateRB = serialRB.readline().decode()
 
     end = 'finished servo-motor spin'
 
