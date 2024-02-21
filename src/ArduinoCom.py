@@ -3,15 +3,13 @@ import time
 
 state = 'openedX_openedY'
 
-# megawhat format example: 'OXOY'
-# com_port format example: 'COM3'
-def sendtomega(megawhat,com_port):
 
+def sendtomega(megawhat):
     # Global Variable
     global state
 
     # Open the serial port (adjust the port and baud rate as needed)
-    ser = serial.Serial(com_port, 9600)
+    ser = serial.Serial('COM3', 9600)
 
     ser.close()
     ser.open()
@@ -37,3 +35,9 @@ def sendtomega(megawhat,com_port):
 
     return end
 
+
+print(state)
+
+sendtomega('OXOY')
+
+print(state)

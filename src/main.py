@@ -1,7 +1,13 @@
-from Algo_Cube import solve
-from src.Algo_Cube import cube, optimize
-from src.Algo_Cube.solve import Solver
+# import ArduinoCom
+# import OpenRBCom
 
 
 if __name__ == '__main__':
-    print("balls")
+    # Initialisation
+    # ArduinoCom.sendtomega('OXOY')
+    # OpenRBCom.sendtoRB('HOMING')
+
+    # Wait for user input
+    input("Press Enter to continue")
+    print('balls')
+
