@@ -7,7 +7,7 @@ def sendtoRB(megawhat):
     global state
 
     # Open the serial port (adjust the port and baud rate as needed)
-    ser = serial.Serial('COM4', 9600)
+    ser = serial.Serial('COM7', 9600)
 
     ser.close()
     ser.open()

@@ -3,8 +3,8 @@ import time
 
 state = 'openedX_openedY'
 
-def sendtomega(megawhat):
 
+def sendtomega(megawhat):
     # Global Variable
     global state
 
@@ -34,6 +34,7 @@ def sendtomega(megawhat):
     end = 'finished'
 
     return end
+
 
 print(state)
 
