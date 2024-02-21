@@ -45,6 +45,10 @@ class Solver:
                           M2M4_R_B=['CXCY', 'M2M4_R', 'OXCY', 'M2M4_R'], M2M4_L_B=['CXCY', 'M2M4_L', 'OXCY', 'M2M4_R'],
                           End=['OXOY'])
         self.sequence_motors = []
+        self.sequence_camera = ['CXCY', 'SNAP', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M2M4_R', 'SNAP', 'M2M4_R', 'SNAP',
+                                'M2M4_R', 'SNAP', 'M2M4_R', 'CXCY', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M1_R', 'CXCY',
+                                'OXCY', 'M1M3_R', 'SNAP', 'M1M3_L', 'M1M3_L', 'SNAP', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R',
+                                'CXCY']
 
         self.inifinite_loop_max_iterations = 12
 
@@ -537,7 +541,6 @@ class Solver:
         temp = []
         for i in range(len(self.moves)):
             temp.extend(self.Dictio[self.moves[i]])
-        self.sequence_motors.extend(self.servo['Start'])
         for j in range(len(temp)):
             self.sequence_motors.extend(self.servo[temp[j]])
         self.sequence_motors.extend(self.servo['End'])
