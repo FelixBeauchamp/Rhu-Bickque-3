@@ -1,6 +1,12 @@
 import serial
 import time
+
+state = 'openedX_openedY'
+
 def sendtomega(megawhat):
+
+    # Global Variable
+    global state
 
     # Open the serial port (adjust the port and baud rate as needed)
     ser = serial.Serial('COM3', 9600)
@@ -17,15 +23,20 @@ def sendtomega(megawhat):
     time.sleep(1)
 
     # Read the response from Arduino
-    response = ser.readline().decode()
+    state = ser.readline().decode()
 
     # Print the response
-    print("Response from Arduino:", response)
+    print("Response from Arduino:", state)
 
     # Close the serial port
     ser.close()
 
-    return response
+    end = 'finished'
 
-sendtomega('pushPair1')
+    return end
 
+print(state)
+
+sendtomega('OXOY')
+
+print(state)
