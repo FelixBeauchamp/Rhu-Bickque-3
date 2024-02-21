@@ -2,7 +2,7 @@ import serial
 import time
 
 com_stateRB = 'Closed'
-
+motor_stateRB = "initialized"
 def openport(com_port):
 
     global com_stateRB
@@ -16,7 +16,7 @@ def openport(com_port):
     com_stateRB = 'Opened'
 
     end = 'finished open port 2'
-
+    time.sleep(1)
     return end
 
 def closeport():
@@ -35,7 +35,7 @@ def sendmessage(megawhat):
 
     global motor_stateRB
 
-    time.sleep(1)
+    #time.sleep(1)
     # Send a string to Arduino
     message = megawhat
     serialRB.write(message.encode())
@@ -79,4 +79,18 @@ def sendtoRB(megawhat,com_port):
 
     return end
 """
+
+openport("COM8")
+startime = time.time()
+sendmessage("HOMING")
+endtime = time.time()
+sendmessage("M1M3_L")
+
+
+sendmessage("M1_L")
+
+closeport()
+print(motor_stateRB)
+print(endtime-startime)
+
 
