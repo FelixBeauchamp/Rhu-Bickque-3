@@ -1,8 +1,10 @@
 # import ArduinoCom
 # import OpenRBCom
 import sys
-print(sys.path)
-sys.path.append('C:\\Users\\Poste\\Desktop\\Sessions GRO_UdeS\\S4_GRO\\Projet\\Code\\Rhu-Bickque-3\\Algo_Cube')
+import os
+algo_cube_path = os.path.join(sys.path[1], "Algo_Cube")
+print(algo_cube_path)
+sys.path.append(algo_cube_path)
 
 from Algo_Cube import solve
 
