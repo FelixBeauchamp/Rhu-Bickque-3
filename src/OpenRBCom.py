@@ -1,13 +1,15 @@
 import serial
 import time
 
-def sendtoRB(megawhat):
+# megawhat format example: 'M1_L'
+# com_port format example: 'COM3'
+def sendtoRB(megawhat,com_port):
 
     # Global Variable
     global state
 
     # Open the serial port (adjust the port and baud rate as needed)
-    ser = serial.Serial('COM4', 9600)
+    ser = serial.Serial(com_port, 9600)
 
     ser.close()
     ser.open()
@@ -33,6 +35,5 @@ def sendtoRB(megawhat):
 
     return end
 
-sendtoRB('M1_R')
 
 
