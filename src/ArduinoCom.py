@@ -1,22 +1,20 @@
 import serial
 import time
 
-# To change if different port
-com_port1 = 'COM3'
+motor_stateArduino = 'openedX_openedY'
+com_stateArduino = 'Closed'
 
-motor_state = 'openedX_openedY'
-serial1 = serial.Serial(com_port1, 230400)
-com_state = 'Closed'
+def openportarduino(com_port1):
 
-def openport():
+    global com_stateArduino
+    global serialArduino
 
-    global com_state
-    global serial1
+    serialArduino = serial.Serial(com_port1, 230400)
 
-    serial1.close()
-    serial1.open()
+    serialArduino.close()
+    serialArduino.open()
 
-    com_state = 'Opened'
+    com_stateArduino = 'Opened'
 
     end = 'finished open port 1'
 
@@ -24,13 +22,13 @@ def openport():
 
     return end
 
-def closeport():
-    global com_state
-    global serial1
+def closeportarduino():
+    global com_stateArduino
+    global serialArduino
 
-    serial1.close()
+    serialArduino.close()
 
-    com_state1 = 'Closed'
+    com_stateArduino = 'Closed'
 
     end = 'finished close port'
 
@@ -38,17 +36,17 @@ def closeport():
 
 def sendmessage(megawhat):
 
-    global motor_state
+    global motor_stateArduino
 
     # Send a string to Arduino
     message = megawhat
-    serial1.write(message.encode())
+    serialArduino.write(message.encode())
 
     # Read the response from Arduino
-    motor_state = serial1.readline().decode()
+    motor_stateArduino = serialArduino.readline().decode()
 
     # Print the response
-    print("Response from Arduino:", motor_state)
+    print("Response from Arduino:", motor_stateArduino)
 
     end = 'finished servo-motor spin'
 
@@ -86,9 +84,12 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-openport()
+
+openportarduino('COM3')
 start_time = time.time()
+print('balls')
 sendmessage('CXCY')
+print('right foot creep')
 end_time = time.time()
-closeport()
-print(end_time - start_time)
+closeportarduino()
+print("Time taken:", end_time - start_time)
