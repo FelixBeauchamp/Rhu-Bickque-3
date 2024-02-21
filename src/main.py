@@ -2,7 +2,7 @@
 # import OpenRBCom
 from Algo_Cube import solve
 # import sys
-# sys.path.append('D:/DOCUMENT/UNI/S4/Projet/code/Rhu-Bickque-3/src/Algo_Cube')
+# sys.path.append('D:/DOCUMENT/UNI/S4/Projet/code/Rhu-Bickque-3/Algo_Cube')
 
 
 def mapping_sequence():
