@@ -1,8 +1,11 @@
 # import ArduinoCom
 # import OpenRBCom
+import sys
+print(sys.path)
+sys.path.append('C:\\Users\\Poste\\Desktop\\Sessions GRO_UdeS\\S4_GRO\\Projet\\Code\\Rhu-Bickque-3\\Algo_Cube')
+
 from Algo_Cube import solve
-# import sys
-# sys.path.append('D:/DOCUMENT/UNI/S4/Projet/code/Rhu-Bickque-3/Algo_Cube')
+
 
 
 def mapping_sequence():
