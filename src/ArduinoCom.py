@@ -1,17 +1,15 @@
 import serial
 import time
 
-# To change if different port
-com_port1 = 'COM3'
-
 motor_state = 'openedX_openedY'
-serial1 = serial.Serial(com_port1, 230400)
 com_state = 'Closed'
 
-def openport():
+def openportarduino(com_port1):
 
     global com_state
     global serial1
+
+    serial1 = serial.Serial(com_port1, 230400)
 
     serial1.close()
     serial1.open()
@@ -24,7 +22,7 @@ def openport():
 
     return end
 
-def closeport():
+def closeportarduino():
     global com_state
     global serial1
 
@@ -86,9 +84,3 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-openport()
-start_time = time.time()
-sendmessage('CXCY')
-end_time = time.time()
-closeport()
-print(end_time - start_time)
