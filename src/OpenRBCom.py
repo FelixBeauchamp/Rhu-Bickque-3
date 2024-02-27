@@ -32,7 +32,7 @@ def closeport():
     return end
 
 def sendmessage(megawhat):
-
+    global serialRB
     global motor_stateRB
 
     #time.sleep(1)
@@ -79,7 +79,7 @@ def sendtoRB(megawhat,com_port):
 
     return end
 """
-
+"""
 openport("COM8")
 startime = time.time()
 sendmessage("HOMING")
@@ -92,5 +92,6 @@ sendmessage("M1_L")
 closeport()
 print(motor_stateRB)
 print(endtime-startime)
+"""
 
 

@@ -1,5 +1,5 @@
-# import ArduinoCom
-# import OpenRBCom
+import ArduinoCom
+import OpenRBCom
 
 import sys
 import os
@@ -17,14 +17,14 @@ def mapping_sequence():
             'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W']
     for move in solve.sequence_camera:
         if move[0] == 'M':
-            # OpenRBCom.sendtoRB(move)
+            OpenRBCom.sendmessage(move)
             print("cum")
         elif move[0] == 'S':
             # call fonction camera
             # add face map to the map list
             print("cum")
         else:
-            # ArduinoCom.sendtomega(move)
+            ArduinoCom.sendmessage(move)
             print("cum")
     stg = solve.reformat(mapp)
     print(stg)
@@ -45,10 +45,10 @@ def solving(map_string):
 
     for moves in solver.sequence_motors:
         if moves[0] == 'M' or moves[0] == 'H':
-            # OpenRBCom.sendtoRB(moves)
+            OpenRBCom.sendmessage(moves)
             print("cum")
         else:
-            # ArduinoCom.sendtomega(moves)
+            ArduinoCom.sendmessage(moves)
             print("cum")
 
 
@@ -68,4 +68,8 @@ if __name__ == '__main__':
 
     # 2- Solving the cube
     input("Press Enter to start solving")
+    ArduinoCom.openportarduino('COM7')
+    OpenRBCom.openport('COM6')
     solving(cube_map)
+    ArduinoCom.closeportarduino()
+    OpenRBCom.closeport()

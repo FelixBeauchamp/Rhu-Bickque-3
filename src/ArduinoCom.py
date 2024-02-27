@@ -35,7 +35,7 @@ def closeportarduino():
     return end
 
 def sendmessage(megawhat):
-
+    global serialArduino
     global motor_stateArduino
 
     # Send a string to Arduino
@@ -84,7 +84,7 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-
+"""
 openportarduino('COM3')
 start_time = time.time()
 print('balls')
@@ -93,3 +93,4 @@ print('right foot creep')
 end_time = time.time()
 closeportarduino()
 print("Time taken:", end_time - start_time)
+"""
