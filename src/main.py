@@ -1,7 +1,9 @@
 # import ArduinoCom
 # import OpenRBCom
+
 import sys
 import os
+
 algo_cube_path = os.path.join(sys.path[1], "Algo_Cube")
 print(algo_cube_path)
 sys.path.append(algo_cube_path)
@@ -9,9 +11,10 @@ sys.path.append(algo_cube_path)
 from Algo_Cube import solve
 
 
-
 def mapping_sequence():
-    mapp = ['G', 'B', 'G', 'B', 'G', 'B', 'G', 'B', 'G', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'B', 'G', 'B', 'G', 'B', 'G', 'B', 'G', 'B', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W']
+    mapp = ['G', 'B', 'G', 'B', 'G', 'B', 'G', 'B', 'G', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'B', 'G', 'B',
+            'G', 'B', 'G', 'B', 'G', 'B', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'Y', 'W', 'Y', 'W', 'Y', 'W',
+            'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W']
     for move in solve.sequence_camera:
         if move[0] == 'M':
             # OpenRBCom.sendtoRB(move)
@@ -23,7 +26,9 @@ def mapping_sequence():
             # ArduinoCom.sendtomega(move)
             print("cum")
     stg = solve.reformat(mapp)
-    print(stg[0:2]+'\n'+stg[3:5]+'\n'+stg[6:8]+'\n'+stg[9:20]+'\n'+stg[21:32]+'\n'+stg[33:44]+'\n'+stg[45:47]+'\n'+stg[48:50]+'\n'+stg[51:53])
+    print(stg)
+    print('   ' + stg[0:3] + '\n   ' + stg[3:6] + '\n   ' + stg[6:9] + '\n' + stg[9:21] + '\n' + stg[21:33] + '\n' +
+          stg[33:45] + '\n   ' + stg[45:48] + '\n   ' + stg[48:51] + '\n   ' + stg[51:])
     return stg
 
 
