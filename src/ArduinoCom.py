@@ -3,13 +3,12 @@ import time
 
 motor_stateArduino = 'openedX_openedY'
 com_stateArduino = 'Closed'
+serialArduino = serial.Serial('COM7', 230400)
 
 def openportarduino(com_port1):
 
     global com_stateArduino
     global serialArduino
-
-    serialArduino = serial.Serial(com_port1, 230400)
 
     serialArduino.close()
     serialArduino.open()

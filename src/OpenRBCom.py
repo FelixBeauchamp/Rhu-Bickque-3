@@ -3,12 +3,11 @@ import time
 
 com_stateRB = 'Closed'
 motor_stateRB = "initialized"
+serialRB = serial.Serial('COM6', 57600)
 def openport(com_port):
 
     global com_stateRB
     global serialRB
-
-    serialRB = serial.Serial(com_port, 57600)
 
     serialRB.close()
     serialRB.open()
