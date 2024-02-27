@@ -55,12 +55,14 @@ def solving(map_string):
 if __name__ == '__main__':
     # 0- Initialisation
     print("Initialisation: OPENING/HOMING")
-    # ArduinoCom.sendtomega('OXOY')
-    # OpenRBCom.sendtoRB('HOMING')
+    OpenRBCom.openport()
+    ArduinoCom.openportarduino()
+    ArduinoCom.sendmessage('OXOY')
+    OpenRBCom.sendmessage('HOMING')
 
     # 1- Wait for user input before clamping the cube
     input("Press Enter to clamp the cube")
-    # ArduinoCom.sendtomega('CXCY')
+    ArduinoCom.sendmessage('CXCY')
 
     # 2- Starting the mapping sequence
     input("Press Enter to start the mapping sequence")
@@ -68,8 +70,7 @@ if __name__ == '__main__':
 
     # 2- Solving the cube
     input("Press Enter to start solving")
-    ArduinoCom.openportarduino('COM7')
-    OpenRBCom.openport('COM6')
+
     solving(cube_map)
     ArduinoCom.closeportarduino()
     OpenRBCom.closeport()
