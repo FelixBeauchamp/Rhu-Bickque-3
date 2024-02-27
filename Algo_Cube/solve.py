@@ -2,7 +2,7 @@ import cube
 import optimize
 from maths import Point
 
-DEBUG = False
+DEBUG = True
 
 sequence_camera = ['CXCY', 'SNAP', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M2M4_R', 'SNAP', 'M2M4_R', 'SNAP', 'M2M4_R', 'SNAP',
                    'M2M4_R', 'CXCY', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M1_R', 'CXCY', 'OXCY', 'M1M3_R', 'SNAP', 'M1M3_L',
@@ -10,12 +10,18 @@ sequence_camera = ['CXCY', 'SNAP', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M2M4_R', 'SN
 
 
 def reformat(mapp):
-    temp = [mapp[0], mapp[1], mapp[2], mapp[3], mapp[4], mapp[5], mapp[6], mapp[7], mapp[8], mapp[44], mapp[43],
-            mapp[42], mapp[32], mapp[31], mapp[30], mapp[20], mapp[19], mapp[18], mapp[45], mapp[46], mapp[47],
-            mapp[48], mapp[49], mapp[50], mapp[51], mapp[52], mapp[53], mapp[12], mapp[13], mapp[14], mapp[24],
-            mapp[25], mapp[26], mapp[36], mapp[37], mapp[38], mapp[33], mapp[21], mapp[9], mapp[34], mapp[22], mapp[10],
-            mapp[35], mapp[23], mapp[11], mapp[17], mapp[29], mapp[41], mapp[16], mapp[28], mapp[40], mapp[15],
-            mapp[27], mapp[39]]
+    temp = ['z']*54
+    temp[0] = mapp[0];temp[1] = mapp[1];temp[2] = mapp[2];temp[3] = mapp[3];temp[4] = mapp[4];temp[5] = mapp[5]
+    temp[6] = mapp[6];temp[7] = mapp[7];temp[8] = mapp[8];temp[9] = mapp[38];temp[10] = mapp[41];temp[11] = mapp[44]
+    temp[12] = mapp[27];temp[13] = mapp[28];temp[14] = mapp[29];temp[15] = mapp[51];temp[16] = mapp[48]
+    temp[17] = mapp[45];temp[18] = mapp[17];temp[19] = mapp[16];temp[20] = mapp[15];temp[21] = mapp[37]
+    temp[22] = mapp[40];temp[23] = mapp[43];temp[24] = mapp[30];temp[25] = mapp[31];temp[26] = mapp[32]
+    temp[27] = mapp[52];temp[28] = mapp[49];temp[29] = mapp[46];temp[30] = mapp[14];temp[31] = mapp[13]
+    temp[32] = mapp[12];temp[33] = mapp[36];temp[34] = mapp[39];temp[35] = mapp[42];temp[36] = mapp[33]
+    temp[37] = mapp[34];temp[38] = mapp[35];temp[39] = mapp[53];temp[40] = mapp[50];temp[41] = mapp[47]
+    temp[42] = mapp[11];temp[43] = mapp[10];temp[44] = mapp[9];temp[45] = mapp[18];temp[46] = mapp[19]
+    temp[47] = mapp[20];temp[48] = mapp[21];temp[49] = mapp[22];temp[50] = mapp[23];temp[51] = mapp[24]
+    temp[52] = mapp[25];temp[53] = mapp[26]
     map_string = ''.join(temp)
     return map_string
 

@@ -84,7 +84,7 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-
+"""
 openportarduino('COM3')
 start_time = time.time()
 print('balls')
@@ -93,3 +93,4 @@ print('right foot creep')
 end_time = time.time()
 closeportarduino()
 print("Time taken:", end_time - start_time)
+"""
