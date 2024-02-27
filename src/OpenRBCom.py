@@ -93,4 +93,3 @@ closeport()
 print(motor_stateRB)
 print(endtime-startime)
 
-

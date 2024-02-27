@@ -35,7 +35,7 @@ def closeportarduino():
     return end
 
 def sendmessage(megawhat):
-
+    global serialArduino
     global motor_stateArduino
 
     # Send a string to Arduino
