@@ -79,7 +79,7 @@ def sendtoRB(megawhat,com_port):
     return end
 """
 """
-openport("COM8")
+openport()
 startime = time.time()
 sendmessage("HOMING")
 endtime = time.time()

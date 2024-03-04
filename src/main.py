@@ -8,7 +8,7 @@ algo_cube_path = os.path.join(sys.path[1], "Algo_Cube")
 print(algo_cube_path)
 sys.path.append(algo_cube_path)
 
-from Algo_Cube import solve, cube, optimize
+from Algo_Ass import solve, cube, optimize
 
 
 def mapping_sequence():
@@ -18,19 +18,18 @@ def mapping_sequence():
     for move in solve.sequence_camera:
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
-            print("cum")
         elif move[0] == 'S':
             # call fonction camera
             # add face map to the map list
-            print("cum")
+            print("SNAP")
         else:
             ArduinoCom.sendmessage(move)
-            print("cum")
     stg = solve.reformat(mapp)
     print(stg)
     print('   ' + stg[0:3] + '\n   ' + stg[3:6] + '\n   ' + stg[6:9] + '\n' + stg[9:21] + '\n' + stg[21:33] + '\n' +
           stg[33:45] + '\n   ' + stg[45:48] + '\n   ' + stg[48:51] + '\n   ' + stg[51:])
     return stg
+
 
 def solving(map_string):
     c = cube.Cube(map_string)
@@ -46,10 +45,8 @@ def solving(map_string):
     for moves in solver.sequence_motors:
         if moves[0] == 'M' or moves[0] == 'H':
             OpenRBCom.sendmessage(moves)
-            print("cum")
         else:
             ArduinoCom.sendmessage(moves)
-            print("cum")
 
 
 if __name__ == '__main__':
