@@ -35,13 +35,20 @@ class Solver():
         self.cube = Cube(faces=cube.getFaces())
         self.__faces = self.cube.cube
         self.__forms = []
-        self.Dictio = dict(F=['M1_R'], Fi=['M1_L'], R=['M4_R'], Ri=['M4_L'], U=['M2M4_L_F', 'M3_R', 'M2M4_R_F'],
-                           Ui=['M2M4_L_F', 'M3_L', 'M2M4_R_F'], L=['M2_R'], Li=['M2_L'], B=['M3_R'], Bi=['M3_L'],
-                           D=['M2M4_L_F', 'M1_R', 'M2M4_R_F'], Di=['M2M4_L_F', 'M1_L', 'M2M4_R_F'],
-                           M=['M2M4_L_B', 'M2M4_R_F'], Mi=['M2M4_R_B', 'M2M4_L_F'],
-                           E=['M1M3_L_F', 'M2M4_R_B', 'M2M4_L_F', 'M1M3_R_F'],
-                           Ei=['M1M3_L_F', 'M2M4_L_B', 'M2M4_R_F', 'M1M3_R_F'], S=['M1M3_L_B', 'M1M3_R_F'],
-                           Si=['M1M3_R_B', 'M1M3_L_F'], f=['M3_R', 'M1M3_R_F'], fi=['M3_L', 'M1M3_L_F'],
+        self.Dictio = dict(F=['M1_R'], duoF=['M1_180'], Fi=['M1_L'], duoFi=['M1_180'], R=['M4_R'], duoR=['M4_180'],
+                           Ri=['M4_L'], duoRi=['M4_180'], U=['M2M4_L_F', 'M3_R', 'M2M4_R_F'],
+                           duoU=['M2M4_L_F', 'M3_180', 'M2M4_R_F'], Ui=['M2M4_L_F', 'M3_L', 'M2M4_R_F'],
+                           duoUi=['M2M4_L_F', 'M3_180', 'M2M4_R_F'], L=['M2_R'], duoL=['M2_180'], Li=['M2_L'],
+                           duoLi=['M2_180'], B=['M3_R'], duoB=['M3_180'], Bi=['M3_L'], duoBi=['M3_180'],
+                           D=['M2M4_L_F', 'M1_R', 'M2M4_R_F'], duoD=['M2M4_L_F', 'M1_180', 'M2M4_R_F'],
+                           Di=['M2M4_L_F', 'M1_L', 'M2M4_R_F'], duoDi=['M2M4_L_F', 'M1_180', 'M2M4_R_F'],
+                           M=['M2M4_L_B', 'M2M4_R_F'], duoM=['duoM2M4_B', 'duoM2M4_F'], Mi=['M2M4_R_B', 'M2M4_L_F'],
+                           duoMi=['duoM2M4_B', 'duoM2M4_F'], E=['M1M3_L_F', 'M2M4_R_B', 'M2M4_L_F', 'M1M3_R_F'],
+                           duoE=['M1M3_L_F', 'duoM2M4_B', 'duoM2M4_F', 'M1M3_R_F'],
+                           Ei=['M1M3_L_F', 'M2M4_L_B', 'M2M4_R_F', 'M1M3_R_F'],
+                           duoEi=['M1M3_L_F', 'duoM2M4_B', 'duoM2M4_F', 'M1M3_R_F'], S=['M1M3_L_B', 'M1M3_R_F'],
+                           duoS=['duoM1M3_B', 'duoM1M3_F'], Si=['M1M3_R_B', 'M1M3_L_F'],
+                           duoSi=['duoM1M3_B', 'duoM1M3_F'], f=['M3_R', 'M1M3_R_F'], fi=['M3_L', 'M1M3_L_F'],
                            r=['M2_R', 'M2M4_L_F'], ri=['M2_L', 'M2M4_R_F'],
                            u=['M2M4_L_F', 'M1_R', 'M1M3_L_F', 'M2M4_R_F'],
                            ui=['M2M4_L_F', 'M1_L', 'M1M3_R_F', 'M2M4_R_F'],
@@ -50,19 +57,25 @@ class Solver():
                            d=['M2M4_L_F', 'M3_R', 'M1M3_R_F', 'M2M4_R_F'],
                            di=['M2M4_L_F', 'M3_L', 'M1M3_L_F', 'M2M4_R_F'], X=['M2M4_L_F'], Xi=['M2M4_R_F'],
                            Y=['M2M4_R_F', 'M1M3_R_F', 'M2M4_L_F'], Yi=['M1M3_L_F', 'M2M4_L_F', 'M1M3_R_F'],
-                           Z=['M1M3_R_F'], Zi=['M1M3_L_F'])
+                           Z=['M1M3_R_F'], Zi=['M1M3_L_F'], duoX=['duoM2M4_F'],
+                           duoY=['M1M3_L_F', 'duoM2M4_F', 'M1M3_R_F'], duoZ=['duoM1M3_F'])
         self.servo = dict(Start=['HOME_ALL', 'CXCY'], M1_R=['CXCY', 'M1_R', 'CXOY', 'M1_L'],
                           M1_L=['CXCY', 'M1_L', 'CXOY', 'M1_R'], M2_R=['CXCY', 'M2_R', 'OXCY', 'M2_L'],
                           M2_L=['CXCY', 'M2_L', 'OXCY', 'M2_R'], M3_R=['CXCY', 'M3_R', 'CXOY', 'M3_L'],
                           M3_L=['CXCY', 'M3_L', 'CXOY', 'M3_R'], M4_R=['CXCY', 'M4_R', 'OXCY', 'M4_L'],
-                          M4_L=['CXCY', 'M4_L', 'OXCY', 'M4_R'],
+                          M4_L=['CXCY', 'M4_L', 'OXCY', 'M4_R'], M1_180=['CXCY', 'M1_R', 'M1_R'],
+                          M2_180=['CXCY', 'M2_R', 'M2_R'], M3_180=['CXCY', 'M3_R', 'M3_R'],
+                          M4_180=['CXCY', 'M4_R', 'M4_R'],
                           M1M3_R_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R'],
                           M1M3_L_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_L', 'CXCY', 'CXOY', 'M1_R'],
+                          duoM1M3_F=['CXCY','CXOY','M3_R','CXCY','OXCY','M1M3_R','M1M3_R','CXCY','CXOY','M1_R'],
                           M1M3_R_B=['CXCY', 'M1M3_R', 'CXOY', 'M1M3_R'], M1M3_L_B=['CXCY', 'M1M3_L', 'CXOY', 'M1M3_R'],
+                          duoM1M3_B=['CXCY', 'M1M3_R', 'M1M3_R'],
                           M2M4_R_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_R', 'CXCY', 'OXCY', 'M2_R'],
                           M2M4_L_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_L', 'CXCY', 'OXCY', 'M2_R'],
+                          duoM2M4_F=['CXCY','OXCY','M4_R','CXCY','CXOY','M2M4_L','M2M4_L','CXCY','OXCY','M2_R'],
                           M2M4_R_B=['CXCY', 'M2M4_R', 'OXCY', 'M2M4_R'], M2M4_L_B=['CXCY', 'M2M4_L', 'OXCY', 'M2M4_R'],
-                          End=['OXOY'])
+                          duoM2M4_B=['CXCY', 'M2M4_R', 'M2M4_R'], End=['OXOY'])
         self.sequence_motors = []
 
     def solveCube(self, debug=False, optimize=False):
@@ -650,9 +663,10 @@ class Solver():
         moves_raw = (moves_raw.replace('For Alignment: ', '').replace('For Cross: ', '').replace('For F2L: ', '').
                      replace('For OLL: ', '').replace('For PLL: ', '').replace('\n', '').replace('x', 'X').
                      replace('y', 'Y').replace('z', 'Z').replace('Fw', 'f').replace('Rw', 'r').
-                     replace('Uw', 'u').replace('Lw', 'l').replace('Bw', 'b').replace('Dw', 'd')).replace('\'', 'i')
+                     replace('Uw', 'u').replace('Lw', 'l').replace('Bw', 'b').replace('Dw', 'd').replace('\'', 'i'))
         moves_list = []
-        for i in range(len(moves_raw)):
+        i = 0
+        while i < len(moves_raw):
             if moves_raw[i] != 'i' and not moves_raw[i].isdigit():
                 try:
                     if moves_raw[i + 1] != 'i':
@@ -662,15 +676,10 @@ class Solver():
                 except IndexError:
                     moves_list.append(moves_raw[i])
             if moves_raw[i].isdigit():
-                try:
-                    if moves_raw[i + 2] != 'i':
-                        mov = moves_raw[i + 1]
-                    else:
-                        mov = moves_raw[i + 1] + 'i'
-                except IndexError:
-                    mov = moves_raw[i + 1]
-                for j in range(int(moves_raw[i]) - 1):
-                    moves_list.append(mov)
+                moves_list[len(moves_list)-1] = '2' + moves_list[len(moves_list)-1]
+            i = i + 1
+        for index, move in enumerate(moves_list):
+            moves_list[index] = move.replace('2', 'duo')
         return moves_list
 
     def translate(self, moves):
