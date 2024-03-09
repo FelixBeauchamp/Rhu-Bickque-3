@@ -680,6 +680,39 @@ class Solver():
             i = i + 1
         for index, move in enumerate(moves_list):
             moves_list[index] = move.replace('2', 'duo')
+
+        i = 0
+        length = len(moves_list)
+        while i < length:
+            if moves_list[i][:3] == 'duo':
+                try:
+                    if moves_list[i][-1] == moves_list[i+1]:
+                        moves_list[i] = moves_list[i+1] + 'i'
+                        del moves_list[i+1]
+                        length = length - 1
+                    if moves_list[i][-1] == moves_list[i+1][0] and len(moves_list[i+1]) == 2:
+                        moves_list[i] = moves_list[i+1][0]
+                        del moves_list[i+1]
+                        length = length - 1
+                except IndexError:
+                    pass
+            elif len(moves_list[i]) == 1:
+                try:
+                    if moves_list[i] == moves_list[i+1][-1] and moves_list[i+1][:3] == 'duo':
+                        moves_list[i] = moves_list[i] + 'i'
+                        del moves_list[i+1]
+                        length = length - 1
+                except IndexError:
+                    pass
+            elif len(moves_list[i]) == 2:
+                try:
+                    if moves_list[i][0] == moves_list[i+1][-1] and moves_list[i+1][:3] == 'duo':
+                        moves_list[i] = moves_list[i][0]
+                        del moves_list[i+1]
+                        length = length - 1
+                except IndexError:
+                    pass
+            i = i + 1
         return moves_list
 
     def translate(self, moves):
