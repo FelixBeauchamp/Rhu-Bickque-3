@@ -3,6 +3,21 @@ from helper import rawCondense
 from solver_data import RunePatternMatcher, movedata, move_pole_perspective, positionTransformData, whiteEdgePairs, \
     whiteEdgeDirectMoves, LyreLookUpSystem, ScythePatternMatcher, RunePatternMatcher
 
+sequence_camera = ['CXCY', 'SNAP', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M2M4_R', 'SNAP', 'M2M4_R', 'SNAP', 'M2M4_R', 'SNAP',
+                   'M2M4_R', 'CXCY', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M1_R', 'CXCY', 'OXCY', 'M1M3_R', 'SNAP', 'M1M3_L',
+                   'M1M3_L', 'SNAP', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R', 'CXCY']
+
+
+def reformat(m):
+    temp = [[[0] * 3 for _ in range(3)] for _ in range(6)]
+    temp[0] = [[m[27], m[28], m[29]], [m[30], m[31], m[32]], [m[33], m[34], m[35]]]
+    temp[1] = [[m[45], m[46], m[47]], [m[48], m[49], m[50]], [m[51], m[52], m[53]]]
+    temp[2] = [[m[17], m[16], m[15]], [m[14], m[13], m[12]], [m[11], m[10], m[9]]]
+    temp[3] = [[m[36], m[37], m[38]], [m[39], m[40], m[41]], [m[42], m[43], m[44]]]
+    temp[4] = [[m[18], m[19], m[20]], [m[21], m[22], m[23]], [m[24], m[25], m[26]]]
+    temp[5] = [[m[0], m[1], m[2]], [m[3], m[4], m[5]], [m[6], m[7], m[8]]]
+    return temp
+
 
 class Solver():
     """
@@ -68,12 +83,14 @@ class Solver():
                           M4_180=['CXCY', 'M4_R', 'M4_R'],
                           M1M3_R_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R'],
                           M1M3_L_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_L', 'CXCY', 'CXOY', 'M1_R'],
-                          duoM1M3_F=['CXCY','CXOY','M3_R','CXCY','OXCY','M1M3_R','M1M3_R','CXCY','CXOY','M1_R'],
+                          duoM1M3_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_R', 'M1M3_R', 'CXCY', 'CXOY',
+                                     'M1_R'],
                           M1M3_R_B=['CXCY', 'M1M3_R', 'CXOY', 'M1M3_R'], M1M3_L_B=['CXCY', 'M1M3_L', 'CXOY', 'M1M3_R'],
                           duoM1M3_B=['CXCY', 'M1M3_R', 'M1M3_R'],
                           M2M4_R_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_R', 'CXCY', 'OXCY', 'M2_R'],
                           M2M4_L_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_L', 'CXCY', 'OXCY', 'M2_R'],
-                          duoM2M4_F=['CXCY','OXCY','M4_R','CXCY','CXOY','M2M4_L','M2M4_L','CXCY','OXCY','M2_R'],
+                          duoM2M4_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_L', 'M2M4_L', 'CXCY', 'OXCY',
+                                     'M2_R'],
                           M2M4_R_B=['CXCY', 'M2M4_R', 'OXCY', 'M2M4_R'], M2M4_L_B=['CXCY', 'M2M4_L', 'OXCY', 'M2M4_R'],
                           duoM2M4_B=['CXCY', 'M2M4_R', 'M2M4_R'], End=['OXOY'])
         self.sequence_motors = []
@@ -496,8 +513,8 @@ class Solver():
                                 te0 == self.__faces[edge[1][0]][1][1] and te1 == self.__faces[edge[0][0]][1][1]))):
                             attrib_corner = "U" if (corner[cx][0] == 5) else ("L" if corner[cx][2] == 0 else "R")
                             attrib_edge = "E" if (
-                                        te0 == self.__faces[edge[0][0]][1][1] and te1 == self.__faces[edge[1][0]][1][
-                                    1]) else "X"
+                                    te0 == self.__faces[edge[0][0]][1][1] and te1 == self.__faces[edge[1][0]][1][
+                                1]) else "X"
                             if (self.optimize):
                                 self.__move(self.__moveMapper(face2, diff_to_move[diff] + self.__getf2lMove("1b1",
                                                                                                             attrib_corner,
@@ -676,7 +693,7 @@ class Solver():
                 except IndexError:
                     moves_list.append(moves_raw[i])
             if moves_raw[i].isdigit():
-                moves_list[len(moves_list)-1] = '2' + moves_list[len(moves_list)-1]
+                moves_list[len(moves_list) - 1] = '2' + moves_list[len(moves_list) - 1]
             i = i + 1
         for index, move in enumerate(moves_list):
             moves_list[index] = move.replace('2', 'duo')
@@ -686,29 +703,29 @@ class Solver():
         while i < length:
             if moves_list[i][:3] == 'duo':
                 try:
-                    if moves_list[i][-1] == moves_list[i+1]:
-                        moves_list[i] = moves_list[i+1] + 'i'
-                        del moves_list[i+1]
+                    if moves_list[i][-1] == moves_list[i + 1]:
+                        moves_list[i] = moves_list[i + 1] + 'i'
+                        del moves_list[i + 1]
                         length = length - 1
-                    if moves_list[i][-1] == moves_list[i+1][0] and len(moves_list[i+1]) == 2:
-                        moves_list[i] = moves_list[i+1][0]
-                        del moves_list[i+1]
+                    if moves_list[i][-1] == moves_list[i + 1][0] and len(moves_list[i + 1]) == 2:
+                        moves_list[i] = moves_list[i + 1][0]
+                        del moves_list[i + 1]
                         length = length - 1
                 except IndexError:
                     pass
             elif len(moves_list[i]) == 1:
                 try:
-                    if moves_list[i] == moves_list[i+1][-1] and moves_list[i+1][:3] == 'duo':
+                    if moves_list[i] == moves_list[i + 1][-1] and moves_list[i + 1][:3] == 'duo':
                         moves_list[i] = moves_list[i] + 'i'
-                        del moves_list[i+1]
+                        del moves_list[i + 1]
                         length = length - 1
                 except IndexError:
                     pass
             elif len(moves_list[i]) == 2:
                 try:
-                    if moves_list[i][0] == moves_list[i+1][-1] and moves_list[i+1][:3] == 'duo':
+                    if moves_list[i][0] == moves_list[i + 1][-1] and moves_list[i + 1][:3] == 'duo':
                         moves_list[i] = moves_list[i][0]
-                        del moves_list[i+1]
+                        del moves_list[i + 1]
                         length = length - 1
                 except IndexError:
                     pass

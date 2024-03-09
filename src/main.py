@@ -4,18 +4,18 @@ import OpenRBCom
 import sys
 import os
 
-algo_cube_path = os.path.join(sys.path[1], "Algo_Cube")
+algo_cube_path = os.path.join(sys.path[1], "Algo_CFOP")
 print(algo_cube_path)
 sys.path.append(algo_cube_path)
 
-from Algo_Ass import solve, cube, optimize
+from Algo_CFOP import solver, cube
 
 
 def mapping_sequence():
     mapp = ['G', 'B', 'G', 'B', 'G', 'B', 'G', 'B', 'G', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'B', 'G', 'B',
             'G', 'B', 'G', 'B', 'G', 'B', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'Y', 'W', 'Y', 'W', 'Y', 'W',
             'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W']
-    for move in solve.sequence_camera:
+    for move in solver.sequence_camera:
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
         elif move[0] == 'S':
@@ -24,25 +24,26 @@ def mapping_sequence():
             print("SNAP")
         else:
             ArduinoCom.sendmessage(move)
-    stg = solve.reformat(mapp)
-    print(stg)
-    print('   ' + stg[0:3] + '\n   ' + stg[3:6] + '\n   ' + stg[6:9] + '\n' + stg[9:21] + '\n' + stg[21:33] + '\n' +
-          stg[33:45] + '\n   ' + stg[45:48] + '\n   ' + stg[48:51] + '\n   ' + stg[51:])
-    return stg
+    map_array = solver.reformat(mapp)
+    cb = cube.Cube(map_array)
+    print(cb)
+    return map_array
 
 
-def solving(map_string):
-    c = cube.Cube(map_string)
+def solving(map_array):
+    c = cube.Cube(map_array)
     print("Solving:\n", c)
-    orig = cube.Cube(c)
-    solver = solve.Solver(c)
-    solver.solve()
-    solver.moves = optimize.optimize_moves(solver.moves)
-    solver.translate()
-    print(f"{len(solver.moves)} moves: {' '.join(solver.moves)}")
-    print(f"{len(solver.sequence_motors)} motors moves: {' - '.join(solver.sequence_motors)}")
+    solution = solver.Solver(c)
+    solution.solveCube(optimize=True)
+    moves = solution.getMoves(decorated=True)
+    print(moves)
 
-    for moves in solver.sequence_motors:
+    moves_list = solver.Solver.reformat(moves)
+    print(f"{len(moves_list)} moves: {' '.join(moves_list)}")
+    solution.translate(moves_list)
+    print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
+
+    for moves in solution.sequence_motors:
         if moves[0] == 'M' or moves[0] == 'H':
             OpenRBCom.sendmessage(moves)
         else:
