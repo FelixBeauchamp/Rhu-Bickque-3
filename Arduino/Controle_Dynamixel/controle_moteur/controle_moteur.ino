@@ -117,7 +117,6 @@ void loop() {
     //dxl.setGoalPosition(DXL_ID26, move26+offset26, UNIT_DEGREE);
     //dxl.setGoalPosition(DXL_ID37, 120, UNIT_DEGREE);
 
-    delay(1000); 
     if (command =="HOMING")
     {
       HOMING();
