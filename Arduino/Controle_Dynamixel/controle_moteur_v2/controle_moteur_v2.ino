@@ -36,7 +36,7 @@
   const int DXL_DIR_PIN = 2; // DYNAMIXEL Shield DIR PIN
 #endif
 
-String command;
+int command;
 
 const uint8_t DXL_ID21 = 50;
 const uint8_t DXL_ID37 = 37;
@@ -52,10 +52,10 @@ const float DXL_PROTOCOL_VERSION = 2.0;
 Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
 using namespace ControlTableItem;
 
-int offset21 = 512; //80;
+int offset21 = -(10*(512/45)); //80;
 int offset37 = 500; //-46;
-int offset26 = 512; //45;
-int offset27 = 512; //45;
+int offset26 = -512; //45;
+int offset27 = -512; //45;
 
 int degree_90_thick = 512 *2;
 
@@ -74,6 +74,9 @@ unsigned long timer = 0;
 uint16_t position_p_gain = 1000;
 uint16_t position_i_gain = 2;
 uint16_t position_d_gain = 700;
+
+//Communication
+int receivedValue;
 
 void setup() {
 
@@ -98,63 +101,64 @@ void setup() {
 
 void loop() {
 
-    command = Serial.readString();
+  Serial.readBytes((char*)&receivedValue, 4);
+  command = receivedValue;
 
-    // pour retourner info, Serial.println("");
+  // pour retourner info, Serial.println("");
 
-    // //Test 1
-    // dxl.setGoalPosition(M2, 0);
-    // DEBUG_SERIAL.println("Position 0 : ");
-    // delay(1000);
-    // dxl.setGoalPosition(M2, 4095);
-    //     DEBUG_SERIAL.println("Position 2 : ");
-    // delay(1000);
-    // dxl.setGoalPosition(M2, 4096);
-    //     DEBUG_SERIAL.println("Position 3 : ");
-    // delay(1000);
-    // dxl.setGoalPosition(M2, 4100);
-    //     DEBUG_SERIAL.println("Position 4 : ");
-    // delay(1000);
-    // dxl.setGoalPosition(M2, 0);
-    //     DEBUG_SERIAL.println("Position 5 : ");
-    // delay(1000);
+  // //Test 1
+  // dxl.setGoalPosition(M2, 0);
+  // DEBUG_SERIAL.println("Position 0 : ");
+  // delay(1000);
+  // dxl.setGoalPosition(M2, 4095);
+  //     DEBUG_SERIAL.println("Position 2 : ");
+  // delay(1000);
+  // dxl.setGoalPosition(M2, 4096);
+  //     DEBUG_SERIAL.println("Position 3 : ");
+  // delay(1000);
+  // dxl.setGoalPosition(M2, 4100);
+  //     DEBUG_SERIAL.println("Position 4 : ");
+  // delay(1000);
+  // dxl.setGoalPosition(M2, 0);
+  //     DEBUG_SERIAL.println("Position 5 : ");
+  // delay(1000);
 
- //Test HOMING
-    // DEBUG_SERIAL.print("Position 0 : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-    // delay(100);
-    // dxl.setGoalPosition(M2, 0);
-    // delay(250);
-    // DEBUG_SERIAL.print("Position 1 : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-    // delay(2000);
-    // dxl.setGoalPosition(M2, 500);
-    // delay(250);
-    // DEBUG_SERIAL.print("Position 2 : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-    // delay(3000);
-    // dxl.setGoalPosition(M2, 1000);
-    // delay(250);
-    // DEBUG_SERIAL.print("Position 3 : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-    // delay(2000);
-    // dxl.setGoalPosition(M2, 0);
-    // delay(250);;
-    // DEBUG_SERIAL.print("Position 4 : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-    // delay(2000);
-    // dxl.setGoalPosition(M2, -500);
-    // delay(250);
-    // DEBUG_SERIAL.print("Position 5 : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-    // delay(2000);
-    // dxl.setGoalPosition(M2, 1500);
-    // delay(250);
-    // DEBUG_SERIAL.print("Position 6 : ");
-    // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-    // delay(2000);
+  //Test HOMING
+  // DEBUG_SERIAL.print("Position 0 : ");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(100);
+  // dxl.setGoalPosition(M2, 0);
+  // delay(250);
+  // DEBUG_SERIAL.print("Position 1 : ");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(2000);
+  // dxl.setGoalPosition(M2, 500);
+  // delay(250);
+  // DEBUG_SERIAL.print("Position 2 : ");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(3000);
+  // dxl.setGoalPosition(M2, 1000);
+  // delay(250);
+  // DEBUG_SERIAL.print("Position 3 : ");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(2000);
+  // dxl.setGoalPosition(M2, 0);
+  // delay(250);;
+  // DEBUG_SERIAL.print("Position 4 : ");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(2000);
+  // dxl.setGoalPosition(M2, -500);
+  // delay(250);
+  // DEBUG_SERIAL.print("Position 5 : ");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(2000);
+  // dxl.setGoalPosition(M2, 1500);
+  // delay(250);
+  // DEBUG_SERIAL.print("Position 6 : ");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(2000);
 
-    // Test 3
+  // Test 3
   // if(direction >= 1) {
   //   direction = 0;
   //   delay(100);
@@ -184,79 +188,82 @@ void loop() {
 
   // Test 4
 
-  droite_2(M2,&goal_position_M2);
-  DEBUG_SERIAL.print("Present_Position:");
-  DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
-  delay(10);
+  // droite_2(M2,&goal_position_M2);
+  // DEBUG_SERIAL.print("Present_Position:");
+  // DEBUG_SERIAL.println(dxl.getPresentPosition(M2));
+  // delay(10);
 
-    if (command =="HOMING")
-    {
-      HOMING();
-      done();
-    }
+  if (command == 0) //HOMING
+  {
+    HOMING();
+    done();
+  }
 
-    if (command == "M1_L")
-    {
-      gauche(M1, &goal_position_M1);
-      done();
-    }
-    if (command == "M1_R")
-    {
-      droite(M1, &goal_position_M1);
-      done();
-    }
-    if (command == "M2_L")
-    {
-      gauche(M2, &goal_position_M2);
-      done();
-    }
-    if (command == "M2_R")
-    {
-      droite(M2, &goal_position_M2);
-      done();
-    }
-    if (command == "M3_L")
-    {
-      gauche(M3, &goal_position_M3);
-      done();
-    }
-    if (command == "M3_R")
-    {
-      droite(M3, &goal_position_M3);
-      done();
-    }
-    if (command == "M4_L")
-    {
-      gauche(M4, &goal_position_M4);
-      done();
-    }
-    if (command == "M4_R")
-    {
-      droite(M4, &goal_position_M4);
-      done();
-    }
+  if (command == 1) //M1_L
+  {
+    gauche(M1, &goal_position_M1);
+    done();
+  }
+  if (command == 11) //M1_R
+  {
+    droite(M1, &goal_position_M1);
+    done();
+  }
+  if (command == 2) //M2_L
+  {
+    gauche(M2, &goal_position_M2);
+    done();
+  }
+  if (command == 22) //M2_R
+  {
+    droite(M2, &goal_position_M2);
+    done();
+  }
+  if (command == 3) //M3_L
+  {
+    gauche(M3, &goal_position_M3);
+    done();
+  }
+  if (command == 33) //M3_R
+  {
+    droite(M3, &goal_position_M3);
+    done();
+  }
+  if (command == 4) //M4_L
+  {
+    gauche(M4, &goal_position_M4);
+    done();
+  }
+  if (command == 44) //M4_R
+  {
+    droite(M4, &goal_position_M4);
+    done();
+  }
 
 
-    if (command == "M1M3_L")
-    {
-      gauche_2M(M1,&goal_position_M1, M3, &goal_position_M3);
-      done();
-    }
-    if (command == "M1M3_R")
-    {
-      droite_2M(M1,&goal_position_M1, M3, &goal_position_M3);
-      done();
-    }
-    if (command == "M2M4_L")
-    {
-      gauche_2M(M2, &goal_position_M2, M4, &goal_position_M4);
-      done();
-    }
-    if (command == "M2M4_R")
-    {
-      droite_2M(M2, &goal_position_M2, M4, &goal_position_M4);
-      done();
-    }
+  if (command == 5) //M1M3_L
+  {
+    gauche_2M(M1, goal_position_M1, M3, goal_position_M3); //À voir si l'Entrée de goal position est pointeur ou pas
+    done();
+  }
+  if (command == 55) //M1M3_R
+  {
+    droite_2M(M1,goal_position_M1, M3, goal_position_M3);
+    done();
+  }
+  if (command == 6) //M2M4_L
+  {
+    gauche_2M(M2, goal_position_M2, M4, goal_position_M4);
+    done();
+  }
+  if (command == 66) //M2M4_R
+  {
+    droite_2M(M2, goal_position_M2, M4, goal_position_M4);
+    done();
+  }
+
+  Serial.flush();
+  receivedValue = 69;
 
 }
 
@@ -273,21 +280,47 @@ void HOMING ()
 void droite (const uint8_t DXL_ID, int32_t *goal_position)
 {
     // couter-clockwise pour droite
+    int offset = 0;
+    if (DXL_ID == M1){
+      offset = offset21;
+    }
+    if (DXL_ID == M2){
+      offset = offset37;
+    }
+    if (DXL_ID == M3){
+      offset = offset26;
+    }
+    if (DXL_ID == M4){
+      offset = offset27;
+    }
     while(dxl.getPresentVelocity(DXL_ID) != 0)
     {
     }
-    int move =  *goal_position + degree_90_thick + offset37 ;
+    int move =  *goal_position + degree_90_thick + offset ;
     *goal_position = *goal_position + degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
 }
 
 void gauche (const uint8_t DXL_ID, int32_t *goal_position)
 {
-    // Clockwise pour droite
+    // Clockwise pour gauche
+    int offset = 0;
+    if (DXL_ID == M1){
+      offset = offset21;
+    }
+    if (DXL_ID == M2){
+      offset = offset37;
+    }
+    if (DXL_ID == M3){
+      offset = offset26;
+    }
+    if (DXL_ID == M4){
+      offset = offset27;
+    }
     while(dxl.getPresentVelocity(DXL_ID) != 0)
     {
     }
-    int move =  *goal_position - degree_90_thick + offset37 ;
+    int move =  *goal_position - degree_90_thick + offset ;
     *goal_position = *goal_position - degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
 }
@@ -310,7 +343,7 @@ void gauche_2 (const uint8_t DXL_ID)
     dxl.setGoalPosition(DXL_ID, move);
 }
 
-void droite_2M (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
+void droite_2M (const uint8_t DXL_ID_1, int32_t goal_position_1, const uint8_t DXL_ID_2, int32_t goal_position_2) //Goal position a revoir si en pointeur ou pas. Sip l'adresse n'est pas envoyé la valeuyr ne sera pas changé
 {
     // Rotation 2 moteurs vers la droite par rapport au premier moteur
     droite(DXL_ID_1, &goal_position_1);
@@ -319,7 +352,7 @@ void droite_2M (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t 
 
 }
 
-void gauche_2M (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
+void gauche_2M (const uint8_t DXL_ID_1, int32_t goal_position_1, const uint8_t DXL_ID_2, int32_t goal_position_2)
 {
     // Rotation 2 moteurs vers la gauche par rapport au premier moteur
     gauche(DXL_ID_1, &goal_position_1);
@@ -339,7 +372,10 @@ void done()
     {
 
     }
-    Serial.println("t'es laid");
+    int valueToSend = 15;
+    Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+    delay(10);
+    valueToSend = 0;
 }
 
 void setting_up(const uint8_t DXL_ID){
