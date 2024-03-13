@@ -1,3 +1,14 @@
+// This code need to be uploaded on the OpenRb-150 to control the Dynamixel and allow the communication between the computer and OpenRb-150.
+// Arduino IDE was used for this. Some add-ins and Dynamixel libraries are necessary to change and upload the code on the OpenRb-150.
+// Dynamixel Setup on Arduino IDE :
+//      File -> pref -> URL (https://raw.githubusercontent.com/ROBOTIS-GIT/OpenRB-150/master/package_openrb_index.json)
+//
+//      tools -> Board manager
+//          -> Arduino SAMD
+//          -> OpenRB150
+//
+//      Sketch -> include lib. -> Mangage ->Dynamixel2Arduino
+
 
   #include <Dynamixel2Arduino.h>
 
