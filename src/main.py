@@ -1,7 +1,8 @@
 import ArduinoCom
 import OpenRBCom
 # import traitement_image
-
+import keyboard
+import time
 import sys
 import os
 
@@ -77,19 +78,33 @@ if __name__ == '__main__':
     ArduinoCom.openportarduino()
     cb = cube.Cube()
     balls = solver.Solver(cb)
+    # Flag to track if 'p' key has been pressed
+    p_pressed = False
+    g_pressed = False
     for moves in balls.Dictio:
-        input("\n Movement: " + moves)
-        ArduinoCom.sendmessage('OXOY')
-        OpenRBCom.sendmessage('HOMING')
-        sequence = balls.Dictio[moves]
-        sequence_motors = []
-        for j in range(len(sequence)):
-            sequence_motors.extend(balls.servo[sequence[j]])
-        for marde in sequence_motors:
-            input("next movement: " + marde)
-            if marde[0] == 'M' or marde[0] == 'H':
-                OpenRBCom.sendmessage(marde)
-            else:
-                ArduinoCom.sendmessage(marde)
+        print("\n Movement: " + moves)
+        p_pressed = False
+        g_pressed = False
+        while not g_pressed and not p_pressed:
+            if keyboard.is_pressed('g'):
+                g_pressed = True
+                print("bibos ass")
+                ArduinoCom.sendmessage('OXOY')
+                print("bibos dick")
+                OpenRBCom.sendmessage('HOMING')
+                sequence = balls.Dictio[moves]
+                sequence_motors = []
+                for j in range(len(sequence)):
+                    sequence_motors.extend(balls.servo[sequence[j]])
+                for marde in sequence_motors:
+                    input("Motor: " + marde)
+                    if marde[0] == 'M' or marde[0] == 'H':
+                        OpenRBCom.sendmessage(marde)
+                    else:
+                        ArduinoCom.sendmessage(marde)
+                time.sleep(0.5)
+            elif keyboard.is_pressed('p'):
+                p_pressed = True
+                time.sleep(0.5)
     ArduinoCom.closeportarduino()
     OpenRBCom.closeport()
