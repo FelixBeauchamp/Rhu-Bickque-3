@@ -1,9 +1,10 @@
 import serial
 import time
+import struct
 
 com_stateRB = 'Closed'
-motor_stateRB = "initialized"
-serialRB = serial.Serial('COM6', 57600)
+motor_stateRB = 0
+serialRB = serial.Serial('COM4', 57600)
 def openport():
 
     global com_stateRB
@@ -36,15 +37,33 @@ def sendmessage(megawhat):
 
     #time.sleep(1)
     # Send a string to Arduino
-    message = megawhat
-    serialRB.write(message.encode())
 
-    # Read the response from Arduino
-    motor_stateRB = serialRB.readline().decode()
+    message = struct.pack('<i', megawhat)
+    serialRB.write(message)
 
     end = 'finished servo-motor spin'
-
+    dynamixeldone()
+    motor_stateRB = 0
     return end
+
+def readmessage():
+    global serialRB
+    global motor_stateRB
+
+    binary_data = serialRB.read(4)  # Assuming you are expecting a 4-byte integer
+    motor_stateRB = int((struct.unpack('<i', binary_data)[0]))
+
+    # Print the response
+    print("Response from OpenRB:", motor_stateRB)
+
+    return motor_stateRB
+
+def dynamixeldone():
+
+    while True:
+        if readmessage() == 15:
+            break
+
 
 """
 # format example for megawhat command: 'OXOY'
@@ -78,18 +97,16 @@ def sendtoRB(megawhat,com_port):
 
     return end
 """
-"""
+
 openport()
-startime = time.time()
-sendmessage("HOMING")
-endtime = time.time()
-sendmessage("M1M3_L")
-
-
-sendmessage("M1_L")
-
+sendmessage(1)
+sendmessage(2)
+sendmessage(3)
+start_time = time.time()
+sendmessage(2)
+end_time = time.time()
+sendmessage(4)
+sendmessage(1)
 closeport()
-print(motor_stateRB)
-print(endtime-startime)
-"""
+print("Time taken:", end_time - start_time)
 
