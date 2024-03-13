@@ -62,10 +62,12 @@ def sendmessage(megawhat):
 def readmessage():
     global serialArduino
     global motor_stateArduino
+    print('Je lis')
 
     binary_data = serialArduino.read(4)  # Assuming you are expecting a 4-byte integer
-    motor_stateArduino = int((struct.unpack('<i', binary_data)[0])/65537)
+    print('Je lis arduino')
 
+    motor_stateArduino = int((struct.unpack('<i', binary_data)[0])/65537)
     # Print the response
     print("Response from Arduino:", motor_stateArduino)
 
@@ -73,7 +75,10 @@ def readmessage():
 
 def megadone():
     while True:
+        print('Je entre')
         if readmessage() == 1:
+            time.sleep(0.5)
+            print('Je fini lit')
             break
 
 """
