@@ -39,8 +39,19 @@ def sendmessage(megawhat):
     global motor_stateArduino
     global serialArduino
 
+    info = 0
+
+    if megawhat == 'OXOY':
+        info = 1
+    if megawhat == 'CXOY':
+        info = 2
+    if megawhat == 'OXCY':
+        info = 3
+    if megawhat == 'CXCY':
+        info = 4
+
     # Send a string to Arduino
-    message = struct.pack('<i', megawhat)
+    message = struct.pack('<i', info)
     serialArduino.write(message)
 
     end = 'finished servo-motor spin'
@@ -97,15 +108,9 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-
+"""
 openportarduino()
-sendmessage(1)
-sendmessage(2)
-sendmessage(3)
-start_time = time.time()
-sendmessage(2)
-end_time = time.time()
-sendmessage(4)
-sendmessage(1)
+sendmessage('CXCY')
+sendmessage('OXOY')
 closeportarduino()
-print("Time taken:", end_time - start_time)
+"""
