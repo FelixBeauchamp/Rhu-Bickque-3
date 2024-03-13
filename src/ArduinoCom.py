@@ -4,7 +4,7 @@ import struct
 
 motor_stateArduino = 0
 com_stateArduino = 'Closed'
-serialArduino = serial.Serial('COM7', 57600)
+serialArduino = serial.Serial('COM3', 57600)
 
 def openportarduino():
 
@@ -63,9 +63,15 @@ def readmessage():
     global serialArduino
     global motor_stateArduino
 
+    """
     binary_data = serialArduino.read(4)  # Assuming you are expecting a 4-byte integer
 
     motor_stateArduino = int((struct.unpack('<i', binary_data)[0])/65537)
+    """
+    response = serialArduino.readline().decode().strip()
+
+    if response == 'yo':
+        motor_stateArduino = 1
     # Print the response
     print("Response from Arduino:", motor_stateArduino)
 
@@ -109,9 +115,8 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-"""
+
 openportarduino()
 sendmessage('CXCY')
 sendmessage('OXOY')
 closeportarduino()
-"""
