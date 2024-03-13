@@ -4,7 +4,7 @@ import struct
 
 motor_stateArduino = 0
 com_stateArduino = 'Closed'
-serialArduino = serial.Serial('COM6', 57600)
+serialArduino = serial.Serial('COM7', 57600)
 
 def openportarduino():
 
