@@ -13,7 +13,9 @@ There are two ways to import the packages on PyCharm. The first one is through t
 If any packages are missing, a notification bar is displayed at the top of the editor. Click Install requirements.
 
 3. Lines of code to upgrade and install:
+   
          pip install -r requirements.txt
+   
          pip install --upgrade pip
               
 
