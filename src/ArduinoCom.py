@@ -115,8 +115,3 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-
-openportarduino()
-sendmessage('CXCY')
-sendmessage('OXOY')
-closeportarduino()
