@@ -1,6 +1,6 @@
 import ArduinoCom
 import OpenRBCom
-#import traitement_image
+# import traitement_image
 
 import sys
 import os
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     cb = cube.Cube()
     balls = solver.Solver(cb)
     for moves in balls.Dictio:
-        input("Movement: " + moves)
+        input("\n Movement: " + moves)
         ArduinoCom.sendmessage('OXOY')
         OpenRBCom.sendmessage('HOMING')
         sequence = balls.Dictio[moves]
