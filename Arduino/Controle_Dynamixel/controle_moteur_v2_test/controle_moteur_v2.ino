@@ -38,28 +38,36 @@
 
 int command;
 
+//Motor and offset values
 const uint8_t DXL_ID21 = 50;
 const uint8_t DXL_ID37 = 37;
 const uint8_t DXL_ID26 = 1;
 const uint8_t DXL_ID27 = 15;
-
-const uint8_t M1 = DXL_ID21;
-const uint8_t M2 = DXL_ID37;
-const uint8_t M3 = DXL_ID26;
-const uint8_t M4 = DXL_ID27;
-
-const float DXL_PROTOCOL_VERSION = 2.0;
-Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
-using namespace ControlTableItem;
 
 int offset21 = -(10*(512/45)); //80;
 int offset37 = 500; //-46;
 int offset26 = -512; //45;
 int offset27 = -512; //45;
 
+//Attributing Motor and offset position
+const uint8_t M1 = DXL_ID21; //Devant
+const uint8_t M2 = DXL_ID26; //Gauche
+const uint8_t M3 = DXL_ID37; //Derrière
+const uint8_t M4 = DXL_ID27; //Droite
+
+int offsetM1 = offset21; //80;
+int offsetM2 = offset26; //-46;
+int offsetM3 = offset37; //45;
+int offsetM4 = offset27; //45;
+
+
+const float DXL_PROTOCOL_VERSION = 2.0;
+Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
+using namespace ControlTableItem;
+
+//Global variables to control move
 int degree_90_thick = 512 *2;
 
-int compteur_pos = 0;
 int32_t goal_position_M1 = 0;
 int32_t goal_position_M2 = 0;
 int32_t goal_position_M3 = 0;
@@ -94,7 +102,8 @@ void setup() {
   setting_up(M3);
   setting_up(M4);
 
-  HOMING();
+  HOMING(&goal_position_M1, &goal_position_M2, &goal_position_M3, &goal_position_M4);
+
   //HOMING_VELOCITY();
 
 }
@@ -195,7 +204,7 @@ void loop() {
 
   if (command == 0) //HOMING
   {
-    HOMING();
+    HOMING(&goal_position_M1, &goal_position_M2, &goal_position_M3, &goal_position_M4);
     done();
   }
 
@@ -267,36 +276,40 @@ void loop() {
 
 }
 
-void HOMING ()
+void HOMING (int32_t *goal_position_1, int32_t *goal_position_2, int32_t *goal_position_3, int32_t *goal_position_4)
 {
-    dxl.setGoalPosition(M1, offset21);
-    dxl.setGoalPosition(M2, offset37);
-    dxl.setGoalPosition(M3, offset26);
-    dxl.setGoalPosition(M4, offset27);
-    DEBUG_SERIAL.println("Position HOMING");
-    delay(1000);
+  dxl.setGoalPosition(M1, offsetM1);
+  dxl.setGoalPosition(M2, offsetM2);
+  dxl.setGoalPosition(M3, offsetM3);
+  dxl.setGoalPosition(M4, offsetM4);
+  *goal_position_1 = offsetM1;
+  *goal_position_2 = offsetM2;
+  *goal_position_3 = offsetM3;
+  *goal_position_4 = offsetM4;
+  // DEBUG_SERIAL.println("Position HOMING");
+  // delay(1000);
 }
 
 void droite (const uint8_t DXL_ID, int32_t *goal_position)
 {
     // couter-clockwise pour droite
-    int offset = 0;
-    if (DXL_ID == M1){
-      offset = offset21;
-    }
-    if (DXL_ID == M2){
-      offset = offset37;
-    }
-    if (DXL_ID == M3){
-      offset = offset26;
-    }
-    if (DXL_ID == M4){
-      offset = offset27;
-    }
+    // int offset = 0;
+    // if (DXL_ID == M1){
+    //   offset = offsetM1;
+    // }
+    // if (DXL_ID == M2){
+    //   offset = offsetM2;
+    // }
+    // if (DXL_ID == M3){
+    //   offset = offsetM3;
+    // }
+    // if (DXL_ID == M4){
+    //   offset = offsetM4;
+    // }
     while(dxl.getPresentVelocity(DXL_ID) != 0)
     {
     }
-    int move =  *goal_position + degree_90_thick + offset ;
+    int move =  *goal_position + degree_90_thick ;
     *goal_position = *goal_position + degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
 }
@@ -304,23 +317,23 @@ void droite (const uint8_t DXL_ID, int32_t *goal_position)
 void gauche (const uint8_t DXL_ID, int32_t *goal_position)
 {
     // Clockwise pour gauche
-    int offset = 0;
-    if (DXL_ID == M1){
-      offset = offset21;
-    }
-    if (DXL_ID == M2){
-      offset = offset37;
-    }
-    if (DXL_ID == M3){
-      offset = offset26;
-    }
-    if (DXL_ID == M4){
-      offset = offset27;
-    }
+    // int offset = 0;
+    // if (DXL_ID == M1){
+    //   offset = offsetM1;
+    // }
+    // if (DXL_ID == M2){
+    //   offset = offsetM2;
+    // }
+    // if (DXL_ID == M3){
+    //   offset = offsetM3;
+    // }
+    // if (DXL_ID == M4){
+    //   offset = offsetM4;
+    // }
     while(dxl.getPresentVelocity(DXL_ID) != 0)
     {
     }
-    int move =  *goal_position - degree_90_thick + offset ;
+    int move =  *goal_position - degree_90_thick ;
     *goal_position = *goal_position - degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
 }
@@ -361,8 +374,9 @@ void gauche_2M (const uint8_t DXL_ID_1, int32_t goal_position_1, const uint8_t D
 
 }
 
-void done()
+void done() //Revoir le while seems sus
 {
+  delay(25);
   while(
     dxl.getPresentVelocity(DXL_ID21) != 0 ||
     dxl.getPresentVelocity(DXL_ID37) != 0 ||
@@ -372,9 +386,9 @@ void done()
     {
 
     }
-    int valueToSend = 15;
+    int valueToSend = 1;
+    // delay(1000);
     Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
-    delay(10);
     valueToSend = 0;
 }
 
@@ -389,7 +403,7 @@ void setting_up(const uint8_t DXL_ID){
 
   dxl.torqueOn(DXL_ID);
 
-  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_ID, 5000); //Velocity is from 0-32767 Profil_velocity*0.229 rev/min = vitesse
+  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_ID, 15000); //Velocity is from 0-32767 Profil_velocity*0.229 rev/min = vitesse
 
   dxl.writeControlTableItem(POSITION_P_GAIN, DXL_ID, position_p_gain);
   dxl.writeControlTableItem(POSITION_I_GAIN, DXL_ID, position_i_gain);

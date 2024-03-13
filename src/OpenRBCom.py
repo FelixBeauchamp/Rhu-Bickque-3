@@ -4,7 +4,7 @@ import struct
 
 com_stateRB = 'Closed'
 motor_stateRB = 0
-serialRB = serial.Serial('COM4', 57600)
+serialRB = serial.Serial('COM6', 57600)
 def openport():
 
     global com_stateRB
@@ -38,7 +38,36 @@ def sendmessage(megawhat):
     #time.sleep(1)
     # Send a string to Arduino
 
-    message = struct.pack('<i', megawhat)
+    info = 0
+
+    if megawhat == 'HOMING':
+        info = 0
+    if megawhat == 'M1_L':
+        info = 1
+    if megawhat == 'M1_R':
+        info = 2
+    if megawhat == 'M2_L':
+        info = 3
+    if megawhat == 'M2_R':
+        info = 4
+    if megawhat == 'M3_L':
+        info = 5
+    if megawhat == 'M3_R':
+        info = 6
+    if megawhat == 'M4_L':
+        info = 7
+    if megawhat == 'M4_R':
+        info = 8
+    if megawhat == 'M1M3_L':
+        info = 9
+    if megawhat == 'M1M3_R':
+        info = 10
+    if megawhat == 'M2M4_L':
+        info = 11
+    if megawhat == 'M2M4_R':
+        info = 12
+
+    message = struct.pack('<i', info)
     serialRB.write(message)
 
     end = 'finished servo-motor spin'
@@ -61,7 +90,7 @@ def readmessage():
 def dynamixeldone():
 
     while True:
-        if readmessage() == 15:
+        if readmessage() == 1:
             break
 
 
@@ -97,16 +126,13 @@ def sendtoRB(megawhat,com_port):
 
     return end
 """
-
+"""
 openport()
-sendmessage(1)
-sendmessage(2)
-sendmessage(3)
-start_time = time.time()
-sendmessage(2)
-end_time = time.time()
-sendmessage(4)
-sendmessage(1)
+sendmessage('HOMING')
+sendmessage('M1_L')
+sendmessage('M2_R')
+sendmessage('HOMING')
 closeport()
-print("Time taken:", end_time - start_time)
+"""
+
 

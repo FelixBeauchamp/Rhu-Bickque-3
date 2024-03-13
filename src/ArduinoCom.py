@@ -4,7 +4,7 @@ import struct
 
 motor_stateArduino = 0
 com_stateArduino = 'Closed'
-serialArduino = serial.Serial('COM3', 57600)
+serialArduino = serial.Serial('COM7', 57600)
 
 def openportarduino():
 
@@ -39,8 +39,19 @@ def sendmessage(megawhat):
     global motor_stateArduino
     global serialArduino
 
+    info = 0
+
+    if megawhat == 'OXOY':
+        info = 1
+    if megawhat == 'CXOY':
+        info = 2
+    if megawhat == 'OXCY':
+        info = 3
+    if megawhat == 'CXCY':
+        info = 4
+
     # Send a string to Arduino
-    message = struct.pack('<i', megawhat)
+    message = struct.pack('<i', info)
     serialArduino.write(message)
 
     end = 'finished servo-motor spin'
@@ -52,9 +63,15 @@ def readmessage():
     global serialArduino
     global motor_stateArduino
 
+    """
     binary_data = serialArduino.read(4)  # Assuming you are expecting a 4-byte integer
-    motor_stateArduino = int((struct.unpack('<i', binary_data)[0])/65537)
 
+    motor_stateArduino = int((struct.unpack('<i', binary_data)[0])/65537)
+    """
+    response = serialArduino.readline().decode().strip()
+
+    if response == 'yo':
+        motor_stateArduino = 1
     # Print the response
     print("Response from Arduino:", motor_stateArduino)
 
@@ -63,6 +80,7 @@ def readmessage():
 def megadone():
     while True:
         if readmessage() == 1:
+            time.sleep(0.5)
             break
 
 """
@@ -97,15 +115,3 @@ def sendtomega(megawhat,com_port):
 
     return end
 """
-
-openportarduino()
-sendmessage(1)
-sendmessage(2)
-sendmessage(3)
-start_time = time.time()
-sendmessage(2)
-end_time = time.time()
-sendmessage(4)
-sendmessage(1)
-closeportarduino()
-print("Time taken:", end_time - start_time)

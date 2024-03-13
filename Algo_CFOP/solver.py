@@ -8,6 +8,8 @@ sequence_camera = ['CXCY', 'SNAP', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M2M4_R', 'SN
                    'M1M3_L', 'SNAP', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R', 'CXCY']
 
 
+# The reformat function transform the list given by the camera mapping of the cube into a list that the solving
+# algorithm can take as parameter
 def reformat(m):
     temp = [[[0] * 3 for _ in range(3)] for _ in range(6)]
     temp[0] = [[m[27], m[28], m[29]], [m[30], m[31], m[32]], [m[33], m[34], m[35]]]
@@ -51,10 +53,10 @@ class Solver():
         self.__faces = self.cube.cube
         self.__forms = []
         self.Dictio = dict(F=['M1_R'], duoF=['M1_180'], Fi=['M1_L'], duoFi=['M1_180'], R=['M4_R'], duoR=['M4_180'],
-                           Ri=['M4_L'], duoRi=['M4_180'], U=['M2M4_L_F', 'M3_R', 'M2M4_R_F'],
-                           duoU=['M2M4_L_F', 'M3_180', 'M2M4_R_F'], Ui=['M2M4_L_F', 'M3_L', 'M2M4_R_F'],
+                           Ri=['M4_L'], duoRi=['M4_180'], U=['M2M4_L_F', 'M3_L', 'M2M4_R_F'],
+                           duoU=['M2M4_L_F', 'M3_180', 'M2M4_R_F'], Ui=['M2M4_L_F', 'M3_R', 'M2M4_R_F'],
                            duoUi=['M2M4_L_F', 'M3_180', 'M2M4_R_F'], L=['M2_R'], duoL=['M2_180'], Li=['M2_L'],
-                           duoLi=['M2_180'], B=['M3_R'], duoB=['M3_180'], Bi=['M3_L'], duoBi=['M3_180'],
+                           duoLi=['M2_180'], B=['M3_L'], duoB=['M3_180'], Bi=['M3_R'], duoBi=['M3_180'],
                            D=['M2M4_L_F', 'M1_R', 'M2M4_R_F'], duoD=['M2M4_L_F', 'M1_180', 'M2M4_R_F'],
                            Di=['M2M4_L_F', 'M1_L', 'M2M4_R_F'], duoDi=['M2M4_L_F', 'M1_180', 'M2M4_R_F'],
                            M=['M2M4_L_B', 'M2M4_R_F'], duoM=['duoM2M4_B', 'duoM2M4_F'], Mi=['M2M4_R_B', 'M2M4_L_F'],
@@ -63,14 +65,14 @@ class Solver():
                            Ei=['M1M3_L_F', 'M2M4_L_B', 'M2M4_R_F', 'M1M3_R_F'],
                            duoEi=['M1M3_L_F', 'duoM2M4_B', 'duoM2M4_F', 'M1M3_R_F'], S=['M1M3_L_B', 'M1M3_R_F'],
                            duoS=['duoM1M3_B', 'duoM1M3_F'], Si=['M1M3_R_B', 'M1M3_L_F'],
-                           duoSi=['duoM1M3_B', 'duoM1M3_F'], f=['M3_R', 'M1M3_R_F'], fi=['M3_L', 'M1M3_L_F'],
+                           duoSi=['duoM1M3_B', 'duoM1M3_F'], f=['M3_L', 'M1M3_R_F'], fi=['M3_R', 'M1M3_L_F'],
                            r=['M2_R', 'M2M4_L_F'], ri=['M2_L', 'M2M4_R_F'],
                            u=['M2M4_L_F', 'M1_R', 'M1M3_L_F', 'M2M4_R_F'],
                            ui=['M2M4_L_F', 'M1_L', 'M1M3_R_F', 'M2M4_R_F'],
                            l=['M4_R', 'M2M4_R_F'], li=['M4_L', 'M2M4_L_F'],
                            b=['M1_R', 'M1M3_L_F'], bi=['M1_L', 'M1M3_R_F'],
-                           d=['M2M4_L_F', 'M3_R', 'M1M3_R_F', 'M2M4_R_F'],
-                           di=['M2M4_L_F', 'M3_L', 'M1M3_L_F', 'M2M4_R_F'], X=['M2M4_L_F'], Xi=['M2M4_R_F'],
+                           d=['M2M4_L_F', 'M3_L', 'M1M3_R_F', 'M2M4_R_F'],
+                           di=['M2M4_L_F', 'M3_R', 'M1M3_L_F', 'M2M4_R_F'], X=['M2M4_L_F'], Xi=['M2M4_R_F'],
                            Y=['M2M4_R_F', 'M1M3_R_F', 'M2M4_L_F'], Yi=['M1M3_L_F', 'M2M4_L_F', 'M1M3_R_F'],
                            Z=['M1M3_R_F'], Zi=['M1M3_L_F'], duoX=['duoM2M4_F'],
                            duoY=['M1M3_L_F', 'duoM2M4_F', 'M1M3_R_F'], duoZ=['duoM1M3_F'])
@@ -84,13 +86,13 @@ class Solver():
                           M1M3_R_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R'],
                           M1M3_L_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_L', 'CXCY', 'CXOY', 'M1_R'],
                           duoM1M3_F=['CXCY', 'CXOY', 'M3_R', 'CXCY', 'OXCY', 'M1M3_R', 'M1M3_R', 'CXCY', 'CXOY',
-                                     'M1_R'],
+                                     'M3_R'],
                           M1M3_R_B=['CXCY', 'M1M3_R', 'CXOY', 'M1M3_R'], M1M3_L_B=['CXCY', 'M1M3_L', 'CXOY', 'M1M3_R'],
                           duoM1M3_B=['CXCY', 'M1M3_R', 'M1M3_R'],
                           M2M4_R_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_R', 'CXCY', 'OXCY', 'M2_R'],
                           M2M4_L_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_L', 'CXCY', 'OXCY', 'M2_R'],
                           duoM2M4_F=['CXCY', 'OXCY', 'M4_R', 'CXCY', 'CXOY', 'M2M4_L', 'M2M4_L', 'CXCY', 'OXCY',
-                                     'M2_R'],
+                                     'M4_R'],
                           M2M4_R_B=['CXCY', 'M2M4_R', 'OXCY', 'M2M4_R'], M2M4_L_B=['CXCY', 'M2M4_L', 'OXCY', 'M2M4_R'],
                           duoM2M4_B=['CXCY', 'M2M4_R', 'M2M4_R'], End=['OXOY'])
         self.sequence_motors = []
@@ -675,6 +677,9 @@ class Solver():
         elif (self.__faces[0][0][1] == self.__faces[3][1][1]):
             self.__move("U")
 
+    # The 'reformat' function transform the movement list given by the solving algorithm
+    # into a list that can be treated after by the motor movements dictionaries. There is
+    # also a little bit of movement optimization/simplification.
     @staticmethod
     def reformat(moves_raw):
         moves_raw = (moves_raw.replace('For Alignment: ', '').replace('For Cross: ', '').replace('For F2L: ', '').
@@ -698,6 +703,7 @@ class Solver():
         for index, move in enumerate(moves_list):
             moves_list[index] = move.replace('2', 'duo')
 
+        # Little movement optimization
         i = 0
         length = len(moves_list)
         while i < length:
@@ -732,6 +738,8 @@ class Solver():
             i = i + 1
         return moves_list
 
+    # The 'translate' function transforms the Rubik's moves into motors moves
+    # using the dictionaries 'Dictio' and 'servo'
     def translate(self, moves):
         temp = []
         for i in range(len(moves)):

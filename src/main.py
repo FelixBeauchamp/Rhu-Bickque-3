@@ -1,6 +1,8 @@
 import ArduinoCom
 import OpenRBCom
 import traitement_image
+# import keyboard
+# import time
 
 import sys
 import os
@@ -14,6 +16,7 @@ from Algo_CFOP import solver, cube
 
 def mapping_sequence():
     mapp = []
+    # Iterate through the camera motor sequence and analizing the
     for move in solver.sequence_camera:
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
@@ -64,9 +67,53 @@ if __name__ == '__main__':
     input("Press Enter to start the mapping sequence")
     cube_map = mapping_sequence()
 
-    # 2- Solving the cube
+    # 3- Solving the cube
     input("Press Enter to start solving")
-
     solving(cube_map)
     ArduinoCom.closeportarduino()
     OpenRBCom.closeport()
+
+
+
+
+
+
+    # print("Initialisation: OPENING/HOMING")
+    # OpenRBCom.openport()
+    # ArduinoCom.openportarduino()
+    # cb = cube.Cube()
+    # balls = solver.Solver(cb)
+    # # Flag to track if 'p' key has been pressed
+    # p_pressed = False
+    # g_pressed = False
+    # input("bibos ass")
+    # ArduinoCom.sendmessage('OXOY')
+    # input("bibos dick")
+    # OpenRBCom.sendmessage('HOMING')
+    # for moves in balls.Dictio:
+    #     print("\n Movement: " + moves)
+    #     p_pressed = False
+    #     g_pressed = False
+    #     while not g_pressed and not p_pressed:
+    #         if keyboard.is_pressed('g'):
+    #             g_pressed = True
+    #             # print("bibos ass")
+    #             # ArduinoCom.sendmessage('OXOY')
+    #             # print("bibos dick")
+    #             # OpenRBCom.sendmessage('HOMING')
+    #             sequence = balls.Dictio[moves]
+    #             sequence_motors = []
+    #             for j in range(len(sequence)):
+    #                 sequence_motors.extend(balls.servo[sequence[j]])
+    #             for marde in sequence_motors:
+    #                 input("Motor: " + marde)
+    #                 if marde[0] == 'M' or marde[0] == 'H':
+    #                     OpenRBCom.sendmessage(marde)
+    #                 else:
+    #                     ArduinoCom.sendmessage(marde)
+    #             time.sleep(0.5)
+    #         elif keyboard.is_pressed('p'):
+    #             p_pressed = True
+    #             time.sleep(0.25)
+    # ArduinoCom.closeportarduino()
+    # OpenRBCom.closeport()
