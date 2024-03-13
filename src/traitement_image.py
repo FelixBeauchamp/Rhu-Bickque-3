@@ -1,7 +1,7 @@
 # The file to analyze the colors on the cube
 import numpy as np
 import cv2
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(0)
 
 YellowL_limit = np.array([25, 80, 0])  # setting the yellow lower limit
 YellowU_limit = np.array([39, 255, 194])  # setting the yellow upper limit
