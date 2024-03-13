@@ -166,22 +166,22 @@ void loop() {
 
   if (command == 9) //M1M3_L
   {
-    left_2M(M1, goal_position_M1, M3, goal_position_M3); 
+    left_2M(M1, &goal_position_M1, M3, &goal_position_M3); 
     done();
   }
   if (command == 10) //M1M3_R
   {
-    right_2M(M1,goal_position_M1, M3, goal_position_M3);
+    right_2M(M1, &goal_position_M1, M3, &goal_position_M3);
     done();
   }
   if (command == 11) //M2M4_L
   {
-    left_2M(M2, goal_position_M2, M4, goal_position_M4);
+    left_2M(M2, &goal_position_M2, M4, &goal_position_M4);
     done();
   }
   if (command == 12) //M2M4_R
   {
-    right_2M(M2, goal_position_M2, M4, goal_position_M4);
+    right_2M(M2, &goal_position_M2, M4, &goal_position_M4);
     done();
   }
 
@@ -223,19 +223,19 @@ void left (const uint8_t DXL_ID, int32_t *goal_position)
     dxl.setGoalPosition(DXL_ID, move);
 }
 
-void right_2M (const uint8_t DXL_ID_1, int32_t goal_position_1, const uint8_t DXL_ID_2, int32_t goal_position_2)
+void right_2M (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
 {
     // Right rotatation from 2 motors based on the first one
-    right(DXL_ID_1, &goal_position_1);
-    left(DXL_ID_2, &goal_position_2);
+    right(DXL_ID_1, goal_position_1);
+    left(DXL_ID_2, goal_position_2);
 
 }
 
-void left_2M (const uint8_t DXL_ID_1, int32_t goal_position_1, const uint8_t DXL_ID_2, int32_t goal_position_2)
+void left_2M (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
 {
     // Left rotatation from 2 motors based on the first one
-    left(DXL_ID_1, &goal_position_1);
-    right(DXL_ID_2, &goal_position_2);
+    left(DXL_ID_1, goal_position_1);
+    right(DXL_ID_2, goal_position_2);
 }
 
 void done() //Revoir le while seems sus
