@@ -1,8 +1,7 @@
 // This file only runs on the ArduinoIDE
 
 #include <Wire.h>
-#include <
-.h>
+#include <Adafruit_PWMServoDriver.h>
 #include <Servo.h>
 
 
@@ -16,9 +15,9 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
 
-int receivedValue;
 uint8_t servonum = 0;
 int command;
+int receivedValue;
 
 Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
@@ -57,58 +56,35 @@ void setServoPulse(uint8_t n, double pulse) {
 }
 
 void loop() {
-        Serial.readBytes((char*)&receivedValue, 4);
-        command = receivedValue;
-        if(command == 1){
-          pwm.setPWM(0,0,SERVOMIN_X);
-          pwm.setPWM(1,0,SERVOMIN_Y);
-          int time = 0;
-          while (time <= delais)
-          {
-            time = millis();
-          }
-          int valueToSend = 1;
-          Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
-          valueToSend = 0;
-        }
-        if(command == 3){
-          pwm.setPWM(0,0,SERVOMAX_X);
-          pwm.setPWM(1,0,SERVOMIN_Y);
-          int time = 0;
-          while (time <= delais)
-          {
-            time = millis();
-          }
-          int valueToSend = 1;
-          Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
-          valueToSend = 0;
-        }
-        if(command == 2){
-          pwm.setPWM(0,0,SERVOMIN_X);
-          pwm.setPWM(1,0,SERVOMAX_Y);
-          int time = 0;
-          while (time <= delais)
-          {
-            time = millis();
-          }
-          int valueToSend = 1;
-          Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
-          valueToSend = 0;
-        }
-        if(command == 4){
-          pwm.setPWM(0,0,SERVOMAX_X);
-          pwm.setPWM(1,0,SERVOMAX_Y);
-          int time = 0;
-          while (time <= delais)
-          {
-            time = millis();
-          }
-          int valueToSend = 1;
-          Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
-          valueToSend = 0;
-        }
-        Serial.flush();
-        int receivedValue = 69;
+  if (Serial.available() >= 4) {
+    Serial.readBytes((char*)&receivedValue, 4);
+    command = receivedValue;
+    if(command == 1){
+      pwm.setPWM(0,0,SERVOMIN_X);
+      pwm.setPWM(1,0,SERVOMIN_Y);
+      delay(100);
+      Serial.println("yo");
+    }
+    if(command == 3){
+      pwm.setPWM(0,0,SERVOMAX_X);
+      pwm.setPWM(1,0,SERVOMIN_Y);
+      delay(100);
+      Serial.println("yo");
+    }
+    if(command == 2){
+      pwm.setPWM(0,0,SERVOMIN_X);
+      pwm.setPWM(1,0,SERVOMAX_Y);
+      delay(100);
+      Serial.println("yo");
+    }
+    if(command == 4){
+      pwm.setPWM(0,0,SERVOMAX_X);
+      pwm.setPWM(1,0,SERVOMAX_Y);
+      delay(100);
+      Serial.println("yo");
+    }
+    Serial.flush();
+  }
 }
 
 void done(){
