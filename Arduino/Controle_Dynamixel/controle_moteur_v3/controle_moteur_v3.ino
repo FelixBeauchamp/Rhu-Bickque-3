@@ -10,7 +10,7 @@
 //      Sketch -> include lib. -> Mangage ->Dynamixel2Arduino
 
 
-  #include <Dynamixel2Arduino.h>
+#include <Dynamixel2Arduino.h>
 
 #if defined(ARDUINO_AVR_UNO) || defined(ARDUINO_AVR_MEGA2560) // When using DynamixelShield
   #include <SoftwareSerial.h>
@@ -127,69 +127,69 @@ void loop() {
     left(M1, &goal_position_M1);
     done();
   }
-  if (command == 11) //M1_R
+  if (command == 2) //M1_R
   {
     right(M1, &goal_position_M1);
     done();
   }
-  if (command == 2) //M2_L
+  if (command == 3) //M2_L
   {
     left(M2, &goal_position_M2);
     done();
   }
-  if (command == 22) //M2_R
+  if (command == 4) //M2_R
   {
     right(M2, &goal_position_M2);
     done();
   }
-  if (command == 3) //M3_L
+  if (command == 5) //M3_L
   {
     left(M3, &goal_position_M3);
     done();
   }
-  if (command == 33) //M3_R
+  if (command == 6) //M3_R
   {
     right(M3, &goal_position_M3);
     done();
   }
-  if (command == 4) //M4_L
+  if (command == 7) //M4_L
   {
     left(M4, &goal_position_M4);
     done();
   }
-  if (command == 44) //M4_R
+  if (command == 8) //M4_R
   {
     right(M4, &goal_position_M4);
     done();
   }
 
 
-  if (command == 5) //M1M3_L
+  if (command == 9) //M1M3_L
   {
     left_2M(M1, goal_position_M1, M3, goal_position_M3); 
     done();
   }
-  if (command == 55) //M1M3_R
+  if (command == 10) //M1M3_R
   {
     right_2M(M1,goal_position_M1, M3, goal_position_M3);
     done();
   }
-  if (command == 6) //M2M4_L
+  if (command == 11) //M2M4_L
   {
     left_2M(M2, goal_position_M2, M4, goal_position_M4);
     done();
   }
-  if (command == 66) //M2M4_R
+  if (command == 12) //M2M4_R
   {
     right_2M(M2, goal_position_M2, M4, goal_position_M4);
     done();
   }
 
   Serial.flush();
-  receivedValue = 69;
+  receivedValue = 15;
 }
 
-void HOMING () //Placing the motors in initial postion with offset and changing the goal position for every motor t othe offset value.
+void HOMING () //Placing the motors in initial postion with offset and changing the goal position for every motor to offset value.
 {
   dxl.setGoalPosition(M1, offsetM1);
   dxl.setGoalPosition(M2, offsetM2);
