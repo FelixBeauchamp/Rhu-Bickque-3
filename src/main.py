@@ -86,8 +86,8 @@ if __name__ == '__main__':
         for j in range(len(sequence)):
             sequence_motors.extend(balls.servo[sequence[j]])
         for marde in sequence_motors:
-            input("next movement")
-            if moves[0] == 'M' or moves[0] == 'H':
+            input("next movement: " + marde)
+            if marde[0] == 'M' or marde[0] == 'H':
                 OpenRBCom.sendmessage(marde)
             else:
                 ArduinoCom.sendmessage(marde)
