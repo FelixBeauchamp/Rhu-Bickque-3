@@ -8,6 +8,8 @@ sequence_camera = ['CXCY', 'SNAP', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M2M4_R', 'SN
                    'M1M3_L', 'SNAP', 'M1M3_R', 'CXCY', 'CXOY', 'M1_R', 'CXCY']
 
 
+# The reformat function transform the list given by the camera mapping of the cube into a list that the solving
+# algorithm can take as parameter
 def reformat(m):
     temp = [[[0] * 3 for _ in range(3)] for _ in range(6)]
     temp[0] = [[m[27], m[28], m[29]], [m[30], m[31], m[32]], [m[33], m[34], m[35]]]
@@ -675,6 +677,9 @@ class Solver():
         elif (self.__faces[0][0][1] == self.__faces[3][1][1]):
             self.__move("U")
 
+    # The 'reformat' function transform the movement list given by the solving algorithm
+    # into a list that can be treated after by the motor movements dictionaries. There is
+    # also a little bit of movement optimization/simplification.
     @staticmethod
     def reformat(moves_raw):
         moves_raw = (moves_raw.replace('For Alignment: ', '').replace('For Cross: ', '').replace('For F2L: ', '').
@@ -698,6 +703,7 @@ class Solver():
         for index, move in enumerate(moves_list):
             moves_list[index] = move.replace('2', 'duo')
 
+        # Little movement optimization
         i = 0
         length = len(moves_list)
         while i < length:
@@ -732,6 +738,8 @@ class Solver():
             i = i + 1
         return moves_list
 
+    # The 'translate' function transforms the Rubik's moves into motors moves
+    # using the dictionaries 'Dictio' and 'servo'
     def translate(self, moves):
         temp = []
         for i in range(len(moves)):

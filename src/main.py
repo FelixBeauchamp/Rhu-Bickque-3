@@ -14,6 +14,7 @@ from Algo_CFOP import solver, cube
 
 def mapping_sequence():
     mapp = []
+    # Iterate through the camera motor sequence and analizing the
     for move in solver.sequence_camera:
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
