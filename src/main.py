@@ -50,24 +50,46 @@ def solving(map_array):
 
 
 if __name__ == '__main__':
-    # 0- Initialisation
+    # # 0- Initialisation
+    # print("Initialisation: OPENING/HOMING")
+    # OpenRBCom.openport()
+    # ArduinoCom.openportarduino()
+    # ArduinoCom.sendmessage('OXOY')
+    # OpenRBCom.sendmessage('HOMING')
+    #
+    # # 1- Wait for user input before clamping the cube
+    # input("Press Enter to clamp the cube")
+    # ArduinoCom.sendmessage('CXCY')
+    #
+    # # 2- Starting the mapping sequence
+    # input("Press Enter to start the mapping sequence")
+    # cube_map = mapping_sequence()
+    #
+    # # 2- Solving the cube
+    # input("Press Enter to start solving")
+    #
+    # solving(cube_map)
+    # ArduinoCom.closeportarduino()
+    # OpenRBCom.closeport()
+
     print("Initialisation: OPENING/HOMING")
     OpenRBCom.openport()
     ArduinoCom.openportarduino()
-    ArduinoCom.sendmessage('OXOY')
-    OpenRBCom.sendmessage('HOMING')
-
-    # 1- Wait for user input before clamping the cube
-    input("Press Enter to clamp the cube")
-    ArduinoCom.sendmessage('CXCY')
-
-    # 2- Starting the mapping sequence
-    input("Press Enter to start the mapping sequence")
-    cube_map = mapping_sequence()
-
-    # 2- Solving the cube
-    input("Press Enter to start solving")
-
-    solving(cube_map)
+    cb = cube.Cube()
+    balls = solver.Solver(cb)
+    for moves in balls.Dictio:
+        input("Movement: " + moves)
+        ArduinoCom.sendmessage('OXOY')
+        OpenRBCom.sendmessage('HOMING')
+        sequence = balls.Dictio[moves]
+        sequence_motors = []
+        for j in range(len(sequence)):
+            sequence_motors.extend(balls.servo[sequence[j]])
+        for marde in sequence_motors:
+            input("next movement")
+            if moves[0] == 'M' or moves[0] == 'H':
+                OpenRBCom.sendmessage(marde)
+            else:
+                ArduinoCom.sendmessage(marde)
     ArduinoCom.closeportarduino()
     OpenRBCom.closeport()
