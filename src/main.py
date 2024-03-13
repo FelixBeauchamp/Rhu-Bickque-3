@@ -1,5 +1,6 @@
 import ArduinoCom
 import OpenRBCom
+import traitement_image
 
 import sys
 import os
@@ -12,16 +13,13 @@ from Algo_CFOP import solver, cube
 
 
 def mapping_sequence():
-    mapp = ['G', 'B', 'G', 'B', 'G', 'B', 'G', 'B', 'G', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'B', 'G', 'B',
-            'G', 'B', 'G', 'B', 'G', 'B', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'O', 'R', 'Y', 'W', 'Y', 'W', 'Y', 'W',
-            'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W', 'Y', 'W']
+    mapp = []
     for move in solver.sequence_camera:
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
         elif move[0] == 'S':
-            # call fonction camera
-            # add face map to the map list
-            print("SNAP")
+            temp = traitement_image.faceofdacube()
+            mapp.extend(temp)
         else:
             ArduinoCom.sendmessage(move)
     map_array = solver.reformat(mapp)

@@ -159,7 +159,7 @@ def faceofdacube():
     square2_3 = colorofsquare(frame_2_3)
     square3_3 = colorofsquare(frame_3_3)
 
-    daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3,square3_1, square3_2, square3_3]
+    daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3, square3_1, square3_2, square3_3]
 
     return daresults
 
