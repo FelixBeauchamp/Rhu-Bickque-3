@@ -24,6 +24,7 @@ Servo myservo;  // create servo object to control a servo
 // twelve servo objects can be created on most boards
 
 int pos = 0;
+int delais = 500;
 
 void setup() {
   Serial.begin(57600);
@@ -58,36 +59,65 @@ void setServoPulse(uint8_t n, double pulse) {
 void loop() {
         Serial.readBytes((char*)&receivedValue, 4);
         command = receivedValue;
-        int valueToSend;
         if(command == 1){
           pwm.setPWM(0,0,SERVOMIN_X);
           pwm.setPWM(1,0,SERVOMIN_Y);
-          delay(500);
-          valueToSend = 1;
+          int time = 0;
+          while (time <= delais)
+          {
+            time = millis();
+          }
+          int valueToSend = 1;
           Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+          valueToSend = 0;
         }
         if(command == 3){
           pwm.setPWM(0,0,SERVOMAX_X);
           pwm.setPWM(1,0,SERVOMIN_Y);
-          delay(500);
-          valueToSend = 1;
+          int time = 0;
+          while (time <= delais)
+          {
+            time = millis();
+          }
+          int valueToSend = 1;
           Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+          valueToSend = 0;
         }
         if(command == 2){
           pwm.setPWM(0,0,SERVOMIN_X);
           pwm.setPWM(1,0,SERVOMAX_Y);
-          delay(500);
-          valueToSend = 1;
+          int time = 0;
+          while (time <= delais)
+          {
+            time = millis();
+          }
+          int valueToSend = 1;
           Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+          valueToSend = 0;
         }
         if(command == 4){
           pwm.setPWM(0,0,SERVOMAX_X);
           pwm.setPWM(1,0,SERVOMAX_Y);
-          delay(500);
-          valueToSend = 1;
+          int time = 0;
+          while (time <= delais)
+          {
+            time = millis();
+          }
+          int valueToSend = 1;
           Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+          valueToSend = 0;
         }
         Serial.flush();
         int receivedValue = 69;
-        valueToSend = 0;
+}
+
+void done(){
+  int time = 0;
+  while (time <= delais)
+  {
+    time = millis();
+  }
+  uint8_t valueToSend = 1;
+  Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+  valueToSend = 0;
 }
