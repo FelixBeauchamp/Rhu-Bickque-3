@@ -27,6 +27,7 @@ def colorofsquare(leframe):
     Y_mask = cv2.inRange(leframe, YellowL_limit, YellowU_limit)
     yellow_pixel_count = cv2.countNonZero(Y_mask)
     cv2.imshow('Yellow pixel count',Y_mask)
+
     B_mask = cv2.inRange(leframe, BlueL_limit, BlueU_limit)
     blue_pixel_count = cv2.countNonZero(B_mask)
 
@@ -158,7 +159,7 @@ def faceofdacube():
     square2_3 = colorofsquare(frame_2_3)
     square3_3 = colorofsquare(frame_3_3)
 
-    daresults = [square1_1, square1_2, square1_3], [square2_1, square2_2, square2_3],[square3_1, square3_2, square3_3]
+    daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3,square3_1, square3_2, square3_3]
 
     return daresults
 
