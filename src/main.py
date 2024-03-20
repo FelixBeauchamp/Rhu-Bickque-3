@@ -13,6 +13,9 @@ sys.path.append(algo_cube_path)
 
 from Algo_CFOP import solver, cube
 
+port_Arduino = 'COM7'
+port_OpenRB = 'COM6'
+
 
 def mapping_sequence():
     mapp = []
@@ -54,8 +57,8 @@ def solving(map_array):
 if __name__ == '__main__':
     # 0- Initialisation
     print("Initialisation: OPENING/HOMING")
-    OpenRBCom.openport()
-    ArduinoCom.openportarduino()
+    OpenRBCom.openport(port_OpenRB)
+    ArduinoCom.openportarduino(port_Arduino)
     ArduinoCom.sendmessage('OXOY')
     OpenRBCom.sendmessage('HOMING')
 
@@ -72,11 +75,6 @@ if __name__ == '__main__':
     solving(cube_map)
     ArduinoCom.closeportarduino()
     OpenRBCom.closeport()
-
-
-
-
-
 
     # print("Initialisation: OPENING/HOMING")
     # OpenRBCom.openport()

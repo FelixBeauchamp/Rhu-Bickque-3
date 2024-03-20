@@ -1,6 +1,7 @@
 # The file to analyze the colors on the cube
 import numpy as np
 import cv2
+
 cap = cv2.VideoCapture(0)
 
 YellowL_limit = np.array([25, 80, 0])  # setting the yellow lower limit
@@ -26,7 +27,7 @@ WhiteU_limit = np.array([180, 79, 255])
 def colorofsquare(leframe):
     Y_mask = cv2.inRange(leframe, YellowL_limit, YellowU_limit)
     yellow_pixel_count = cv2.countNonZero(Y_mask)
-    cv2.imshow('Yellow pixel count',Y_mask)
+    cv2.imshow('Yellow pixel count', Y_mask)
 
     B_mask = cv2.inRange(leframe, BlueL_limit, BlueU_limit)
     blue_pixel_count = cv2.countNonZero(B_mask)
@@ -43,7 +44,8 @@ def colorofsquare(leframe):
     W_mask = cv2.inRange(leframe, WhiteL_limit, WhiteU_limit)
     white_pixel_count = cv2.countNonZero(W_mask)
 
-    couleur = max(blue_pixel_count, red_pixel_count, orange_pixel_count, green_pixel_count, yellow_pixel_count, white_pixel_count)
+    couleur = max(blue_pixel_count, red_pixel_count, orange_pixel_count, green_pixel_count, yellow_pixel_count,
+                  white_pixel_count)
     if couleur == blue_pixel_count:
         return "B"
     elif couleur == red_pixel_count:
@@ -56,6 +58,8 @@ def colorofsquare(leframe):
         return "Y"
     elif couleur == white_pixel_count:
         return "W"
+
+
 def faceofdacube():
     ret, frame = cap.read()
     width = np.size(frame, 1)
@@ -119,7 +123,6 @@ def faceofdacube():
     white = cv2.bitwise_and(frame, frame, mask=W_mask)
     '''
 
-
     cv2.imshow('Original', frame)  # to display the original frame
     '''
     cv2.imshow('Filtered', filtered)  # to display the original frame
@@ -164,17 +167,14 @@ def faceofdacube():
     return daresults
 
 
-while 1:
-    #
-    print(faceofdacube())
-    if cv2.waitKey(3000) == 27:
-        break
+if __name__ == '__main__':
+    while 1:
+        print(faceofdacube())
+        if cv2.waitKey(3000) == 27:
+            break
     # this function will be triggered when the ESC key is pressed
     # and the while loop will terminate and so will the program
 
 cap.release()
 
 cv2.destroyAllWindows()
-
-
-
