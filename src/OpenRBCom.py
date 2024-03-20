@@ -5,10 +5,12 @@ import struct
 com_stateRB = 'Closed'
 motor_stateRB = 0
 serialRB = serial.Serial('COM6', 57600)
-def openport():
+def openport(port):
 
     global com_stateRB
     global serialRB
+
+    serialRB = serial.Serial(port, 57600)
 
     serialRB.close()
     serialRB.open()

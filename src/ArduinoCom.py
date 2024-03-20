@@ -6,10 +6,12 @@ motor_stateArduino = 0
 com_stateArduino = 'Closed'
 serialArduino = serial.Serial('COM7', 57600)
 
-def openportarduino():
+def openportarduino(port):
 
     global com_stateArduino
     global serialArduino
+
+    serialArduino = serial.Serial(port, 57600)
 
     serialArduino.close()
     serialArduino.open()
