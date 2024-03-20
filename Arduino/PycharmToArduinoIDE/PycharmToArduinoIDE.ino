@@ -7,10 +7,10 @@
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
-#define SERVOMIN_X  360 // This is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX_X  190 // This is the 'maximum' pulse length count (out of 4096)
-#define SERVOMIN_Y  220 // This is the 'minimum' pulse length count (out of 4096)
-#define SERVOMAX_Y  400 // This is the 'maximum' pulse length count (out of 4096)
+#define SERVOMIN_X  380 // This is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX_X  262 // This is the 'maximum' pulse length count (out of 4096)
+#define SERVOMIN_Y  200 // This is the 'minimum' pulse length count (out of 4096)
+#define SERVOMAX_Y  322 // This is the 'maximum' pulse length count (out of 4096)
 #define USMIN  600 // This is the rounded 'minimum' microsecond length based on the minimum pulse of 150
 #define USMAX  2400 // This is the rounded 'maximum' microsecond length based on the maximum pulse of 600
 #define SERVO_FREQ 50 // Analog servos run at ~50 Hz updates
@@ -85,15 +85,4 @@ void loop() {
     }
     Serial.flush();
   }
-}
-
-void done(){
-  int time = 0;
-  while (time <= delais)
-  {
-    time = millis();
-  }
-  uint8_t valueToSend = 1;
-  Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
-  valueToSend = 0;
 }
