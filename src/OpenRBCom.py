@@ -72,8 +72,7 @@ def sendmessage(megawhat):
     message = struct.pack('<i', info)
     serialRB.write(message)
 
-    end = 'finished servo-motor spin'
-    dynamixeldone()
+    end = dynamixeldone()
     motor_stateRB = 0
     return end
 
@@ -92,7 +91,7 @@ def dynamixeldone():
 
     while True:
         if readmessage() == 1:
-            break
+            return 'Finished Dynamixel spin'
 
 
 """
