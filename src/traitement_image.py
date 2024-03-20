@@ -61,7 +61,7 @@ def colorofsquare(leframe):
 
 
 def faceofdacube():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
 
     ret, frame = cap.read()
     width = np.size(frame, 1)
@@ -167,7 +167,7 @@ def faceofdacube():
     daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3, square3_1, square3_2, square3_3]
 
     cap.release()
-    cv2.destroyAllWindows()
+    # cv2.destroyAllWindows()
     return daresults
 
 

@@ -1,8 +1,8 @@
 import ArduinoCom
 import OpenRBCom
 import traitement_image
-# import keyboard
-# import time
+import keyboard
+import time
 
 import sys
 import os
@@ -24,6 +24,7 @@ def mapping_sequence():
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
         elif move[0] == 'S':
+            input('SNAP')
             temp = traitement_image.faceofdacube()
             mapp.extend(temp)
         else:
@@ -77,8 +78,8 @@ if __name__ == '__main__':
     OpenRBCom.closeport()
 
     # print("Initialisation: OPENING/HOMING")
-    # OpenRBCom.openport()
-    # ArduinoCom.openportarduino()
+    # OpenRBCom.openport(port_OpenRB)
+    # ArduinoCom.openportarduino(port_Arduino)
     # cb = cube.Cube()
     # balls = solver.Solver(cb)
     # # Flag to track if 'p' key has been pressed
