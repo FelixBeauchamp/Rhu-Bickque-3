@@ -74,7 +74,6 @@ def readmessage():
     if response == 'yo':
         motor_stateArduino = 1
     # Print the response
-    print("Response from Arduino:", motor_stateArduino)
 
     return motor_stateArduino
 

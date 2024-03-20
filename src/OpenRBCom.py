@@ -85,7 +85,6 @@ def readmessage():
     motor_stateRB = int((struct.unpack('<i', binary_data)[0]))
 
     # Print the response
-    print("Response from OpenRB:", motor_stateRB)
 
     return motor_stateRB
 
