@@ -70,10 +70,11 @@ class faceDuCube(QWidget):
                 painter.setPen(QColor(0, 0, 0))
                 actual_color = test_couleur[(i-1)*3+j]
                 rgb_values = [255,255,255]
-                #rgb_values = self.whatsdacolor(actual_color)
+                rgb_values = self.whatsdacolor(actual_color)
                 painter.setBrush(QColor(rgb_values[0],rgb_values[1],rgb_values[2]))
                 painter.drawRect(origine_carre+i*taille_carre+i*space, origine_carre+j*taille_carre+j*space, taille_carre, taille_carre)  # x, y, width, height
 
+print(faceDuCube.whatsdacolor("W"))
 main_window = MyWindow()
 main_window.show()
 
