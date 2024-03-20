@@ -2,7 +2,7 @@
 import numpy as np
 import cv2
 
-cap = cv2.VideoCapture(0)
+
 
 YellowL_limit = np.array([25, 80, 0])  # setting the yellow lower limit
 YellowU_limit = np.array([39, 255, 194])  # setting the yellow upper limit
@@ -61,6 +61,8 @@ def colorofsquare(leframe):
 
 
 def faceofdacube():
+    cap = cv2.VideoCapture(0)
+
     ret, frame = cap.read()
     width = np.size(frame, 1)
     height = np.size(frame, 0)
@@ -164,6 +166,8 @@ def faceofdacube():
 
     daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3, square3_1, square3_2, square3_3]
 
+    cap.release()
+    cv2.destroyAllWindows()
     return daresults
 
 
@@ -175,6 +179,4 @@ if __name__ == '__main__':
     # this function will be triggered when the ESC key is pressed
     # and the while loop will terminate and so will the program
 
-cap.release()
 
-cv2.destroyAllWindows()
