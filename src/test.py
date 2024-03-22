@@ -91,18 +91,22 @@ class TestComServoMotor(unittest.TestCase):
 
 class TestTraitementImage(unittest.TestCase):
     def test_faceofdacube(self):
+        # Prompt the user to input expected results
+        print("Please enter the expected results for the face of the cube (comma-separated):")
+        expected_input = input().strip().split(',')
+
+        # Convert input to list of strings
+        expected_result = [x.strip() for x in expected_input]
+
         # Call the function
         results = traitement_image.faceofdacube()
-
-        # Define the expected result
-        expected_result = ['B', 'B', 'B', 'R', 'R', 'R', 'O', 'O', 'O']  # Example expected result
 
         # Compare the actual result with the expected result
         assert results == expected_result, f"Expected: {expected_result}, Got: {results}"
 
 
-
 if __name__ == '__main__':
+
     # To run all the tests
     print("The tests results from motors cannot confirm if the Dynamixel motors ans ServoMotors actually did the right move. It only confirms that the communication protocol works.")
     unittest.main()
