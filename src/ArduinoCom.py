@@ -55,8 +55,8 @@ def sendmessage(megawhat):
     message = struct.pack('<i', info)
     serialArduino.write(message)
 
-    end = 'finished servo-motor spin'
-    megadone()
+    end = megadone()
+
     motor_stateArduino = 0
     return end
 
@@ -81,7 +81,7 @@ def megadone():
     while True:
         if readmessage() == 1:
             time.sleep(0.5)
-            break
+            return 'Finished ServoMotor movement'
 
 """
 # format example for megawhat command: 'OXOY'
