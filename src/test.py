@@ -1,7 +1,10 @@
+# This files contains the majority of unitary / small integration tests. They majoritarily revolve around communication protocol.
+
 import unittest
 import sys
 import OpenRBCom
 import ArduinoCom
+import traitement_image
 
 port_Arduino_test = 'COM9'
 port_OpenRB_test = 'COM8'
@@ -86,7 +89,20 @@ class TestComServoMotor(unittest.TestCase):
         self.assertEqual(ArduinoCom.sendmessage('CXCY'), Arduino_EndCom_Message,
                          "Should put the two ServoMotor in their closed position. The Dynamixel motors should all be near the center")
 
+class TestTraitementImage(unittest.TestCase):
+    def test_faceofdacube(self):
+        # Call the function
+        results = traitement_image.faceofdacube()
+
+        # Define the expected result
+        expected_result = ['B', 'B', 'B', 'R', 'R', 'R', 'O', 'O', 'O']  # Example expected result
+
+        # Compare the actual result with the expected result
+        assert results == expected_result, f"Expected: {expected_result}, Got: {results}"
+
+
 
 if __name__ == '__main__':
-    print("The test result cannot confirm if the Dynamixel motors ans ServoMotors actually did the right move. It only confirms that the communication protocol works.")
+    # To run all the tests
+    print("The tests results from motors cannot confirm if the Dynamixel motors ans ServoMotors actually did the right move. It only confirms that the communication protocol works.")
     unittest.main()
