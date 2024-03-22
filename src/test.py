@@ -6,8 +6,11 @@ import OpenRBCom
 import ArduinoCom
 import traitement_image
 
+
+# The ports to be used and the expected colors results form the face of the cube to analyze must be decided before running tests
 port_Arduino_test = 'COM9'
 port_OpenRB_test = 'COM8'
+expected_result_faceofthecube = ['B', 'B', 'B', 'R', 'R', 'R', 'O', 'O', 'O']
 
 OpenRB_EndCom_Message = 'Finished Dynamixel spin'
 Arduino_EndCom_Message = 'Finished ServoMotor movement'
@@ -90,19 +93,17 @@ class TestComServoMotor(unittest.TestCase):
                          "Should put the two ServoMotor in their closed position. The Dynamixel motors should all be near the center")
 
 class TestTraitementImage(unittest.TestCase):
-    def test_faceofdacube(self):
+    '''def setUp(self):
         # Prompt the user to input expected results
         print("Please enter the expected results for the face of the cube (comma-separated):")
         expected_input = input().strip().split(',')
-
         # Convert input to list of strings
-        expected_result = [x.strip() for x in expected_input]
-
+        self.expected_result = [x.strip() for x in expected_input]'''
+    def test_faceofdacube(self):
         # Call the function
         results = traitement_image.faceofdacube()
-
         # Compare the actual result with the expected result
-        assert results == expected_result, f"Expected: {expected_result}, Got: {results}"
+        self.assertEqual(results, expected_result_faceofthecube, f"Expected: {expected_result_faceofthecube}, Got: {results}")
 
 
 if __name__ == '__main__':
