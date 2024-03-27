@@ -1,9 +1,10 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QVBoxLayout, QTabWidget, QPushButton
-from PyQt5.QtCore import QTimer
-
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QVBoxLayout, QTabWidget, QPushButton, QLineEdit
+from PyQt5.QtCore import pyqtSignal
 
 class CubeDisplay(QWidget):
+    data_changed = pyqtSignal(list)  # Signal to notify data change
+
     def __init__(self, cube_faces, parent=None):
         super().__init__(parent)
         self.cube_faces = cube_faces
@@ -34,6 +35,9 @@ class CubeDisplay(QWidget):
             cube_face_data = self.cube_faces[idx]
             cube_face_widget = CubeFaceDisplay(cube_face_data)
             self.grid_layout.addWidget(cube_face_widget, *position)
+
+        # Emit signal with updated data
+        self.data_changed.emit(new_cube_faces)
 
 
 class CubeFaceDisplay(QWidget):
@@ -69,32 +73,48 @@ class CubeFaceDisplay(QWidget):
 
 
 class ControlsTab(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, cube_display, parent=None):
         super().__init__(parent)
+        self.cube_display = cube_display
         self.initUI()
 
     def initUI(self):
         layout = QVBoxLayout()
 
-        # Create a start button
-        self.start_button = QPushButton('Start', self)
-        self.start_button.clicked.connect(self.start_function)
-        layout.addWidget(self.start_button)
+        # Create line edits and labels for each face
+        face_names = ["Front", "Top", "Left", "Right", "Back", "Bottom"]
+        self.line_edits = []
+        for face_name in face_names:
+            label = QLabel(f"Face: {face_name}")
+            layout.addWidget(label)
+            line_edit = QLineEdit()
+            layout.addWidget(line_edit)
+            self.line_edits.append(line_edit)
 
-        # Create a stop button
-        self.stop_button = QPushButton('Stop', self)
-        self.stop_button.clicked.connect(self.stop_function)
-        layout.addWidget(self.stop_button)
+        # Create a button to apply changes
+        apply_button = QPushButton('Apply')
+        apply_button.clicked.connect(self.apply_changes)
+        layout.addWidget(apply_button)
 
         self.setLayout(layout)
 
-    def start_function(self):
-        # Add code here to trigger the function in another program
-        print("Start button clicked!")
+    def apply_changes(self):
+        new_cube_faces_data = []
+        for idx, line_edit in enumerate(self.line_edits):
+            cube_face_data = line_edit.text().strip().split()
+            # If line edit is empty, use initial value instead
+            if not cube_face_data:
+                cube_face_data = initial_cube_faces_data[idx]
+            new_cube_faces_data.append(cube_face_data)
+            # Clear the line edit
+            line_edit.clear()
+        self.cube_display.update_cube_faces(new_cube_faces_data)
+        self.update_initial_cube_faces(new_cube_faces_data)
 
-    def stop_function(self):
-        # Add code here to stop whatever process was started
-        print("Stop button clicked!")
+    def update_initial_cube_faces(self, new_cube_faces_data):
+        for idx, face_data in enumerate(new_cube_faces_data):
+            initial_cube_faces_data[idx] = face_data
+        print("Updated initial_cube_faces_data:", initial_cube_faces_data)
 
 
 if __name__ == '__main__':
@@ -103,22 +123,24 @@ if __name__ == '__main__':
     # Initial cube face data received from another program
     initial_cube_faces_data = [
         ['r', 'g', 'y', 'b', 'o', 'w', 'g', 'y', 'r'],  # Front face
-        ['w', 'o', 'b', 'r', 'y', 'g', 'o', 'c', 'r'],  # Top face
-        ['o', 'w', 'g', 'r', 'b', 'y', 'p', 'o', 'c'],  # Left face
+        ['w', 'o', 'b', 'r', 'y', 'g', 'o', 'c', 'r'],  # Left face
+        ['o', 'w', 'g', 'r', 'b', 'y', 'p', 'o', 'c'],  # Top face
         ['w', 'r', 'o', 'g', 'b', 'y', 'p', 'o', 'r'],  # Right face
-        ['w', 'g', 'o', 'r', 'b', 'y', 'p', 'o', 'c'],  # Bottom face
-        ['g', 'r', 'o', 'b', 'y', 'w', 'p', 'o', 'r']   # Back face
+        ['w', 'g', 'o', 'r', 'b', 'y', 'p', 'o', 'c'],  # Back face
+        ['g', 'r', 'o', 'b', 'y', 'w', 'p', 'o', 'r']   # Bottom face
     ]
+
+    # Create the cube display
+    cube_display = CubeDisplay(initial_cube_faces_data)
 
     # Create a tab widget
     tab_widget = QTabWidget()
 
     # Create the cube display tab
-    cube_display_tab = CubeDisplay(initial_cube_faces_data)
-    tab_widget.addTab(cube_display_tab, "Cube Display")
+    tab_widget.addTab(cube_display, "Cube Display")
 
     # Create the controls tab
-    controls_tab = ControlsTab()
+    controls_tab = ControlsTab(cube_display)
     tab_widget.addTab(controls_tab, "Controls")
 
     # Set up the main window
@@ -128,20 +150,5 @@ if __name__ == '__main__':
     main_window.setLayout(main_layout)
     main_window.setWindowTitle('Cube Display and Controls')
     main_window.show()
-
-    # Function to update cube faces data
-    def update_cube_faces_data():
-        new_cube_faces_data = [
-            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Front face
-            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Top face
-            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Left face
-            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Right face
-            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Bottom face
-            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r']   # Back face
-        ]
-        cube_display_tab.update_cube_faces(new_cube_faces_data)
-
-    # Example of updating cube faces data after 5 seconds
-    QTimer.singleShot(5000, update_cube_faces_data)
 
     sys.exit(app.exec_())
