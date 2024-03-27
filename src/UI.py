@@ -84,12 +84,13 @@ class ControlsTab(QWidget):
         layout = QVBoxLayout()
 
         # Create line edits and labels for each face
-        face_names = ["Front", "Top", "Left", "Right", "Back", "Bottom"]
+        face_names = ["Front", "Left", "Top", "Right", "Back", "Bottom"]
         self.line_edits = []
         for face_name in face_names:
             label = QLabel(f"Face: {face_name}")
             layout.addWidget(label)
             line_edit = QLineEdit()
+            line_edit.setMaximumWidth(100)  # Adjust the maximum width as needed
             layout.addWidget(line_edit)
             self.line_edits.append(line_edit)
 
@@ -102,16 +103,10 @@ class ControlsTab(QWidget):
 
     def apply_changes(self):
         new_cube_faces_data = []
-        for idx, line_edit in enumerate(self.line_edits):
+        for line_edit in self.line_edits:
             cube_face_data = line_edit.text().strip().split()
-            # If line edit is empty, use initial value instead
-            if not cube_face_data:
-                cube_face_data = initial_cube_faces_data[idx]
             new_cube_faces_data.append(cube_face_data)
-            # Clear the line edit
-            line_edit.clear()
         self.cube_display.update_cube_faces(new_cube_faces_data)
-        self.update_initial_cube_faces(new_cube_faces_data)
 
     def update_initial_cube_faces(self, new_cube_faces_data):
         for idx, face_data in enumerate(new_cube_faces_data):
@@ -127,6 +122,7 @@ class SequenceTab(QWidget):
     def initUI(self):
         layout = QVBoxLayout()
         self.timer_label = QLabel()
+        self.timer_label.setStyleSheet("font-size: 24px;")  # Increase font size
         self.start_button = QPushButton('Start')
         self.stop_button = QPushButton('Stop')
         self.reset_button = QPushButton('Reset')
