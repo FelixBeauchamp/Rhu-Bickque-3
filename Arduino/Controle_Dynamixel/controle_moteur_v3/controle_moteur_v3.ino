@@ -71,6 +71,8 @@ int offsetM2 = offset26; //-46;
 int offsetM3 = offset37; //45;
 int offsetM4 = offset27; //45;
 
+const uint8_t Motor_array[4] = {M1,M2,M3,M4};
+
 
 const float DXL_PROTOCOL_VERSION = 2.0;
 Dynamixel2Arduino dxl(DXL_SERIAL, DXL_DIR_PIN);
@@ -91,6 +93,10 @@ uint16_t position_d_gain = 700;
 
 //Communication
 int receivedValue;
+
+//Max Torque control
+int Max_Torque = 0.5; //N*m Calculated to rotate 1 face of the cube with SF of 4.
+int Max_Current = (((1.4-0.2)/(1.5-0.06))*Max_Torque + 0.15)/1000; //Max_current in mA based on the documentation sheet on XL430 with ratio information
 
 void setup() {
 
@@ -263,10 +269,41 @@ void done() //Revoir le while seems sus
     dxl.getPresentVelocity(DXL_ID27) != 0
     )
     {
+      if (Check_Exceed_Max_Torque()==1){
+        return;
+      }
     }
     int valueToSend = 1;
     Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
     valueToSend = 0;
+}
+
+bool Check_Exceed_Max_Torque()
+{
+  for (int i=0; i<4;i++){
+    if (dxl.getPresentCurrent(Motor_array[i]) > Max_Current){
+      Stop_rotation();
+      delay(25);
+      Serial.print("Stop rotation")
+      int valueToSend = 2; //Error
+      Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+      valueToSend = 0;
+      return(1);
+    }
+  }
+  return(0);
+}
+
+void Stop_rotation()
+{
+  for (int i=0; i<4;i++){
+    int Temp_Pos = 0;
+    Temp_Pos = dxl.getPresentPosition(Motor_array[i]);
+    dxl.setGoalPosition(Motor_array[i], Temp_Pos);
+    dxl.torqueOff(Motor_array[i]);
+    dxl.torqueOn(Motor_array[i]);
+  }
+
 }
 
 void setting_up(const uint8_t DXL_ID){

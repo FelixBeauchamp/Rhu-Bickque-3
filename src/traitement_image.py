@@ -4,19 +4,19 @@ import cv2
 
 
 
-YellowL_limit = np.array([20, 80, 0])  # setting the yellow lower limit
+YellowL_limit = np.array([20, 80, 1])  # setting the yellow lower limit
 YellowU_limit = np.array([39, 255, 194])  # setting the yellow upper limit
 
-BlueL_limit = np.array([110, 80, 0])  # setting the yellow lower limit
+BlueL_limit = np.array([110, 80, 1])  # setting the yellow lower limit
 BlueU_limit = np.array([150, 255, 210])
 
-RedL_limit = np.array([150, 80, 0])  # setting the yellow lower limit
+RedL_limit = np.array([150, 80, 1])  # setting the yellow lower limit
 RedU_limit = np.array([180, 255, 194])
 
-OrangeL_limit = np.array([10, 80, 0])  # setting the yellow lower limit
+OrangeL_limit = np.array([10, 80, 1])  # setting the yellow lower limit
 OrangeU_limit = np.array([20, 255, 194])
 
-GreenL_limit = np.array([40, 80, 0])  # setting the yellow lower limit
+GreenL_limit = np.array([40, 80, 1])  # setting the yellow lower limit
 GreenU_limit = np.array([100, 255, 194])
 
 WhiteL_limit = np.array([0, 0, 120])  # setting the yellow lower limit
@@ -110,6 +110,11 @@ def faceofdacube():
     gauche_x_3 = gauche_x_2 + cote_cube
     droite_x_3 = droite_x_2 + cote_cube
 
+    width_pince_og = 20;
+    width_pince_end = 80;
+
+    length_pince = 70;
+
     filtered_avg = cv2.GaussianBlur(avg_frame, (5, 5), cv2.BORDER_DEFAULT)
     cv2.imshow('Face du cube avg nor', filtered_avg)
 
@@ -119,14 +124,22 @@ def faceofdacube():
 
     frame_1_1 = into_hsv_filtered_avg[haut_1_x:bas_1_x, gauche_x_1:droite_x_1].copy()
     frame_2_1 = into_hsv_filtered_avg[haut_2_x:bas_2_x, gauche_x_1:droite_x_1].copy()
+    cv2.rectangle(frame_2_1, (0, width_pince_og), (length_pince, width_pince_end), (0,0,0), cv2.FILLED)
+    cv2.imshow('Face 2_1', frame_2_1)
     frame_3_1 = into_hsv_filtered_avg[haut_3_x:bas_3_x, gauche_x_1:droite_x_1].copy()
 
     frame_1_2 = into_hsv_filtered_avg[haut_1_x:bas_1_x, gauche_x_2:droite_x_2].copy()
+    cv2.rectangle(frame_1_2, (width_pince_og, 0), (width_pince_end, length_pince), (0, 0, 0), cv2.FILLED)
+    cv2.imshow('Face 1_2', frame_1_2)
     frame_2_2 = into_hsv_filtered_avg[haut_2_x:bas_2_x, gauche_x_2:droite_x_2].copy()
     frame_3_2 = into_hsv_filtered_avg[haut_3_x:bas_3_x, gauche_x_2:droite_x_2].copy()
+    cv2.rectangle(frame_3_2, (width_pince_og, 100-length_pince), (width_pince_end, 100), (0, 0, 0), cv2.FILLED)
+    cv2.imshow('Face 3_2', frame_3_2)
 
     frame_1_3 = into_hsv_filtered_avg[haut_1_x:bas_1_x, gauche_x_3:droite_x_3].copy()
     frame_2_3 = into_hsv_filtered_avg[haut_2_x:bas_2_x, gauche_x_3:droite_x_3].copy()
+    cv2.rectangle(frame_2_3, (100-length_pince, width_pince_og), (100, width_pince_end), (0, 0, 0), cv2.FILLED)
+    cv2.imshow('Face 2_3', frame_2_3)
     frame_3_3 = into_hsv_filtered_avg[haut_3_x:bas_3_x, gauche_x_3:droite_x_3].copy()
 
     # ret will return a true value if the frame exists otherwise False
