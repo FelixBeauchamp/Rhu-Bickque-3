@@ -133,11 +133,11 @@ if __name__ == '__main__':
     def update_cube_faces_data():
         new_cube_faces_data = [
             ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Front face
-            ['w', 'o', 'b', 'r', 'y', 'g', 'o', 'c', 'r'],  # Top face
-            ['o', 'w', 'g', 'r', 'b', 'y', 'p', 'o', 'c'],  # Left face
-            ['w', 'r', 'o', 'g', 'b', 'y', 'p', 'o', 'r'],  # Right face
-            ['w', 'g', 'o', 'r', 'b', 'y', 'p', 'o', 'c'],  # Bottom face
-            ['g', 'r', 'o', 'b', 'y', 'w', 'p', 'o', 'r']   # Back face
+            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Top face
+            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Left face
+            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Right face
+            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r'],  # Bottom face
+            ['r', 'o', 'g', 'r', 'o', 'w', 'g', 'b', 'r']   # Back face
         ]
         cube_display_tab.update_cube_faces(new_cube_faces_data)
 
