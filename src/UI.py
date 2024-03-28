@@ -1,6 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QGridLayout, QVBoxLayout, QTabWidget, QPushButton, QLineEdit
 from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import QTime
+from PyQt5.QtCore import QTimer
 
 class CubeDisplay(QWidget):
     data_changed = pyqtSignal(list)  # Signal to notify data change
@@ -82,12 +84,13 @@ class ControlsTab(QWidget):
         layout = QVBoxLayout()
 
         # Create line edits and labels for each face
-        face_names = ["Front", "Top", "Left", "Right", "Back", "Bottom"]
+        face_names = ["Front", "Left", "Top", "Right", "Back", "Bottom"]
         self.line_edits = []
         for face_name in face_names:
             label = QLabel(f"Face: {face_name}")
             layout.addWidget(label)
             line_edit = QLineEdit()
+            line_edit.setMaximumWidth(100)  # Adjust the maximum width as needed
             layout.addWidget(line_edit)
             self.line_edits.append(line_edit)
 
@@ -100,21 +103,73 @@ class ControlsTab(QWidget):
 
     def apply_changes(self):
         new_cube_faces_data = []
-        for idx, line_edit in enumerate(self.line_edits):
+        for line_edit in self.line_edits:
             cube_face_data = line_edit.text().strip().split()
-            # If line edit is empty, use initial value instead
-            if not cube_face_data:
-                cube_face_data = initial_cube_faces_data[idx]
             new_cube_faces_data.append(cube_face_data)
-            # Clear the line edit
-            line_edit.clear()
         self.cube_display.update_cube_faces(new_cube_faces_data)
-        self.update_initial_cube_faces(new_cube_faces_data)
 
     def update_initial_cube_faces(self, new_cube_faces_data):
         for idx, face_data in enumerate(new_cube_faces_data):
             initial_cube_faces_data[idx] = face_data
         print("Updated initial_cube_faces_data:", initial_cube_faces_data)
+
+
+class SequenceTab(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.initUI()
+
+    def initUI(self):
+        layout = QVBoxLayout()
+        self.timer_label = QLabel()
+        self.timer_label.setStyleSheet("font-size: 24px;")  # Increase font size
+        self.start_button = QPushButton('Start')
+        self.stop_button = QPushButton('Stop')
+        self.reset_button = QPushButton('Reset')
+        self.start_button.clicked.connect(self.start_timer)
+        self.stop_button.clicked.connect(self.stop_timer)
+        self.reset_button.clicked.connect(self.reset_timer)
+        layout.addWidget(self.timer_label)
+        layout.addWidget(self.start_button)
+        layout.addWidget(self.stop_button)
+        layout.addWidget(self.reset_button)
+        self.setLayout(layout)
+
+        # Create a timer to update the displayed time every 10 ms
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_timer)
+
+        # Initialize button state
+        self.enable_start_button()
+
+    def enable_start_button(self):
+        self.start_button.setEnabled(True)
+        self.stop_button.setEnabled(False)
+        self.reset_button.setEnabled(True)
+
+    def disable_start_button(self):
+        self.start_button.setEnabled(False)
+        self.stop_button.setEnabled(True)
+        self.reset_button.setEnabled(False)
+
+    def start_timer(self):
+        self.disable_start_button()
+        self.start_time = QTime.currentTime()
+        self.timer.start(10)  # Start the timer to update every 10 ms
+
+    def stop_timer(self):
+        self.timer.stop()
+        self.enable_start_button()
+
+    def reset_timer(self):
+        self.timer_label.setText("Time since start: 0.00 seconds")
+        self.enable_start_button()
+
+    def update_timer(self):
+        if self.start_time:
+            elapsed_time = self.start_time.elapsed() / 1000  # Convert milliseconds to seconds
+            self.timer_label.setText(f"Time since start: {elapsed_time:.2f} seconds")
+
 
 
 if __name__ == '__main__':
@@ -142,6 +197,10 @@ if __name__ == '__main__':
     # Create the controls tab
     controls_tab = ControlsTab(cube_display)
     tab_widget.addTab(controls_tab, "Controls")
+
+    # Create the sequence tab
+    sequence_tab = SequenceTab()
+    tab_widget.addTab(sequence_tab, "Sequence")
 
     # Set up the main window
     main_window = QWidget()
