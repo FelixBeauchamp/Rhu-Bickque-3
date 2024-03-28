@@ -55,9 +55,9 @@ const uint8_t DXL_ID37 = 37;
 const uint8_t DXL_ID26 = 1;
 const uint8_t DXL_ID27 = 15;
 
-int offset21 = -(10*(512/45)); //80;
-int offset37 = 500; //-46;
-int offset26 = -512; //45;
+int offset21 = 82*(512/45); //82 degree //-(10*(512/45)); //80;
+int offset37 = -500; //-46;
+int offset26 = 512; //45;
 int offset27 = -512; //45;
 
 //Attributing Motor and offset depending on their position
@@ -66,12 +66,14 @@ const uint8_t M2 = DXL_ID26; //Left
 const uint8_t M3 = DXL_ID37; //Back
 const uint8_t M4 = DXL_ID27; //Right
 
+const uint8_t Motor_array[4] = {M1,M2,M3,M4};
+
 int offsetM1 = offset21; //80;
 int offsetM2 = offset26; //-46;
 int offsetM3 = offset37; //45;
 int offsetM4 = offset27; //45;
 
-const uint8_t Motor_array[4] = {M1,M2,M3,M4};
+int Motor_Offset[4] = {offsetM1, offsetM2, offsetM3, offsetM4};
 
 
 const float DXL_PROTOCOL_VERSION = 2.0;
@@ -86,6 +88,8 @@ int32_t goal_position_M2 = 0;
 int32_t goal_position_M3 = 0;
 int32_t goal_position_M4 = 0;
 
+int32_t* Motor_goal_position[4] = {&goal_position_M1, &goal_position_M2, &goal_position_M3, &goal_position_M4};
+
 //PID
 uint16_t position_p_gain = 1000;
 uint16_t position_i_gain = 2;
@@ -93,11 +97,6 @@ uint16_t position_d_gain = 700;
 
 //Communication
 int receivedValue;
-
-//Max Torque control
-int Max_Torque = 0.5; //N*m Calculated to rotate 1 face of the cube with SF of 4.
-//int Max_Current = (((1.4-0.2)/(1.5-0.06))*Max_Torque + 0.15)*1000; //Max_current in mA based on the documentation sheet on XL430 with ratio information
-int Max_Current = 100;
 
 void setup() {
 
@@ -109,13 +108,11 @@ void setup() {
   // Set Port Protocol Version. This has to match with DYNAMIXEL protocol version.
   dxl.setPortProtocolVersion(DXL_PROTOCOL_VERSION);
   // Get DYNAMIXEL information
+  for (int i=0; i < 4; i++) {
+    setting_up(Motor_array[i]);
+  }
 
-  setting_up(M1);
-  setting_up(M2);
-  setting_up(M3);
-  setting_up(M4);
-
-  HOMING();
+  // HOMING();
 }
 
 void loop() {
@@ -128,70 +125,38 @@ void loop() {
   if (command == 0) //HOMING
   {
     HOMING();
-    done();
+    done(0, 0);
   }
 
-  if (command == 1) //M1_L
-  {
-    left(M1, &goal_position_M1);
-    done();
+  if (command >= 1 && command <= 8) {
+    uint8_t motorIndex = (command - 1) / 2; // Determine the motor index (0 for M1, 1 for M2, ...)
+    if (command % 2 == 1) {
+        left(Motor_array[motorIndex], Motor_goal_position[motorIndex]);
+    } else {
+        right(Motor_array[motorIndex], Motor_goal_position[motorIndex]);
+    }
+    done(Motor_array[motorIndex], 0);
   }
-  if (command == 2) //M1_R
-  {
-    right(M1, &goal_position_M1);
-    done();
-  }
-  if (command == 3) //M2_L
-  {
-    left(M2, &goal_position_M2);
-    done();
-  }
-  if (command == 4) //M2_R
-  {
-    right(M2, &goal_position_M2);
-    done();
-  }
-  if (command == 5) //M3_L
-  {
-    left(M3, &goal_position_M3);
-    done();
-  }
-  if (command == 6) //M3_R
-  {
-    right(M3, &goal_position_M3);
-    done();
-  }
-  if (command == 7) //M4_L
-  {
-    left(M4, &goal_position_M4);
-    done();
-  }
-  if (command == 8) //M4_R
-  {
-    right(M4, &goal_position_M4);
-    done();
-  }
-
 
   if (command == 9) //M1M3_L
   {
-    left_2M_M1M3(M1, &goal_position_M1, M3, &goal_position_M3); 
-    done();
+    left_2M_M1M3(Motor_array[0], Motor_goal_position[0], Motor_array[2], Motor_goal_position[2]); 
+    done(Motor_array[0], Motor_array[2]);
   }
   if (command == 10) //M1M3_R
   {
-    right_2M_M1M3(M1, &goal_position_M1, M3, &goal_position_M3);
-    done();
+    right_2M_M1M3(Motor_array[0], Motor_goal_position[0], Motor_array[2], Motor_goal_position[2]);
+    done(Motor_array[0], Motor_array[2]);
   }
   if (command == 11) //M2M4_L
   {
-    left_2M_M2M4(M2, &goal_position_M2, M4, &goal_position_M4);
-    done();
+    left_2M_M2M4(Motor_array[1], Motor_goal_position[1], Motor_array[3], Motor_goal_position[3]);
+    done(Motor_array[1], Motor_array[3]);
   }
   if (command == 12) //M2M4_R
   {
-    right_2M_M2M4(M2, &goal_position_M2, M4, &goal_position_M4);
-    done();
+    right_2M_M2M4(Motor_array[1], Motor_goal_position[1], Motor_array[3], Motor_goal_position[3]);
+    done(Motor_array[1], Motor_array[3]);
   }
 
   Serial.flush();
@@ -200,14 +165,10 @@ void loop() {
 
 void HOMING () //Placing the motors in initial postion with offset and changing the goal position for every motor to offset value.
 {
-  dxl.setGoalPosition(M1, offsetM1);
-  dxl.setGoalPosition(M2, offsetM2);
-  dxl.setGoalPosition(M3, offsetM3);
-  dxl.setGoalPosition(M4, offsetM4);
-  goal_position_M1 = offsetM1;
-  goal_position_M2 = offsetM2;
-  goal_position_M3 = offsetM3;
-  goal_position_M4 = offsetM4;
+  for (int i = 0; i < 4; i++){
+    dxl.setGoalPosition(Motor_array[i], Motor_Offset[i]);
+    *(Motor_goal_position[i]) = Motor_Offset[i];
+  }
 }
 
 void right (const uint8_t DXL_ID, int32_t *goal_position)
@@ -262,39 +223,77 @@ void right_2M_M1M3 (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint
     right(DXL_ID_2, goal_position_2);
 }
 
-void done() //Revoir le while seems sus
+void done(const uint8_t DXL_ID_1, const uint8_t DXL_ID_2) //Revoir le while seems sus
 {
+  bool blocked = 0;
   delay(25);
   while(
-    dxl.getPresentVelocity(DXL_ID21) != 0 ||
-    dxl.getPresentVelocity(DXL_ID37) != 0 ||
-    dxl.getPresentVelocity(DXL_ID26) != 0 ||
-    dxl.getPresentVelocity(DXL_ID27) != 0
+    dxl.getPresentVelocity(Motor_array[0]) != 0 ||
+    dxl.getPresentVelocity(Motor_array[1]) != 0 ||
+    dxl.getPresentVelocity(Motor_array[2]) != 0 ||
+    dxl.getPresentVelocity(Motor_array[3]) != 0
     )
     {
-      // if (Check_Exceed_Max_Torque()==1){
-      //   return;
+      // if (Check_if_Blocked(DXL_ID_1, DXL_ID_2)==1){
+      //   blocked = 1;
+      //   break;
       // }
     }
-    int valueToSend = 1;
-    Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
-    valueToSend = 0;
-}
-
-bool Check_Exceed_Max_Torque()
-{
-  for (int i=0; i<4;i++){
-    // dxl.setOperatingMode(Motor_array[i], 	OP_CURRENT);
-    // Serial.println(dxl.getPresentCurrent(M4, UNIT_MILLI_AMPERE));
-    if (dxl.getPresentCurrent(Motor_array[i], UNIT_MILLI_AMPERE) > Max_Current){
-      Stop_rotation();
-      delay(25);
-      int valueToSend = 2; //Error
+    if (blocked == 0){
+      int valueToSend = 1;
       Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
       valueToSend = 0;
-      return(1);
     }
-    // dxl.setOperatingMode(Motor_array[i], 	OP_EXTENDED_POSITION);
+    else if (blocked == 1){
+      return;
+    }
+
+}
+
+bool Check_if_Blocked(const uint8_t DXL_ID_1, const uint8_t DXL_ID_2)
+{
+  int min_speed = 100;
+  int min_off_pos = 25;
+  int index[2] = {0, 0};
+  int nb_motor = 0;
+
+  if (DXL_ID_1 == 0 && DXL_ID_2 == 0){
+    for (int i=0; i<4;i++){
+      if ((dxl.getPresentVelocity(Motor_array[i]) < min_speed) && ((dxl.getPresentPosition(Motor_array[i]) != *(Motor_goal_position[i])-min_off_pos) || (dxl.getPresentPosition(Motor_array[i]) != *(Motor_goal_position[i])+min_off_pos))){
+        Stop_rotation();
+        delay(25);
+        int valueToSend = 2; //Error
+        Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+        valueToSend = 0;
+        return(1);
+      }
+    }
+  }
+  else{
+    if (DXL_ID_1 != 0 && DXL_ID_2 == 0){
+      nb_motor = 1;
+    }
+    else if (DXL_ID_1 != 0 && DXL_ID_2 != 0){
+      nb_motor = 2;
+    }
+    for (int i = 0; i < 4; ++i) {
+      if (Motor_array[i] == DXL_ID_1) {
+        index[0] = i; // Return the index of the value if found
+      }
+      if (Motor_array[i] == DXL_ID_2) {
+        index[1] = i; // Return the index of the value if found
+      }
+    }
+    for (int i=0; i<nb_motor;i++){
+      if ((dxl.getPresentVelocity(Motor_array[index[i]]) < min_speed) && ((dxl.getPresentPosition(Motor_array[index[i]]) != *(Motor_goal_position[index[i]])-min_off_pos) || (dxl.getPresentPosition(Motor_array[index[i]]) != *(Motor_goal_position[index[i]])+min_off_pos))){
+        Stop_rotation();
+        delay(25);
+        int valueToSend = 2; //Error
+        Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
+        valueToSend = 0;
+        return(1);
+      }
+    }
   }
   return(0);
 }
@@ -303,7 +302,6 @@ void Stop_rotation()
 {
   Serial.print("Stop rotation");
   for (int i=0; i<4;i++){
-    // dxl.setOperatingMode(Motor_array[i], OP_EXTENDED_POSITION);
     int Temp_Pos = 0;
     Temp_Pos = dxl.getPresentPosition(Motor_array[i]);
     dxl.setGoalPosition(Motor_array[i], Temp_Pos);

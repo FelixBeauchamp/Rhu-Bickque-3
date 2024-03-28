@@ -92,6 +92,8 @@ def dynamixeldone():
     while True:
         if readmessage() == 1:
             return 'Finished Dynamixel spin'
+        if readmessage() == 2:
+            return 'Error in Dynamixel spin'
 
 """
 openport()
