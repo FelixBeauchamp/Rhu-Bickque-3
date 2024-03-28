@@ -49,6 +49,7 @@ def solving(map_array):
     print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
 
     for moves in solution.sequence_motors:
+        input('bibos dick')
         if moves[0] == 'M' or moves[0] == 'H':
             OpenRBCom.sendmessage(moves)
         else:
