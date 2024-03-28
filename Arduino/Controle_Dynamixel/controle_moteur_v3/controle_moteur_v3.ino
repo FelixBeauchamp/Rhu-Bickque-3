@@ -96,7 +96,8 @@ int receivedValue;
 
 //Max Torque control
 int Max_Torque = 0.5; //N*m Calculated to rotate 1 face of the cube with SF of 4.
-int Max_Current = (((1.4-0.2)/(1.5-0.06))*Max_Torque + 0.15)/1000; //Max_current in mA based on the documentation sheet on XL430 with ratio information
+//int Max_Current = (((1.4-0.2)/(1.5-0.06))*Max_Torque + 0.15)*1000; //Max_current in mA based on the documentation sheet on XL430 with ratio information
+int Max_Current = 100;
 
 void setup() {
 
@@ -121,6 +122,8 @@ void loop() {
 
   Serial.readBytes((char*)&receivedValue, 4);
   command = receivedValue;
+  // delay(1000);
+  // command = 8;
 
   if (command == 0) //HOMING
   {
@@ -269,9 +272,9 @@ void done() //Revoir le while seems sus
     dxl.getPresentVelocity(DXL_ID27) != 0
     )
     {
-      if (Check_Exceed_Max_Torque()==1){
-        return;
-      }
+      // if (Check_Exceed_Max_Torque()==1){
+      //   return;
+      // }
     }
     int valueToSend = 1;
     Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
@@ -281,22 +284,26 @@ void done() //Revoir le while seems sus
 bool Check_Exceed_Max_Torque()
 {
   for (int i=0; i<4;i++){
-    if (dxl.getPresentCurrent(Motor_array[i]) > Max_Current){
+    // dxl.setOperatingMode(Motor_array[i], 	OP_CURRENT);
+    // Serial.println(dxl.getPresentCurrent(M4, UNIT_MILLI_AMPERE));
+    if (dxl.getPresentCurrent(Motor_array[i], UNIT_MILLI_AMPERE) > Max_Current){
       Stop_rotation();
       delay(25);
-      Serial.print("Stop rotation")
       int valueToSend = 2; //Error
       Serial.write((uint8_t*)&valueToSend, sizeof(valueToSend));
       valueToSend = 0;
       return(1);
     }
+    // dxl.setOperatingMode(Motor_array[i], 	OP_EXTENDED_POSITION);
   }
   return(0);
 }
 
 void Stop_rotation()
 {
+  Serial.print("Stop rotation");
   for (int i=0; i<4;i++){
+    // dxl.setOperatingMode(Motor_array[i], OP_EXTENDED_POSITION);
     int Temp_Pos = 0;
     Temp_Pos = dxl.getPresentPosition(Motor_array[i]);
     dxl.setGoalPosition(Motor_array[i], Temp_Pos);
