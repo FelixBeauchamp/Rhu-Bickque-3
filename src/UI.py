@@ -1,6 +1,5 @@
 import sys
-import random
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime
 
 class CubeDisplay(QWidget):
@@ -17,6 +16,11 @@ class CubeDisplay(QWidget):
         self.setup_faces()
         layout.addLayout(self.grid_layout)
 
+        # Add apply button
+        self.apply_button = QPushButton("Apply")
+        self.apply_button.clicked.connect(self.apply_changes)
+        layout.addWidget(self.apply_button)
+
         # Add timer widgets
         self.timer_label = QLabel("Time elapsed: 0:00.00")
         self.start_button = QPushButton("Start")
@@ -29,6 +33,17 @@ class CubeDisplay(QWidget):
         layout.addWidget(self.start_button)
         layout.addWidget(self.stop_button)
         layout.addWidget(self.reset_button)
+
+        # Add spacing between apply button and timer widgets
+        layout.addSpacing(20)
+
+        # Add progress bar and percentage label
+        self.progress_label = QLabel("Progress: 0%")
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setRange(0, 120)  # Set the range of the progress bar
+        self.progress_bar.setValue(0)  # Start with the progress bar empty
+        layout.addWidget(self.progress_label)
+        layout.addWidget(self.progress_bar)
 
         self.setLayout(layout)
 
@@ -56,6 +71,11 @@ class CubeDisplay(QWidget):
         sender = self.sender()
         sender.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
 
+    def apply_changes(self):
+        print("Initial face colors array after applying changes:")
+        for face_name, colors in self.face_colors.items():
+            print(f"{face_name}: {colors}")
+
     def start_timer(self):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_timer)
@@ -74,6 +94,8 @@ class CubeDisplay(QWidget):
         if hasattr(self, 'timer'):
             self.timer.stop()
             del self.elapsed_time  # Remove elapsed time attribute
+        self.progress_bar.setValue(0)  # Reset progress bar value
+        self.progress_label.setText("Progress: 0%")
 
     def update_timer(self):
         current_time = QTime.currentTime()
@@ -83,16 +105,21 @@ class CubeDisplay(QWidget):
         milliseconds = elapsed_time % 1000
         self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}.{milliseconds:02}")
 
+        # Update progress bar value and percentage label
+        self.progress_bar.setValue(seconds)
+        progress_percent = (seconds / 120) * 100
+        self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
+
 
 if __name__ == '__main__':
-    # Generate random initial face colors
+    # Initialize face colors to all white
     initial_face_colors = {
-        "Back": [random.choice(['white', 'red', 'green', 'yellow', 'blue', 'orange']) for _ in range(9)],
-        "Left": [random.choice(['white', 'red', 'green', 'yellow', 'blue', 'orange']) for _ in range(9)],
-        "Top": [random.choice(['white', 'red', 'green', 'yellow', 'blue', 'orange']) for _ in range(9)],
-        "Right": [random.choice(['white', 'red', 'green', 'yellow', 'blue', 'orange']) for _ in range(9)],
-        "Front": [random.choice(['white', 'red', 'green', 'yellow', 'blue', 'orange']) for _ in range(9)],
-        "Bottom": [random.choice(['white', 'red', 'green', 'yellow', 'blue', 'orange']) for _ in range(9)]
+        "Back": ['white'] * 9,
+        "Left": ['white'] * 9,
+        "Top": ['white'] * 9,
+        "Right": ['white'] * 9,
+        "Front": ['white'] * 9,
+        "Bottom": ['white'] * 9
     }
 
     app = QApplication(sys.argv)
