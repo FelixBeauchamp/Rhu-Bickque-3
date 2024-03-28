@@ -45,9 +45,9 @@ def sendmessage(megawhat):
     if megawhat == 'OXOY':
         info = 1
     if megawhat == 'CXOY':
-        info = 2
-    if megawhat == 'OXCY':
         info = 3
+    if megawhat == 'OXCY':
+        info = 2
     if megawhat == 'CXCY':
         info = 4
 
@@ -82,5 +82,4 @@ def megadone():
         if readmessage() == 1:
             time.sleep(0.5)
             return 'Finished ServoMotor movement'
-
 
