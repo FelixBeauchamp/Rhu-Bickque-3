@@ -1,49 +1,51 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QTimer, QTime
+from PyQt5.QtCore import QTimer, QTime, Qt
 
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
         self.face_colors = initial_colors
+        self.can_change_colors = True  # Flag to control color changes
+        self.start_button_clicked = False  # Flag to track if start button has been clicked
+        self.elapsed_time = 0  # Variable to store elapsed time
         self.initUI()
 
     def initUI(self):
         layout = QVBoxLayout()
         self.grid_layout = QGridLayout()
-        self.grid_layout.setHorizontalSpacing(50)  # Add horizontal spacing between faces
-        self.grid_layout.setVerticalSpacing(50)    # Add vertical spacing between faces
         self.setup_faces()
         layout.addLayout(self.grid_layout)
 
         # Add apply button
         self.apply_button = QPushButton("Apply")
+        self.apply_button.setFixedSize(60, 30)  # Set fixed size
         self.apply_button.clicked.connect(self.apply_changes)
-        layout.addWidget(self.apply_button)
+        layout.addWidget(self.apply_button, alignment=Qt.AlignHCenter)  # Align button to center
 
         # Add timer widgets
         self.timer_label = QLabel("Time elapsed: 0:00.00")
         self.start_button = QPushButton("Start")
+        self.start_button.setFixedSize(500, 30)  # Set fixed size
         self.start_button.clicked.connect(self.start_timer)
         self.stop_button = QPushButton("Stop")
+        self.stop_button.setFixedSize(500, 30)  # Set fixed size
         self.stop_button.clicked.connect(self.stop_timer)
         self.reset_button = QPushButton("Reset")
+        self.reset_button.setFixedSize(500, 30)  # Set fixed size
         self.reset_button.clicked.connect(self.reset_timer)
-        layout.addWidget(self.timer_label)
-        layout.addWidget(self.start_button)
-        layout.addWidget(self.stop_button)
-        layout.addWidget(self.reset_button)
-
-        # Add spacing between apply button and timer widgets
-        layout.addSpacing(20)
+        layout.addWidget(self.timer_label, alignment=Qt.AlignHCenter)  # Align label to center
+        layout.addWidget(self.start_button, alignment=Qt.AlignHCenter)  # Align button to center
+        layout.addWidget(self.stop_button, alignment=Qt.AlignHCenter)  # Align button to center
+        layout.addWidget(self.reset_button, alignment=Qt.AlignHCenter)  # Align button to center
 
         # Add progress bar and percentage label
         self.progress_label = QLabel("Progress: 0%")
         self.progress_bar = QProgressBar()
         self.progress_bar.setRange(0, 120)  # Set the range of the progress bar
         self.progress_bar.setValue(0)  # Start with the progress bar empty
-        layout.addWidget(self.progress_label)
-        layout.addWidget(self.progress_bar)
+        self.progress_bar.setFixedSize(500, 30)  # Set fixed size
+        layout.addWidget(self.progress_bar, alignment=Qt.AlignHCenter)  # Align progress bar to center
 
         self.setLayout(layout)
 
@@ -52,8 +54,8 @@ class CubeDisplay(QWidget):
         face_order = [("Back", 0, 1), ("Top", 1, 0), ("Left", 1, 1), ("Right", 1, 2), ("Front", 2, 1), ("Bottom", 3, 1)]
         for i, (face_name, row, col) in enumerate(face_order):
             face_grid = QGridLayout()
-            face_grid.setHorizontalSpacing(10)  # Add horizontal spacing between squares
-            face_grid.setVerticalSpacing(10)    # Add vertical spacing between squares
+            face_grid.setHorizontalSpacing(0)  # Set spacing between squares to 0
+            face_grid.setVerticalSpacing(0)    # Set spacing between squares to 0
             face_colors = self.face_colors[face_name]
             for seg_idx, color in enumerate(face_colors):
                 label = QPushButton()
@@ -64,38 +66,53 @@ class CubeDisplay(QWidget):
             self.grid_layout.addLayout(face_grid, row, col)
 
     def change_color(self, face_name, seg_idx):
-        color_map = ['white', 'red', 'green', 'yellow', 'blue', 'orange']
-        current_color = self.face_colors[face_name][seg_idx]
-        next_color = color_map[(color_map.index(current_color) + 1) % len(color_map)]
-        self.face_colors[face_name][seg_idx] = next_color
-        sender = self.sender()
-        sender.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
+        if self.can_change_colors:
+            color_map = ['white', 'red', 'green', 'yellow', 'blue', 'orange']
+            current_color = self.face_colors[face_name][seg_idx]
+            next_color = color_map[(color_map.index(current_color) + 1) % len(color_map)]
+            self.face_colors[face_name][seg_idx] = next_color
+            sender = self.sender()
+            sender.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
 
     def apply_changes(self):
-        print("Initial face colors array after applying changes:")
-        for face_name, colors in self.face_colors.items():
-            print(f"{face_name}: {colors}")
+        if self.can_change_colors:
+            print("Initial face colors array after applying changes:")
+            for face_name, colors in self.face_colors.items():
+                print(f"{face_name}: {colors}")
 
     def start_timer(self):
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_timer)
-        if hasattr(self, 'elapsed_time'):
+        if not self.start_button_clicked:
+            self.can_change_colors = False  # Disable color changes
+            self.start_button_clicked = True  # Set start button clicked
+            self.start_button.setEnabled(False)
+            self.apply_button.setEnabled(False)  # Disable apply button
+            self.timer = QTimer(self)
+            self.timer.timeout.connect(self.update_timer)
             self.start_time = QTime.currentTime().addMSecs(-self.elapsed_time)
+            self.timer.start(10)  # Update timer every 10 ms
         else:
-            self.start_time = QTime.currentTime()
-        self.timer.start(10)  # Update timer every 10 ms
+            self.can_change_colors = False
+            self.timer.start()
 
     def stop_timer(self):
-        self.timer.stop()
-        self.elapsed_time = self.start_time.elapsed()
+        if hasattr(self, 'timer'):
+            self.timer.stop()
+            self.elapsed_time = self.start_time.elapsed()
+            self.start_button.setEnabled(True)
+            self.apply_button.setEnabled(True)  # Re-enable apply button
+            self.can_change_colors = False  # Disable color changes
 
     def reset_timer(self):
         self.timer_label.setText("Time elapsed: 0:00.00")
         if hasattr(self, 'timer'):
             self.timer.stop()
-            del self.elapsed_time  # Remove elapsed time attribute
+            self.elapsed_time = 0  # Reset elapsed time
         self.progress_bar.setValue(0)  # Reset progress bar value
         self.progress_label.setText("Progress: 0%")
+        self.can_change_colors = True  # Enable color changes
+        self.start_button_clicked = False  # Reset start button clicked flag
+        self.start_button.setEnabled(True)
+        self.apply_button.setEnabled(True)  # Re-enable apply button
 
     def update_timer(self):
         current_time = QTime.currentTime()
