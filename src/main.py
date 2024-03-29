@@ -18,17 +18,19 @@ port_OpenRB = 'COM6'
 
 
 def mapping_sequence():
-    mapp = []
+    mapp = ['O', 'B', 'B', 'G', 'G', 'Y', 'O', 'G', 'R', 'W', 'B', 'W', 'Y', 'W', 'G', 'B', 'W', 'W',
+            'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
+            'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
     # Iterate through the camera motor sequence and analizing the
-    for move in solver.sequence_camera:
-        if move[0] == 'M':
-            OpenRBCom.sendmessage(move)
-        elif move[0] == 'S':
-            input('SNAP')
-            temp = traitement_image.faceofdacube()
-            mapp.extend(temp)
-        else:
-            ArduinoCom.sendmessage(move)
+    # for move in solver.sequence_camera:
+    #     if move[0] == 'M':
+    #         OpenRBCom.sendmessage(move)
+    #     elif move[0] == 'S':
+    #         input('SNAP')
+    #         temp = traitement_image.faceofdacube()
+    #         mapp.extend(temp)
+    #     else:
+    #         ArduinoCom.sendmessage(move)
     map_array = solver.reformat(mapp)
     cb = cube.Cube(map_array)
     print(cb)
