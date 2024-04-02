@@ -1,5 +1,6 @@
 import ArduinoCom
 import OpenRBCom
+import UI
 import traitement_image
 import keyboard
 import time
@@ -56,6 +57,10 @@ def solving(map_array):
             OpenRBCom.sendmessage(moves)
         else:
             ArduinoCom.sendmessage(moves)
+
+
+def change_state(state):
+    return state
 
 
 if __name__ == '__main__':
