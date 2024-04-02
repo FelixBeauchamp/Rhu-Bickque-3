@@ -23,7 +23,10 @@ def mapping_sequence():
             'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
             'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
     # Iterate through the camera motor sequence and analizing the
+    map_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
     # for move in solver.sequence_camera:
+    #     if UI.stop_pressed
+    #         break
     #     if move[0] == 'M':
     #         OpenRBCom.sendmessage(move)
     #     elif move[0] == 'S':
@@ -32,9 +35,10 @@ def mapping_sequence():
     #         mapp.extend(temp)
     #     else:
     #         ArduinoCom.sendmessage(move)
-    map_array = solver.reformat(mapp)
-    cb = cube.Cube(map_array)
-    print(cb)
+    if not UI.stop_pressed
+        map_array = solver.reformat(mapp)
+        cb = cube.Cube(map_array)
+        print(cb)
     return map_array
 
 
@@ -60,11 +64,12 @@ def solving(map_array):
 
 
 def change_state(state):
-    return state
+    UI.SolvingState = state
 
 
 if __name__ == '__main__':
     # 0- Initialisation
+    change_state(0)
     print("Initialisation: OPENING/HOMING")
     OpenRBCom.openport(port_OpenRB)
     ArduinoCom.openportarduino(port_Arduino)
@@ -72,14 +77,17 @@ if __name__ == '__main__':
     OpenRBCom.sendmessage('HOMING')
 
     # 1- Wait for user input before clamping the cube
+    change_state(1)
     input("Press Enter to clamp the cube")
     ArduinoCom.sendmessage('CXCY')
 
     # 2- Starting the mapping sequence
+    change_state(2)
     input("Press Enter to start the mapping sequence")
     cube_map = mapping_sequence()
 
     # 3- Solving the cube
+    change_state(3)
     input("Press Enter to start solving")
     solving(cube_map)
     ArduinoCom.closeportarduino()
