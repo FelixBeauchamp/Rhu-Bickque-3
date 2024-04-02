@@ -2,8 +2,6 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
-SolvingState = 0
-
 class CubeDisplay(QWidget):
     colorsChanged = pyqtSignal(dict)
 
@@ -55,7 +53,7 @@ class CubeDisplay(QWidget):
 
     def setup_faces(self):
         # Define the order of the faces for the cross shape
-        face_order = [("Back", 0, 1), ("Top", 1, 0), ("Left", 1, 1), ("Right", 1, 2), ("Front", 2, 1), ("Bottom", 3, 1)]
+        face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1), ("Back", 1, 3)]
         for i, (face_name, row, col) in enumerate(face_order):
             face_grid = QGridLayout()
             face_grid.setHorizontalSpacing(0)  # Set spacing between squares to 0
@@ -94,6 +92,10 @@ class CubeDisplay(QWidget):
             self.timer.timeout.connect(self.update_timer)
             self.start_time = QTime.currentTime().addMSecs(-self.elapsed_time)
             self.timer.start(10)  # Update timer every 10 ms
+            # Set face colors to updated colors
+            self.face_colors = updated_colors
+            self.setup_faces()
+            self.colorsChanged.emit(updated_colors)
         else:
             self.can_change_colors = False
             self.timer.start()
@@ -135,12 +137,6 @@ class CubeDisplay(QWidget):
         progress_percent = (seconds / 120) * 100
         self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
 
-    def update_colors(self, new_colors):
-        if self.start_button_clicked:
-            self.face_colors = new_colors
-            self.setup_faces()
-            self.colorsChanged.emit(new_colors)
-
 
 if __name__ == '__main__':
     # Initialize face colors to all white
@@ -173,3 +169,4 @@ if __name__ == '__main__':
     update_colors_from_external_file(updated_colors)
 
     sys.exit(app.exec_())
+
