@@ -25,7 +25,7 @@ def mapping_sequence():
     # Iterate through the camera motor sequence and analizing the
     map_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
     # for move in solver.sequence_camera:
-    #     if UI.stop_pressed
+    #     if UI.stop_pressed:
     #         break
     #     if move[0] == 'M':
     #         OpenRBCom.sendmessage(move)
@@ -35,7 +35,7 @@ def mapping_sequence():
     #         mapp.extend(temp)
     #     else:
     #         ArduinoCom.sendmessage(move)
-    if not UI.stop not pressed
+    if not UI.stop_pressed:
         map_array = solver.reformat(mapp)
         cb = cube.Cube(map_array)
         print(cb)
@@ -56,6 +56,8 @@ def solving(map_array):
     print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
 
     for moves in solution.sequence_motors:
+        if UI.stop_pressed:
+            break
         input('bibos dick')
         if moves[0] == 'M' or moves[0] == 'H':
             OpenRBCom.sendmessage(moves)
@@ -70,28 +72,32 @@ def change_state(state):
 if __name__ == '__main__':
     # 0- Initialisation
     change_state(0)
-    print("Initialisation: OPENING/HOMING")
-    OpenRBCom.openport(port_OpenRB)
-    ArduinoCom.openportarduino(port_Arduino)
-    ArduinoCom.sendmessage('OXOY')
-    OpenRBCom.sendmessage('HOMING')
+    if not UI.stop_pressed:
+        print("Initialisation: OPENING/HOMING")
+        OpenRBCom.openport(port_OpenRB)
+        ArduinoCom.openportarduino(port_Arduino)
+        ArduinoCom.sendmessage('OXOY')
+        OpenRBCom.sendmessage('HOMING')
 
     # 1- Wait for user input before clamping the cube
-    change_state(1)
-    input("Press Enter to clamp the cube")
-    ArduinoCom.sendmessage('CXCY')
+    if not UI.stop_pressed:
+        change_state(1)
+        input("Press Enter to clamp the cube")
+        ArduinoCom.sendmessage('CXCY')
 
     # 2- Starting the mapping sequence
-    change_state(2)
-    input("Press Enter to start the mapping sequence")
-    cube_map = mapping_sequence()
+    if not UI.stop_pressed:
+        change_state(2)
+        input("Press Enter to start the mapping sequence")
+        cube_map = mapping_sequence()
 
     # 3- Solving the cube
-    change_state(3)
-    input("Press Enter to start solving")
-    solving(cube_map)
-    ArduinoCom.closeportarduino()
-    OpenRBCom.closeport()
+    if not UI.stop_pressed:
+        change_state(3)
+        input("Press Enter to start solving")
+        solving(cube_map)
+        ArduinoCom.closeportarduino()
+        OpenRBCom.closeport()
 
     # print("Initialisation: OPENING/HOMING")
     # OpenRBCom.openport(port_OpenRB)
