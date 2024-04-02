@@ -2,6 +2,9 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
+SolvingState = 0
+stop_pressed = False
+
 class CubeDisplay(QWidget):
     colorsChanged = pyqtSignal(dict)
 
