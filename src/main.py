@@ -35,7 +35,7 @@ def mapping_sequence():
     #         mapp.extend(temp)
     #     else:
     #         ArduinoCom.sendmessage(move)
-    if not UI.stop_pressed
+    if not UI.stop not pressed
         map_array = solver.reformat(mapp)
         cb = cube.Cube(map_array)
         print(cb)
