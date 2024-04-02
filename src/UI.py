@@ -4,6 +4,7 @@ from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
 SolvingState = 0
 stop_pressed = False
+mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 
 class CubeDisplay(QWidget):
     colorsChanged = pyqtSignal(dict)
@@ -55,6 +56,12 @@ class CubeDisplay(QWidget):
         self.setLayout(layout)
 
     def setup_faces(self):
+        # Clear any existing widgets
+        for i in reversed(range(self.grid_layout.count())):
+            layoutItem = self.grid_layout.itemAt(i)
+            if layoutItem.widget():
+                layoutItem.widget().setParent(None)
+
         # Define the order of the faces for the cross shape
         face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1), ("Back", 1, 3)]
         for i, (face_name, row, col) in enumerate(face_order):
@@ -123,8 +130,7 @@ class CubeDisplay(QWidget):
         self.start_button.setEnabled(True)
         self.apply_button.setEnabled(True)  # Re-enable apply button
         # Reset face colors to white
-        for face_name in self.face_colors:
-            self.face_colors[face_name] = ['white'] * 9
+        self.face_colors = initial_face_colors
         self.setup_faces()  # Update the display with white colors
 
     def update_timer(self):
@@ -141,14 +147,15 @@ class CubeDisplay(QWidget):
         self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
 
 
+
 if __name__ == '__main__':
     # Initialize face colors to all white
     initial_face_colors = {
-        "Back": ['white'] * 9,
-        "Left": ['white'] * 9,
-        "Top": ['white'] * 9,
-        "Right": ['white'] * 9,
-        "Front": ['white'] * 9,
+        "Back": ['red'] * 9,
+        "Left": ['green'] * 9,
+        "Top": ['yellow'] * 9,
+        "Right": ['blue'] * 9,
+        "Front": ['orange'] * 9,
         "Bottom": ['white'] * 9
     }
 
@@ -158,7 +165,8 @@ if __name__ == '__main__':
 
     # Example of updating colors from another Python file
     def update_colors_from_external_file(new_colors):
-        cube_display.update_colors(new_colors)
+        cube_display.face_colors = new_colors
+        cube_display.setup_faces()
 
     # Simulate receiving updated colors from another Python file
     updated_colors = {
@@ -170,6 +178,4 @@ if __name__ == '__main__':
         "Bottom": ['white'] * 9
     }
     update_colors_from_external_file(updated_colors)
-
     sys.exit(app.exec_())
-
