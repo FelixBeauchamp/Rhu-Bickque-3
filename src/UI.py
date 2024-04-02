@@ -1,8 +1,12 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QTimer, QTime, Qt
+from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
+
+SolvingState = 0
 
 class CubeDisplay(QWidget):
+    colorsChanged = pyqtSignal(dict)
+
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
         self.face_colors = initial_colors
@@ -113,6 +117,10 @@ class CubeDisplay(QWidget):
         self.start_button_clicked = False  # Reset start button clicked flag
         self.start_button.setEnabled(True)
         self.apply_button.setEnabled(True)  # Re-enable apply button
+        # Reset face colors to white
+        for face_name in self.face_colors:
+            self.face_colors[face_name] = ['white'] * 9
+        self.setup_faces()  # Update the display with white colors
 
     def update_timer(self):
         current_time = QTime.currentTime()
@@ -126,6 +134,12 @@ class CubeDisplay(QWidget):
         self.progress_bar.setValue(seconds)
         progress_percent = (seconds / 120) * 100
         self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
+
+    def update_colors(self, new_colors):
+        if self.start_button_clicked:
+            self.face_colors = new_colors
+            self.setup_faces()
+            self.colorsChanged.emit(new_colors)
 
 
 if __name__ == '__main__':
@@ -142,4 +156,20 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     cube_display = CubeDisplay(initial_face_colors)
     cube_display.show()
+
+    # Example of updating colors from another Python file
+    def update_colors_from_external_file(new_colors):
+        cube_display.update_colors(new_colors)
+
+    # Simulate receiving updated colors from another Python file
+    updated_colors = {
+        "Back": ['red'] * 9,
+        "Left": ['green'] * 9,
+        "Top": ['yellow'] * 9,
+        "Right": ['blue'] * 9,
+        "Front": ['orange'] * 9,
+        "Bottom": ['white'] * 9
+    }
+    update_colors_from_external_file(updated_colors)
+
     sys.exit(app.exec_())
