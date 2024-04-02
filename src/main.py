@@ -39,6 +39,7 @@ def mapping_sequence():
         map_array = solver.reformat(mapp)
         cb = cube.Cube(map_array)
         print(cb)
+        UI.mapping_array = map_array
     return map_array
 
 
