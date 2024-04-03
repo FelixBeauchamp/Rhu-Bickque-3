@@ -15,10 +15,12 @@ mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
 
+
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
-        self.face_colors = initial_colors
+        self.face_colors = initial_colors  # Store the initial colors of each face
+        self.face_buttons = {}
         self.can_change_colors = True  # Flag to control color changes
         self.start_solve_button_clicked = False  # Flag to track if start button has been clicked
         self.elapsed_time = 0  # Variable to store elapsed time
@@ -78,14 +80,16 @@ class CubeDisplay(QWidget):
         for i, (face_name, row, col) in enumerate(face_order):
             face_grid = QGridLayout()
             face_grid.setHorizontalSpacing(0)  # Set spacing between squares to 0
-            face_grid.setVerticalSpacing(0)    # Set spacing between squares to 0
+            face_grid.setVerticalSpacing(0)  # Set spacing between squares to 0
             face_colors = self.face_colors[face_name]
             for seg_idx, color in enumerate(face_colors):
                 label = QPushButton()
+                #label.setProperty("face_name", face_name)
                 label.setStyleSheet(f"background-color: {color}; border: 1px solid black;")
                 label.setFixedSize(50, 50)
                 label.clicked.connect(lambda state, f=face_name, s=seg_idx: self.change_color(f, s))
                 face_grid.addWidget(label, seg_idx // 3, seg_idx % 3)
+                self.face_buttons[(face_name, seg_idx)] = label
             self.grid_layout.addLayout(face_grid, row, col)
 
     def change_color(self, face_name, seg_idx):
@@ -102,7 +106,6 @@ class CubeDisplay(QWidget):
             print("Initial face colors array after applying changes:")
             for face_name, colors in self.face_colors.items():
                 print(f"{face_name}: {colors}")
-
 
     def stop_timer(self):
         if hasattr(self, 'timer'):
@@ -142,17 +145,71 @@ class CubeDisplay(QWidget):
         time.sleep(0.1)
         control.clamp()
 
+    def update_face_colors(self, modified_dict):
+        if self.can_change_colors:
+            face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1),
+                          ("Back", 1, 3)]
+            for i, (face_name, row, col) in enumerate(face_order):
+                face_colors = modified_dict[face_name]
+                for seg_idx, color in enumerate(face_colors):
+                    next_color = modified_dict[face_name][seg_idx]
+                    self.face_colors[face_name][seg_idx] = next_color
+                    button = self.face_buttons.get((face_name, seg_idx))
+                    if button:
+                        button.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
+                        # Update the stored color in the face_colors dictionary
+                        self.face_colors[face_name][seg_idx] = next_color
+
     def start_mapping(self):
         global mapping_array
         global moves_list
 
         mapping_array = control.mapping_sequence()
-        moves_list = control.solving_moves(mapping_array)
+        print(mapping_array)
+        # Modified dictionnary to show colors on UI
+        # Empty dictionary to store the modified array
+        modified_dict = {}
+
+        # Define the names of the faces
+        face_names = ['Front', 'Right', 'Back', 'Left', 'Bottom', 'Top']
+
+        # Iterate through the input array and convert each list of colors into lists of RGB values
+        for i, face_name in enumerate(face_names):
+            # Extract three consecutive lists of colors
+            face_colors = mapping_array[i]
+
+            # Convert colors to RGB format
+            face_rgb = [
+                'red' if color == 'R' else 'green' if color == 'G' else 'blue' if color == 'B' else
+                'white' if color == 'W' else 'yellow' if color == 'Y' else 'orange' for row in face_colors
+                for color in row
+            ]
+
+            # Append the converted RGB values to the modified dictionary with the face name as the key
+            modified_dict[face_name] = face_rgb
+
+        # Print the modified dictionary
+        print(modified_dict)
+        self.update_face_colors(modified_dict)
 
     def start_solve(self):
         global moves_list
 
         self.can_change_colors = False
+
+        #Change the mapping array back to its original form after applying manual change
+        color_map = {
+            'green': 'G',
+            'red': 'R',
+            'blue': 'B',
+            'white': 'W',
+            'yellow': 'Y',
+            'orange': 'O'
+        }
+        converted_colors_mapping = [[[color_map[color] for color in row[i:i + 3]] for i in range(0, len(row), 3)] for row in
+                            self.face_colors]
+        moves_list = control.solving_moves(converted_colors_mapping)
+
         self.timer.start()
         for i in range(len(moves_list)):
             control.do_move(moves_list[i])
