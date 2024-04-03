@@ -68,7 +68,7 @@ class CubeDisplay(QWidget):
         self.setLayout(layout)
 
         time.sleep(0.1)
-        # control.initialisation()
+        control.initialisation()
 
     def setup_faces(self):
         # Clear any existing widgets
