@@ -11,7 +11,9 @@ sequence_camera = ['CXCY', 'SNAP', 'OXCY', 'M2_R', 'CXCY', 'CXOY', 'M2M4_R', 'SN
 # The reformat function transform the list given by the camera mapping of the cube into a list that the solving
 # algorithm can take as parameter
 def reformat(m):
-    temp = [[[0] * 3 for _ in range(3)] for _ in range(6)]
+    temp = [[['z'] * 3 for _ in range(3)] for _ in range(6)]
+    m = list(m)  # Convert string to list of characters
+    m = [str(element) for element in m]
     temp[0] = [[m[27], m[28], m[29]], [m[30], m[31], m[32]], [m[33], m[34], m[35]]]
     temp[1] = [[m[51], m[48], m[45]], [m[52], m[49], m[46]], [m[53], m[50], m[47]]]
     temp[2] = [[m[17], m[16], m[15]], [m[14], m[13], m[12]], [m[11], m[10], m[9]]]
@@ -19,6 +21,9 @@ def reformat(m):
     temp[4] = [[m[18], m[19], m[20]], [m[21], m[22], m[23]], [m[24], m[25], m[26]]]
     temp[5] = [[m[0], m[1], m[2]], [m[3], m[4], m[5]], [m[6], m[7], m[8]]]
     return temp
+
+
+
 
 
 class Solver():

@@ -71,7 +71,7 @@ def colorofsquare(leframe):
 
 
 def faceofdacube():
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     ret, frame_test = cap.read()
     # Number of frames to capture
     num_frames =1
