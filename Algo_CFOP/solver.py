@@ -760,4 +760,4 @@ class Solver():
             for move in array:
                 array_of_array1[i].extend(self.servo[move])
             i = i + 1
-        return array_of_array
+        return array_of_array1
