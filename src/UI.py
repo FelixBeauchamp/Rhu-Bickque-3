@@ -240,15 +240,18 @@ class CubeDisplay(QWidget):
         self.timer.start(10)
         print((len(moves_list)))
         i = 0
+        print(moves_list)
         for move in moves_list[2]:
             print(move)
             for sub_move in move:
                 print(sub_move)
                 control.do_move(sub_move)
-            # self.apply_move(self.face_colors)
-            # self.can_change_colors = True
-            # self.update_face_colors(self.face_colors, moves_list[0][i])
-            # self.can_change_colors = False
+            if i < len(moves_list[2]) - 1:
+                print(moves_list[0][i])
+                self.apply_move(self.face_colors, moves_list[0][i])
+                self.can_change_colors = True
+                self.update_face_colors(self.face_colors)
+                self.can_change_colors = False
             i = i + 1
 
     def apply_move(self, color_to_change, move):
@@ -435,7 +438,9 @@ class CubeDisplay(QWidget):
                    ('Left', (2, 0), (2, 1), (2, 2)),
                    ('Back', (2, 0), (2, 1), (2, 2))]
         }
-
+        if move not in move_mapping:
+            print("Invalid move:", move)
+            return False
         # Apply the move to the face colors dictionary
         for face, *positions in move_mapping[move]:
             face_color = color_to_change[face]
@@ -443,6 +448,7 @@ class CubeDisplay(QWidget):
             new_colors = colors[-1:] + colors[:-1]  # Shift the colors
             for pos, color in zip(positions, new_colors):
                 face_color[pos[0]][pos[1]] = color
+        return True
 
 # if __name__ == '__main__':
 # # Initialize face colors to all white
