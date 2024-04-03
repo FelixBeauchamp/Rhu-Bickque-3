@@ -8,3 +8,5 @@ wheel==0.42.0
 pyserial==3.5
 arduinoserial==1.0.1
 arduino-python3==0.6
+PyQt5==5.15.10
+unittest-additions==0.1.3
