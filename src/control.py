@@ -73,7 +73,7 @@ def solving_moves(map_array):
 
 
 def do_move(move):
-    input('bibos dick')
+    input(move)
     if move[0] == 'M' or move[0] == 'H':
         OpenRBCom.sendmessage(move)
     else:
@@ -88,10 +88,13 @@ def close_ports():
 
 if __name__ == '__main__':
     input("MEGAWHAAAT")
-    initialisation()
-    clamp()
-    mapping_sequence()
-    close_ports()
+    # initialisation()
+    # clamp()
+    # deez = mapping_sequence()
+    # balls = solving_moves(deez)
+    # for dicks in balls:
+    #     do_move(dicks)
+    # close_ports()
 
     # print("Initialisation: OPENING/HOMING")
     # OpenRBCom.openport(port_OpenRB)
