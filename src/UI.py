@@ -218,7 +218,7 @@ class CubeDisplay(QWidget):
         print(moves_list)
 
         self.timer.start()
-        for move in moves_list:
+        for move in moves_list[1]:
             print(move)
             control.do_move(move)
 

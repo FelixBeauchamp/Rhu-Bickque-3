@@ -90,13 +90,13 @@ def close_ports():
 
 if __name__ == '__main__':
     input("MEGAWHAAAT")
-    initialisation()
-    clamp()
-    deez = mapping_sequence()
-    balls = solving_moves(deez)
-    for dicks in balls:
-        do_move(dicks)
-    close_ports()
+    # initialisation()
+    # clamp()
+    # deez = mapping_sequence()
+    # balls = solving_moves(deez)
+    # for dicks in balls:
+    #     do_move(dicks)
+    # close_ports()
 
     # print("Initialisation: OPENING/HOMING")
     # OpenRBCom.openport(port_OpenRB)
