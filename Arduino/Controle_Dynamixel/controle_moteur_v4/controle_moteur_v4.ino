@@ -82,6 +82,7 @@ using namespace ControlTableItem;
 
 //Global variables to control move
 int degree_90_thick = 512 *2;
+int degree_95_thick = (512/45) * 95;
 
 int32_t goal_position_M1 = 0;
 int32_t goal_position_M2 = 0;
@@ -177,7 +178,10 @@ void right (const uint8_t DXL_ID, int32_t *goal_position)
     while(dxl.getPresentVelocity(DXL_ID) != 0)
     {
     }
-    int move =  *goal_position + degree_90_thick ;
+    int move =  *goal_position + degree_95_thick ;
+    dxl.setGoalPosition(DXL_ID, move);
+    delay(25);
+    move = *goal_position + degree_90_thick;
     *goal_position = *goal_position + degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
 }
@@ -188,7 +192,10 @@ void left (const uint8_t DXL_ID, int32_t *goal_position)
     while(dxl.getPresentVelocity(DXL_ID) != 0)
     {
     }
-    int move =  *goal_position - degree_90_thick ;
+    int move =  *goal_position - degree_95_thick ;
+    dxl.setGoalPosition(DXL_ID, move);
+    delay(25);
+    move =  *goal_position - degree_90_thick
     *goal_position = *goal_position - degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
 }
