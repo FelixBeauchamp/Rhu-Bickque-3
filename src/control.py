@@ -69,7 +69,9 @@ def solving_moves(map_array):
     solution.translate(moves_list)
     print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
 
-    return solution.sequence_motors
+    MEGA_MOVES = [moves_list, solution.sequence_motors]
+
+    return MEGA_MOVES
 
 
 def do_move(move):
@@ -88,13 +90,13 @@ def close_ports():
 
 if __name__ == '__main__':
     input("MEGAWHAAAT")
-    # initialisation()
-    # clamp()
-    # deez = mapping_sequence()
-    # balls = solving_moves(deez)
-    # for dicks in balls:
-    #     do_move(dicks)
-    # close_ports()
+    initialisation()
+    clamp()
+    deez = mapping_sequence()
+    balls = solving_moves(deez)
+    for dicks in balls:
+        do_move(dicks)
+    close_ports()
 
     # print("Initialisation: OPENING/HOMING")
     # OpenRBCom.openport(port_OpenRB)
