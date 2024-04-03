@@ -66,9 +66,12 @@ class CubeDisplay(QWidget):
         self.progress_bar.setFixedSize(500, 30)  # Set fixed size
         layout.addWidget(self.progress_bar, alignment=Qt.AlignHCenter)  # Align progress bar to center
         self.setLayout(layout)
+        self.start_mapping_button.setEnabled(True)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solving_button.setEnabled(False)
 
         time.sleep(0.1)
-        control.initialisation()
+        #control.initialisation()
 
     def setup_faces(self):
         # Clear any existing widgets
@@ -142,7 +145,13 @@ class CubeDisplay(QWidget):
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
+        self.start_mapping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solving_button.setEnabled(False)
         control.clamp()
+        self.start_mapping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(True)
+        self.start_solving_button.setEnabled(False)
 
     def update_face_colors(self, modified_dict):
         if self.can_change_colors:
@@ -162,6 +171,10 @@ class CubeDisplay(QWidget):
     def start_mapping(self):
         global mapping_array
         global moves_list
+
+        self.start_mapping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solving_button.setEnabled(False)
 
         mapping_array = control.mapping_sequence()
         print(mapping_array)
@@ -190,11 +203,17 @@ class CubeDisplay(QWidget):
         # Print the modified dictionary
         print(modified_dict)
         self.update_face_colors(modified_dict)
+        self.start_mapping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solving_button.setEnabled(True)
 
     def start_solve(self):
         global moves_list
 
         self.can_change_colors = False
+        self.start_mapping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solving_button.setEnabled(False)
 
         # Change the mapping array back to its original form after applying manual change
         color_map = {
@@ -216,11 +235,12 @@ class CubeDisplay(QWidget):
 
         moves_list = control.solving_moves(converted_face_colors)
         print(moves_list)
-
+        time.sleep(5)
+        print('done')
         # self.timer.start()
-        for move in moves_list[1]:
-            print(move)
-            control.do_move(move)
+        # for move in moves_list[1]:
+        #     print(move)
+        #     control.do_move(move)
 
     def apply_move(face_colors, move):
         # Define the mapping of faces affected by each move
