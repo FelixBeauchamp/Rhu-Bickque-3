@@ -78,6 +78,7 @@ if __name__ == '__main__':
         OpenRBCom.openport(port_OpenRB)
         ArduinoCom.openportarduino(port_Arduino)
         ArduinoCom.sendmessage('OXOY')
+        time.sleep(4)
         OpenRBCom.sendmessage('HOMING')
 
     # 1- Wait for user input before clamping the cube
