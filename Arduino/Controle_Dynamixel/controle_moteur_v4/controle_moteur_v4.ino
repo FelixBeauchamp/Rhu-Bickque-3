@@ -339,7 +339,7 @@ void setting_up(const uint8_t DXL_ID){
 
   dxl.torqueOn(DXL_ID);
 
-  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_ID, 20000); //Velocity is from 0-32767 Profil_velocity*0.229 rev/min = speed
+  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_ID, 15000); //Velocity is from 0-32767 Profil_velocity*0.229 rev/min = speed
 
   dxl.writeControlTableItem(POSITION_P_GAIN, DXL_ID, position_p_gain);
   dxl.writeControlTableItem(POSITION_I_GAIN, DXL_ID, position_i_gain);
