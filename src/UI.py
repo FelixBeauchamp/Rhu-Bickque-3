@@ -212,8 +212,8 @@ class CubeDisplay(QWidget):
         moves_list = control.solving_moves(converted_colors_mapping)
 
         self.timer.start()
-        for i in range(len(moves_list)):
-            control.do_move(moves_list[i])
+        for move in (moves_list):
+            control.do_move(move)
 
         def apply_move(face_colors, move):
             # Define the mapping of faces affected by each move
@@ -245,19 +245,19 @@ class CubeDisplay(QWidget):
                     face_color[pos[0]][pos[1]] = color
 
 
-if __name__ == '__main__':
-    # Initialize face colors to all white
-    initial_face_colors = {
-        "Back": ['red'] * 9,
-        "Left": ['green'] * 9,
-        "Top": ['yellow'] * 9,
-        "Right": ['blue'] * 9,
-        "Front": ['orange'] * 9,
-        "Bottom": ['white'] * 9
-    }
-
-    app = QApplication(sys.argv)
-    cube_display = CubeDisplay(initial_face_colors)
-    cube_display.show()
-
-    sys.exit(app.exec_())
+#if __name__ == '__main__':
+    # # Initialize face colors to all white
+    # initial_face_colors = {
+    #     "Back": ['red'] * 9,
+    #     "Left": ['green'] * 9,
+    #     "Top": ['yellow'] * 9,
+    #     "Right": ['blue'] * 9,
+    #     "Front": ['orange'] * 9,
+    #     "Bottom": ['white'] * 9
+    # }
+    #
+    # app = QApplication(sys.argv)
+    # cube_display = CubeDisplay(initial_face_colors)
+    # cube_display.show()
+    #
+    # sys.exit(app.exec_())
