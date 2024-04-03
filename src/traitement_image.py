@@ -4,27 +4,31 @@ import cv2
 
 
 
-YellowL_limit = np.array([26, 80, 1])  # setting the yellow lower limit
-YellowU_limit = np.array([39, 255, 254])  # setting the yellow upper limit
+YellowL_limit = np.array([15, 10, 0])  # setting the yellow lower limit
+YellowU_limit = np.array([35, 255, 200])  # setting the yellow upper limit
 
-BlueL_limit = np.array([110, 80, 1])  # setting the blue lower limit
-BlueU_limit = np.array([150, 255, 254])
+BlueL_limit = np.array([100, 0, 0])  # setting the blue lower limit
+BlueU_limit = np.array([110, 255, 220])
 
-RedL_limit = np.array([151, 80, 1])  # setting the red lower limit
-RedU_limit = np.array([180, 255, 254])
+RedL_limit_high = np.array([140, 0, 0])  # setting the red lower limit
+RedU_limit_high = np.array([180, 255, 220])
 
-OrangeL_limit = np.array([0, 80, 1])  # setting the orange lower limit
-OrangeU_limit = np.array([25, 255, 254])
+#RedL_limit_low = np.array([0, 0, 0])  # setting the red lower limit
+#RedU_limit_low = np.array([5, 255, 255])
 
-GreenL_limit = np.array([40, 80, 1])  # setting the green lower limit
-GreenU_limit = np.array([100, 255, 254])
+OrangeL_limit = np.array([0, 0, 0])  # setting the orange lower limit
+OrangeU_limit = np.array([15, 255, 220])
 
-WhiteL_limit = np.array([0, 0, 254])  # setting the white lower limit
-WhiteU_limit = np.array([180, 79, 255])
+GreenL_limit = np.array([45, 0, 0])  # setting the green lower limit
+GreenU_limit = np.array([95, 255, 220])
+
+WhiteL_limit = np.array([0, 0, 90])  # setting the white lower limit
+WhiteU_limit = np.array([180, 75, 255])
 
 
 # frames = np.array([[1,1,1],[1,1,1],[1,1,1]])
 def colorofsquare(leframe):
+
     Y_mask = cv2.inRange(leframe, YellowL_limit, YellowU_limit)
     yellow_pixel_count = cv2.countNonZero(Y_mask)
     cv2.imshow('Yellow pixel count', Y_mask)
@@ -32,8 +36,9 @@ def colorofsquare(leframe):
     B_mask = cv2.inRange(leframe, BlueL_limit, BlueU_limit)
     blue_pixel_count = cv2.countNonZero(B_mask)
 
-    R_mask = cv2.inRange(leframe, RedL_limit, RedU_limit)
-    red_pixel_count = cv2.countNonZero(R_mask)
+    R_mask = cv2.inRange(leframe, RedL_limit_high, RedU_limit_high)
+#   R_mask_2 = cv2.inRange(leframe, RedL_limit_low, RedU_limit_low)
+    red_pixel_count = cv2.countNonZero(R_mask) #+ cv2.countNonZero(R_mask_2)
 
     O_mask = cv2.inRange(leframe, OrangeL_limit, OrangeU_limit)
     orange_pixel_count = cv2.countNonZero(O_mask)
@@ -88,27 +93,27 @@ def faceofdacube():
     #coin_sup_gauche = [0, 0]
     #coin_inf_droit = [width, height]
 
-    cote_cube = 95
+    cote_cube = 85
 
     # Barre horizontales
-    haut_1_x = 105
-    bas_1_x = 200
+    haut_1_x = 100
+    bas_1_x = haut_1_x+cote_cube
 
-    haut_2_x = haut_1_x + cote_cube
-    bas_2_x = bas_1_x + cote_cube
+    haut_2_x = haut_1_x + cote_cube + 15
+    bas_2_x = haut_2_x + cote_cube
 
-    haut_3_x = haut_2_x + cote_cube
-    bas_3_x = bas_2_x + cote_cube
+    haut_3_x = haut_2_x + cote_cube + 15
+    bas_3_x = haut_3_x + cote_cube
 
     # Barres verticales
-    gauche_x_1 = 207
-    droite_x_1 = 302
+    gauche_x_1 = 210
+    droite_x_1 = gauche_x_1+cote_cube
 
-    gauche_x_2 = gauche_x_1 + cote_cube
-    droite_x_2 = droite_x_1 + cote_cube
+    gauche_x_2 = gauche_x_1 + cote_cube + 15
+    droite_x_2 = gauche_x_2 + cote_cube
 
-    gauche_x_3 = gauche_x_2 + cote_cube
-    droite_x_3 = droite_x_2 + cote_cube
+    gauche_x_3 = gauche_x_2 + cote_cube + 15
+    droite_x_3 = gauche_x_3 + cote_cube
 
     length_pince = 55
     cv2.imshow('Vision initiale', avg_frame)
@@ -120,9 +125,11 @@ def faceofdacube():
     cv2.imshow('Face du cube avg', frame_cube_avg)
 
     frame_1_1 = into_hsv_filtered_avg[haut_1_x:bas_1_x, gauche_x_1:droite_x_1].copy()
+    cv2.imshow('Face 1_1', frame_1_1)
     frame_2_1 = into_hsv_filtered_avg[haut_2_x:bas_2_x, gauche_x_1+length_pince:droite_x_1].copy()
     cv2.imshow('Face 2_1', frame_2_1)
     frame_3_1 = into_hsv_filtered_avg[haut_3_x:bas_3_x, gauche_x_1:droite_x_1].copy()
+    cv2.imshow('Face 3_1', frame_3_1)
 
     frame_1_2 = into_hsv_filtered_avg[haut_1_x+length_pince:bas_1_x, gauche_x_2:droite_x_2].copy()
     cv2.imshow('Face 1_2', frame_1_2)
@@ -132,9 +139,11 @@ def faceofdacube():
     cv2.imshow('Face 3_2', frame_3_2)
 
     frame_1_3 = into_hsv_filtered_avg[haut_1_x:bas_1_x, gauche_x_3:droite_x_3].copy()
+    cv2.imshow('Face 1_3', frame_1_3)
     frame_2_3 = into_hsv_filtered_avg[haut_2_x:bas_2_x, gauche_x_3:droite_x_3-length_pince].copy()
     cv2.imshow('Face 2_3', frame_2_3)
     frame_3_3 = into_hsv_filtered_avg[haut_3_x:bas_3_x, gauche_x_3:droite_x_3].copy()
+    cv2.imshow('Face 3_3', frame_3_3)
 
     square1_1 = colorofsquare(frame_1_1)
     square2_1 = colorofsquare(frame_2_1)
