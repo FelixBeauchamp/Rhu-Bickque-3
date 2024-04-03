@@ -4,7 +4,12 @@ from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
 SolvingState = 0
 stop_pressed = False
+clamp = False
+mapping = False
+Solve = False
+
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
+total_moves = 0
 
 class CubeDisplay(QWidget):
     colorsChanged = pyqtSignal(dict)
