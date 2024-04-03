@@ -245,10 +245,10 @@ class CubeDisplay(QWidget):
             for sub_move in move:
                 print(sub_move)
                 control.do_move(sub_move)
-            self.apply_move(self.face_colors)
-            self.can_change_colors = True
-            self.update_face_colors(self.face_colors, moves_list[0][i])
-            self.can_change_colors = False
+            # self.apply_move(self.face_colors)
+            # self.can_change_colors = True
+            # self.update_face_colors(self.face_colors, moves_list[0][i])
+            # self.can_change_colors = False
             i = i + 1
 
     def apply_move(self, color_to_change, move):
