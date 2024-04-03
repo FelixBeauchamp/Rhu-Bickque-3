@@ -1,4 +1,6 @@
 import sys
+import time
+
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
@@ -147,9 +149,13 @@ class CubeDisplay(QWidget):
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
         global clamp
+        global SolvingState
 
-        clamp = True
         print("Start Clamping")
+        clamp = True
+        while SolvingState != 1:
+            time.sleep(0.01)
+        clamp = False
 
     def start_mapping(self):
         print("Start Mapping")
