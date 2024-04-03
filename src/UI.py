@@ -40,6 +40,8 @@ class CubeDisplay(QWidget):
 
         # Add timer widgets
         self.timer_label = QLabel("Time elapsed: 0:00.00")
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_timer)
         self.start_clamping_button = QPushButton("Start Clamping")
         self.start_clamping_button.setFixedSize(500, 30)  # Set fixed size
         self.start_clamping_button.clicked.connect(self.start_clamping)
@@ -66,12 +68,12 @@ class CubeDisplay(QWidget):
         self.progress_bar.setFixedSize(500, 30)  # Set fixed size
         layout.addWidget(self.progress_bar, alignment=Qt.AlignHCenter)  # Align progress bar to center
         self.setLayout(layout)
-        self.start_mapping_button.setEnabled(True)
+        self.start_clamping_button.setEnabled(True)
         self.start_mapping_button.setEnabled(False)
-        self.start_solving_button.setEnabled(False)
+        self.start_solve_button.setEnabled(True)
 
         time.sleep(0.1)
-        #control.initialisation()
+        control.initialisation()
 
     def setup_faces(self):
         # Clear any existing widgets
@@ -132,26 +134,28 @@ class CubeDisplay(QWidget):
 
     def update_timer(self):
         current_time = QTime.currentTime()
-        elapsed_time = self.start_time.msecsTo(current_time)
-        minutes = elapsed_time // 60000
-        seconds = (elapsed_time % 60000) // 1000
-        milliseconds = elapsed_time % 1000
+        self.elapsed_time = self.start_time.msecsTo(current_time)
+        minutes = self.elapsed_time // 60000
+        seconds = (self.elapsed_time % 60000) // 1000
+        milliseconds = self.elapsed_time % 1000
         self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}.{milliseconds:02}")
+        self.timer_label.update()
+        QApplication.processEvents()
 
         # Update progress bar value and percentage label
-        self.progress_bar.setValue(seconds)
-        progress_percent = (seconds / 120) * 100
-        self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
+        # self.progress_bar.setValue(seconds)
+        # progress_percent = (seconds / 120) * 100
+        # self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
         self.start_mapping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
-        self.start_solving_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
         control.clamp()
         self.start_mapping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(True)
-        self.start_solving_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
 
     def update_face_colors(self, modified_dict):
         if self.can_change_colors:
@@ -174,7 +178,7 @@ class CubeDisplay(QWidget):
 
         self.start_mapping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
-        self.start_solving_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
 
         mapping_array = control.mapping_sequence()
         print(mapping_array)
@@ -205,15 +209,14 @@ class CubeDisplay(QWidget):
         self.update_face_colors(modified_dict)
         self.start_mapping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
-        self.start_solving_button.setEnabled(True)
+        self.start_solve_button.setEnabled(True)
 
     def start_solve(self):
         global moves_list
-
         self.can_change_colors = False
         self.start_mapping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
-        self.start_solving_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
 
         # Change the mapping array back to its original form after applying manual change
         color_map = {
@@ -232,17 +235,23 @@ class CubeDisplay(QWidget):
             face_subarrays = [face_colors[i:i + 3] for i in range(0, len(face_colors), 3)]
             # Ajouter les sous-tableaux à notre tableau principal
             converted_face_colors.append(face_subarrays)
-
         moves_list = control.solving_moves(converted_face_colors)
-        print(moves_list)
-        time.sleep(5)
-        print('done')
-        # self.timer.start()
-        # for move in moves_list[1]:
-        #     print(move)
-        #     control.do_move(move)
+        self.start_time = QTime.currentTime()
+        self.timer.start(10)
+        print((len(moves_list)))
+        i = 0
+        for move in moves_list[2]:
+            print(move)
+            for sub_move in move:
+                print(sub_move)
+                control.do_move(sub_move)
+            self.apply_move(self.face_colors)
+            self.can_change_colors = True
+            self.update_face_colors(self.face_colors, moves_list[0][i])
+            self.can_change_colors = False
+            i = i + 1
 
-    def apply_move(face_colors, move):
+    def apply_move(self, color_to_change, move):
         # Define the mapping of faces affected by each move
         move_mapping = {
             'L': [('Left', (0, 0), (1, 0), (2, 0)),
@@ -429,7 +438,7 @@ class CubeDisplay(QWidget):
 
         # Apply the move to the face colors dictionary
         for face, *positions in move_mapping[move]:
-            face_color = face_colors[face]
+            face_color = color_to_change[face]
             colors = [face_color[pos[0]][pos[1]] for pos in positions]
             new_colors = colors[-1:] + colors[:-1]  # Shift the colors
             for pos, color in zip(positions, new_colors):

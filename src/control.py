@@ -70,7 +70,6 @@ def solving_moves(map_array):
     print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
 
     MEGA_MOVES = [moves_list, solution.sequence_motors, array_of_arrays]
-    input(MEGA_MOVES)
     return MEGA_MOVES
 
 
