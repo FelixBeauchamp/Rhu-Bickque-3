@@ -70,7 +70,7 @@ class CubeDisplay(QWidget):
         self.setLayout(layout)
         self.start_clamping_button.setEnabled(True)
         self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(True)
+        self.start_solve_button.setEnabled(False)
 
         time.sleep(0.1)
         control.initialisation()
