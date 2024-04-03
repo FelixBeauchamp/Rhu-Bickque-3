@@ -748,13 +748,16 @@ class Solver():
     def translate(self, moves):
         temp = []
         array_of_array = [[] for _ in range(len(moves))]
+        array_of_array1 = [[] for _ in range(len(moves))]
         for i in range(len(moves)):
             temp.extend(self.Dictio[moves[i]])
             array_of_array[i].extend(self.Dictio[moves[i]])
         for j in range(len(temp)):
             self.sequence_motors.extend(self.servo[temp[j]])
         self.sequence_motors.extend(self.servo['End'])
+        i = 0
         for array in array_of_array:
             for move in array:
-                move.extend(self.servo[move])
+                array_of_array1[i].extend(self.servo[move])
+            i = i + 1
         return array_of_array

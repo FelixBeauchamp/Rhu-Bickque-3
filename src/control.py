@@ -33,22 +33,22 @@ def clamp():
 
 def mapping_sequence():
     print("Press Enter to start the mapping sequence")
-    # mapp = ['O', 'B', 'B', 'G', 'G', 'Y', 'O', 'G', 'R', 'W', 'B', 'W', 'Y', 'W', 'G', 'B', 'W', 'W',
-    #         'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
-    #         'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
+    mapp = ['O', 'B', 'B', 'G', 'G', 'Y', 'O', 'G', 'R', 'W', 'B', 'W', 'Y', 'W', 'G', 'B', 'W', 'W',
+            'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
+            'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
 
     # Iterate through the camera motor sequence and analizing the
-    mapp = []
-    for move in solver.sequence_camera:
-        if move[0] == 'M':
-            OpenRBCom.sendmessage(move)
-        elif move[0] == 'S':
-            print('SNAP')
-            temp = traitement_image.faceofdacube()
-            mapp.extend(temp)
-        else:
-            ArduinoCom.sendmessage(move)
-    print(mapp)
+    # mapp = []
+    # for move in solver.sequence_camera:
+    #     if move[0] == 'M':
+    #         OpenRBCom.sendmessage(move)
+    #     elif move[0] == 'S':
+    #         print('SNAP')
+    #         temp = traitement_image.faceofdacube()
+    #         mapp.extend(temp)
+    #     else:
+    #         ArduinoCom.sendmessage(move)
+    # print(mapp)
     map_array = solver.reformat(mapp)
     c = cube.Cube(map_array)
     print("Solving:\n")
@@ -70,7 +70,7 @@ def solving_moves(map_array):
     print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
 
     MEGA_MOVES = [moves_list, solution.sequence_motors, array_of_arrays]
-
+    input(MEGA_MOVES)
     return MEGA_MOVES
 
 
@@ -90,13 +90,13 @@ def close_ports():
 
 if __name__ == '__main__':
     input("MEGAWHAAAT")
-    # initialisation()
-    # clamp()
-    # deez = mapping_sequence()
-    # balls = solving_moves(deez)
-    # for dicks in balls:
-    #     do_move(dicks)
-    # close_ports()
+    initialisation()
+    clamp()
+    deez = mapping_sequence()
+    balls = solving_moves(deez)
+    for dicks in balls:
+        do_move(dicks)
+    close_ports()
 
     # print("Initialisation: OPENING/HOMING")
     # OpenRBCom.openport(port_OpenRB)
