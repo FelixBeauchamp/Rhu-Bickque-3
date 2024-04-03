@@ -6,6 +6,7 @@ from helper import getScramble
 cb = Cube([[['B', 'G', 'O'], ['R', 'G', 'Y'], ['W', 'R', 'R']], [['G', 'Y', 'W'], ['B', 'O', 'B'], ['Y', 'O', 'B']],
            [['G', 'G', 'W'], ['W', 'B', 'G'], ['Y', 'O', 'G']], [['R', 'O', 'O'], ['R', 'R', 'B'], ['Y', 'R', 'B']],
            [['O', 'Y', 'G'], ['W', 'W', 'B'], ['O', 'G', 'R']], [['B', 'W', 'R'], ['W', 'Y', 'O'], ['Y', 'Y', 'W']]])
+print(cb)
 #  5
 # 3012
 #  4
@@ -13,7 +14,7 @@ cb = Cube([[['B', 'G', 'O'], ['R', 'G', 'Y'], ['W', 'R', 'R']], [['G', 'Y', 'W']
 # print("Scramble:", scramble)
 # cb.doMoves(scramble)
 
-print(cb)
+
 
 solver = Solver(cb)
 solver.solveCube(optimize=True)
