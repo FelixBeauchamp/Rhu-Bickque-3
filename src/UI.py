@@ -217,7 +217,7 @@ class CubeDisplay(QWidget):
         moves_list = control.solving_moves(converted_face_colors)
         print(moves_list)
 
-        self.timer.start()
+        # self.timer.start()
         for move in moves_list[1]:
             print(move)
             control.do_move(move)
