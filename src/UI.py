@@ -53,7 +53,7 @@ class CubeDisplay(QWidget):
         layout.addWidget(self.timer_label, alignment=Qt.AlignHCenter)  # Align label to center
         layout.addWidget(self.start_clamping_button, alignment=Qt.AlignHCenter)  # Align button to center
         layout.addWidget(self.start_mapping_button, alignment=Qt.AlignHCenter)  # Align button to center
-        layout.addWidget(self.start_button, alignment=Qt.AlignHCenter)  # Align button to center
+        layout.addWidget(self.start_solve_button, alignment=Qt.AlignHCenter)  # Align button to center
         layout.addWidget(self.stop_button, alignment=Qt.AlignHCenter)  # Align button to center
 
         # Add progress bar and percentage label
