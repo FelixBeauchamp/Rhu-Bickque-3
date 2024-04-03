@@ -65,8 +65,12 @@ class CubeDisplay(QWidget):
         self.progress_bar.setValue(0)  # Start with the progress bar empty
         self.progress_bar.setFixedSize(500, 30)  # Set fixed size
         layout.addWidget(self.progress_bar, alignment=Qt.AlignHCenter)  # Align progress bar to center
-
         self.setLayout(layout)
+
+        time.sleep(0.1)
+        control.initialisation()
+
+
 
     def setup_faces(self):
         # Clear any existing widgets
@@ -140,9 +144,6 @@ class CubeDisplay(QWidget):
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
-
-        control.initialisation()
-        time.sleep(0.1)
         control.clamp()
 
     def update_face_colors(self, modified_dict):
@@ -213,6 +214,35 @@ class CubeDisplay(QWidget):
         self.timer.start()
         for i in range(len(moves_list)):
             control.do_move(moves_list[i])
+
+        def apply_move(face_colors, move):
+            # Define the mapping of faces affected by each move
+            move_mapping = {
+                'F': [('Front', (0, 0), (0, 1), (0, 2)),
+                      ('Top', (2, 0), (2, 1), (2, 2)),
+                      ('Right', (0, 2), (1, 2), (2, 2)),
+                      ('Bottom', (0, 0), (0, 1), (0, 2)),
+                      ('Left', (0, 0), (1, 0), (2, 0))],
+                'B': [('Back', (0, 0), (0, 1), (0, 2)),
+                      ('Top', (0, 0), (0, 1), (0, 2)),
+                      ('Left', (0, 0), (1, 0), (2, 0)),
+                      ('Bottom', (2, 0), (2, 1), (2, 2)),
+                      ('Right', (0, 2), (1, 2), (2, 2))],
+                'U': [('Top', (0, 0), (0, 1), (0, 2)),
+                      ('Front', (0, 0), (0, 1), (0, 2)),
+                      ('Right', (0, 0), (0, 1), (0, 2)),
+                      ('Back', (0, 0), (0, 1), (0, 2)),
+                      ('Left', (0, 0), (0, 1), (0, 2))],
+                # Define other moves similarly
+            }
+
+            # Apply the move to the face colors dictionary
+            for face, *positions in move_mapping[move]:
+                face_color = face_colors[face]
+                colors = [face_color[pos[0]][pos[1]] for pos in positions]
+                new_colors = colors[-1:] + colors[:-1]  # Shift the colors
+                for pos, color in zip(positions, new_colors):
+                    face_color[pos[0]][pos[1]] = color
 
 
 if __name__ == '__main__':
