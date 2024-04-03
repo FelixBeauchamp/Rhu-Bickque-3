@@ -204,31 +204,39 @@ void left (const uint8_t DXL_ID, int32_t *goal_position)
 void right_2M_M2M4 (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
 {
     // Right rotatation from 2 motors based on the first one
+    delay_90_degree = 25;
     right(DXL_ID_1, goal_position_1);
     left(DXL_ID_2, goal_position_2);
+    delay_90_degree = 400;
 
 }
 
 void left_2M_M2M4 (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
 {
     // Right rotatation from 2 motors based on the first one
+    delay_90_degree = 25;
     left(DXL_ID_1, goal_position_1);
     right(DXL_ID_2, goal_position_2);
+    delay_90_degree = 400;
 
 }
 
 void left_2M_M1M3 (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
 {
     // Left rotatation from 2 motors based on the first one
+    delay_90_degree = 25;
     left(DXL_ID_1, goal_position_1);
     left(DXL_ID_2, goal_position_2);
+    delay_90_degree = 400;
 }
 
 void right_2M_M1M3 (const uint8_t DXL_ID_1, int32_t *goal_position_1, const uint8_t DXL_ID_2, int32_t *goal_position_2)
 {
     // Left rotatation from 2 motors based on the first one
+    delay_90_degree = 25;
     right(DXL_ID_1, goal_position_1);
     right(DXL_ID_2, goal_position_2);
+    delay_90_degree = 400;
 }
 
 void done(const uint8_t DXL_ID_1, const uint8_t DXL_ID_2) //Revoir le while seems sus

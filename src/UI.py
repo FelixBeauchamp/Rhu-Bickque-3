@@ -1,5 +1,6 @@
 import sys
 import time
+import control
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
@@ -11,6 +12,7 @@ mapping = False
 Solve = False
 
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
+moves_list = []
 total_moves = 0
 
 class CubeDisplay(QWidget):
@@ -18,7 +20,7 @@ class CubeDisplay(QWidget):
         super().__init__(parent)
         self.face_colors = initial_colors
         self.can_change_colors = True  # Flag to control color changes
-        self.start_button_clicked = False  # Flag to track if start button has been clicked
+        self.start_solve_button_clicked = False  # Flag to track if start button has been clicked
         self.elapsed_time = 0  # Variable to store elapsed time
         self.initUI()
 
@@ -42,9 +44,9 @@ class CubeDisplay(QWidget):
         self.start_mapping_button = QPushButton("Start Mapping")
         self.start_mapping_button.setFixedSize(500, 30)  # Set fixed size
         self.start_mapping_button.clicked.connect(self.start_mapping)
-        self.start_button = QPushButton("Start Solve")
-        self.start_button.setFixedSize(500, 30)  # Set fixed size
-        self.start_button.clicked.connect(self.start_timer)
+        self.start_solve_button = QPushButton("Start Solve")
+        self.start_solve_button.setFixedSize(500, 30)  # Set fixed size
+        self.start_solve_button.clicked.connect(self.start_solve)
         self.stop_button = QPushButton("Stop")
         self.stop_button.setFixedSize(500, 30)  # Set fixed size
         self.stop_button.clicked.connect(self.stop_timer)
@@ -101,19 +103,6 @@ class CubeDisplay(QWidget):
             for face_name, colors in self.face_colors.items():
                 print(f"{face_name}: {colors}")
 
-    def start_timer(self):
-        if not self.start_button_clicked:
-            self.can_change_colors = False  # Disable color changes
-            self.start_button_clicked = True  # Set start button clicked
-            self.start_button.setEnabled(False)
-            self.apply_button.setEnabled(False)  # Disable apply button
-            self.timer = QTimer(self)
-            self.timer.timeout.connect(self.update_timer)
-            self.start_time = QTime.currentTime().addMSecs(-self.elapsed_time)
-            self.timer.start(10)  # Update timer every 10 ms
-        else:
-            self.can_change_colors = False
-            self.timer.start()
 
     def stop_timer(self):
         if hasattr(self, 'timer'):
@@ -129,8 +118,8 @@ class CubeDisplay(QWidget):
         self.progress_bar.setValue(0)  # Reset progress bar value
         self.progress_label.setText("Progress: 0%")
         self.can_change_colors = True  # Enable color changes
-        self.start_button_clicked = False  # Reset start button clicked flag
-        self.start_button.setEnabled(True)
+        self.start_solve_button_clicked = False  # Reset start button clicked flag
+        self.start_solve_button.setEnabled(True)
         self.apply_button.setEnabled(True)  # Re-enable apply button
 
     def update_timer(self):
@@ -148,17 +137,26 @@ class CubeDisplay(QWidget):
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
-        global clamp
-        global SolvingState
 
-        print("Start Clamping")
-        clamp = True
-        while SolvingState != 1:
-            time.sleep(0.01)
-        clamp = False
+        control.initialisation()
+        time.sleep(0.1)
+        control.clamp()
 
     def start_mapping(self):
-        print("Start Mapping")
+        global mapping_array
+        global moves_list
+
+        mapping_array = control.mapping_sequence()
+        moves_list = control.solving_moves(mapping_array)
+
+    def start_solve(self):
+        global moves_list
+
+        self.can_change_colors = False
+        self.timer.start()
+        for i in range(len(moves_list)):
+            control.do_move(moves_list[i])
+
 
 if __name__ == '__main__':
     # Initialize face colors to all white
