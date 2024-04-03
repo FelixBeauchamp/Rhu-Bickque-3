@@ -82,7 +82,8 @@ using namespace ControlTableItem;
 
 //Global variables to control move
 int degree_90_thick = 512 *2;
-int degree_95_thick = (512/45) * 95;
+int degree_95_thick = (512/45) * 97.5;
+int delay_90_degree = 400;
 
 int32_t goal_position_M1 = 0;
 int32_t goal_position_M2 = 0;
@@ -180,7 +181,7 @@ void right (const uint8_t DXL_ID, int32_t *goal_position)
     }
     int move =  *goal_position + degree_95_thick ;
     dxl.setGoalPosition(DXL_ID, move);
-    delay(25);
+    delay(delay_90_degree);
     move = *goal_position + degree_90_thick;
     *goal_position = *goal_position + degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
@@ -194,8 +195,8 @@ void left (const uint8_t DXL_ID, int32_t *goal_position)
     }
     int move =  *goal_position - degree_95_thick ;
     dxl.setGoalPosition(DXL_ID, move);
-    delay(25);
-    move =  *goal_position - degree_90_thick
+    delay(delay_90_degree);
+    move =  *goal_position - degree_90_thick;
     *goal_position = *goal_position - degree_90_thick;
     dxl.setGoalPosition(DXL_ID, move);
 }
@@ -324,12 +325,13 @@ void setting_up(const uint8_t DXL_ID){
 
   // Turn off torque when configuring items in EEPROM area
   dxl.torqueOff(DXL_ID);
+  dxl.setOperatingMode(DXL_ID, OP_POSITION);
 
   dxl.setOperatingMode(DXL_ID, OP_EXTENDED_POSITION);
 
   dxl.torqueOn(DXL_ID);
 
-  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_ID, 15000); //Velocity is from 0-32767 Profil_velocity*0.229 rev/min = speed
+  dxl.writeControlTableItem(PROFILE_VELOCITY, DXL_ID, 20000); //Velocity is from 0-32767 Profil_velocity*0.229 rev/min = speed
 
   dxl.writeControlTableItem(POSITION_P_GAIN, DXL_ID, position_p_gain);
   dxl.writeControlTableItem(POSITION_I_GAIN, DXL_ID, position_i_gain);
