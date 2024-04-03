@@ -747,8 +747,14 @@ class Solver():
     # using the dictionaries 'Dictio' and 'servo'
     def translate(self, moves):
         temp = []
+        array_of_array = [[] for _ in range(len(moves))]
         for i in range(len(moves)):
             temp.extend(self.Dictio[moves[i]])
+            array_of_array[i].extend(self.Dictio[moves[i]])
         for j in range(len(temp)):
             self.sequence_motors.extend(self.servo[temp[j]])
         self.sequence_motors.extend(self.servo['End'])
+        for array in array_of_array:
+            for move in array:
+                move.extend(self.servo[move])
+        return array_of_array

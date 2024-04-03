@@ -27,12 +27,12 @@ def initialisation():
 
 
 def clamp():
-    input("Press Enter to clamp the cube")
+    print("Press Enter to clamp the cube")
     ArduinoCom.sendmessage('CXCY')
 
 
 def mapping_sequence():
-    input("Press Enter to start the mapping sequence")
+    print("Press Enter to start the mapping sequence")
     # mapp = ['O', 'B', 'B', 'G', 'G', 'Y', 'O', 'G', 'R', 'W', 'B', 'W', 'Y', 'W', 'G', 'B', 'W', 'W',
     #         'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
     #         'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
@@ -43,7 +43,7 @@ def mapping_sequence():
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
         elif move[0] == 'S':
-            input('SNAP')
+            print('SNAP')
             temp = traitement_image.faceofdacube()
             mapp.extend(temp)
         else:
@@ -66,16 +66,16 @@ def solving_moves(map_array):
 
     moves_list = solver.Solver.reformat(mov)
     print(f"{len(moves_list)} moves: {' '.join(moves_list)}")
-    solution.translate(moves_list)
+    array_of_arrays = solution.translate(moves_list)
     print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
 
-    MEGA_MOVES = [moves_list, solution.sequence_motors]
+    MEGA_MOVES = [moves_list, solution.sequence_motors, array_of_arrays]
 
     return MEGA_MOVES
 
 
 def do_move(move):
-    input(move)
+    print(move)
     if move[0] == 'M' or move[0] == 'H':
         OpenRBCom.sendmessage(move)
     else:
