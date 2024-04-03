@@ -4,11 +4,14 @@ from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
 SolvingState = 0
 stop_pressed = False
+clamp = False
+mapping = False
+Solve = False
+
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
+total_moves = 0
 
 class CubeDisplay(QWidget):
-    colorsChanged = pyqtSignal(dict)
-
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
         self.face_colors = initial_colors
@@ -31,19 +34,23 @@ class CubeDisplay(QWidget):
 
         # Add timer widgets
         self.timer_label = QLabel("Time elapsed: 0:00.00")
-        self.start_button = QPushButton("Start")
+        self.start_clamping_button = QPushButton("Start Clamping")
+        self.start_clamping_button.setFixedSize(500, 30)  # Set fixed size
+        self.start_clamping_button.clicked.connect(self.start_clamping)
+        self.start_mapping_button = QPushButton("Start Mapping")
+        self.start_mapping_button.setFixedSize(500, 30)  # Set fixed size
+        self.start_mapping_button.clicked.connect(self.start_mapping)
+        self.start_button = QPushButton("Start Solve")
         self.start_button.setFixedSize(500, 30)  # Set fixed size
         self.start_button.clicked.connect(self.start_timer)
         self.stop_button = QPushButton("Stop")
         self.stop_button.setFixedSize(500, 30)  # Set fixed size
         self.stop_button.clicked.connect(self.stop_timer)
-        self.reset_button = QPushButton("Reset")
-        self.reset_button.setFixedSize(500, 30)  # Set fixed size
-        self.reset_button.clicked.connect(self.reset_timer)
         layout.addWidget(self.timer_label, alignment=Qt.AlignHCenter)  # Align label to center
+        layout.addWidget(self.start_clamping_button, alignment=Qt.AlignHCenter)  # Align button to center
+        layout.addWidget(self.start_mapping_button, alignment=Qt.AlignHCenter)  # Align button to center
         layout.addWidget(self.start_button, alignment=Qt.AlignHCenter)  # Align button to center
         layout.addWidget(self.stop_button, alignment=Qt.AlignHCenter)  # Align button to center
-        layout.addWidget(self.reset_button, alignment=Qt.AlignHCenter)  # Align button to center
 
         # Add progress bar and percentage label
         self.progress_label = QLabel("Progress: 0%")
@@ -102,10 +109,6 @@ class CubeDisplay(QWidget):
             self.timer.timeout.connect(self.update_timer)
             self.start_time = QTime.currentTime().addMSecs(-self.elapsed_time)
             self.timer.start(10)  # Update timer every 10 ms
-            # Set face colors to updated colors
-            self.face_colors = updated_colors
-            self.setup_faces()
-            self.colorsChanged.emit(updated_colors)
         else:
             self.can_change_colors = False
             self.timer.start()
@@ -114,9 +117,7 @@ class CubeDisplay(QWidget):
         if hasattr(self, 'timer'):
             self.timer.stop()
             self.elapsed_time = self.start_time.elapsed()
-            self.start_button.setEnabled(True)
-            self.apply_button.setEnabled(True)  # Re-enable apply button
-            self.can_change_colors = False  # Disable color changes
+            self.close()  # Close the UI when stop button is pressed
 
     def reset_timer(self):
         self.timer_label.setText("Time elapsed: 0:00.00")
@@ -129,9 +130,6 @@ class CubeDisplay(QWidget):
         self.start_button_clicked = False  # Reset start button clicked flag
         self.start_button.setEnabled(True)
         self.apply_button.setEnabled(True)  # Re-enable apply button
-        # Reset face colors to white
-        self.face_colors = initial_face_colors
-        self.setup_faces()  # Update the display with white colors
 
     def update_timer(self):
         current_time = QTime.currentTime()
@@ -146,7 +144,15 @@ class CubeDisplay(QWidget):
         progress_percent = (seconds / 120) * 100
         self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
 
+    # Additional methods for start_clamping and start_mapping buttons
+    def start_clamping(self):
+        global clamp
 
+        clamp = True
+        print("Start Clamping")
+
+    def start_mapping(self):
+        print("Start Mapping")
 
 if __name__ == '__main__':
     # Initialize face colors to all white
@@ -163,19 +169,4 @@ if __name__ == '__main__':
     cube_display = CubeDisplay(initial_face_colors)
     cube_display.show()
 
-    # Example of updating colors from another Python file
-    def update_colors_from_external_file(new_colors):
-        cube_display.face_colors = new_colors
-        cube_display.setup_faces()
-
-    # Simulate receiving updated colors from another Python file
-    updated_colors = {
-        "Back": ['red'] * 9,
-        "Left": ['green'] * 9,
-        "Top": ['yellow'] * 9,
-        "Right": ['blue'] * 9,
-        "Front": ['orange'] * 9,
-        "Bottom": ['white'] * 9
-    }
-    update_colors_from_external_file(updated_colors)
     sys.exit(app.exec_())
