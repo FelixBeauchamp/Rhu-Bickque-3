@@ -68,9 +68,7 @@ class CubeDisplay(QWidget):
         self.setLayout(layout)
 
         time.sleep(0.1)
-        control.initialisation()
-
-
+        # control.initialisation()
 
     def setup_faces(self):
         # Clear any existing widgets
@@ -88,7 +86,7 @@ class CubeDisplay(QWidget):
             face_colors = self.face_colors[face_name]
             for seg_idx, color in enumerate(face_colors):
                 label = QPushButton()
-                #label.setProperty("face_name", face_name)
+                # label.setProperty("face_name", face_name)
                 label.setStyleSheet(f"background-color: {color}; border: 1px solid black;")
                 label.setFixedSize(50, 50)
                 label.clicked.connect(lambda state, f=face_name, s=seg_idx: self.change_color(f, s))
@@ -198,7 +196,7 @@ class CubeDisplay(QWidget):
 
         self.can_change_colors = False
 
-        #Change the mapping array back to its original form after applying manual change
+        # Change the mapping array back to its original form after applying manual change
         color_map = {
             'green': 'G',
             'red': 'R',
@@ -207,16 +205,21 @@ class CubeDisplay(QWidget):
             'yellow': 'Y',
             'orange': 'O'
         }
-        # Convert the face colors to Rubik's Cube notation directly
-        converted_colors_mapping = {
-            face: [[color_map[color] for color in row] for row in colors]
-            for face, colors in self.face_colors.items()
-        }
+        converted_face_colors = []
+        for face_name in ['Front', 'Right', 'Back', 'Left', 'Bottom', 'Top']:
+            # Récupérer les couleurs de la face et les convertir selon la carte de couleur
+            face_colors = [color_map[color] for color in self.face_colors[face_name]]
+            # Diviser les couleurs en sous-tableaux de 3 éléments
+            face_subarrays = [face_colors[i:i + 3] for i in range(0, len(face_colors), 3)]
+            # Ajouter les sous-tableaux à notre tableau principal
+            converted_face_colors.append(face_subarrays)
 
-        moves_list = control.solving_moves(converted_colors_mapping)
+        moves_list = control.solving_moves(converted_face_colors)
+        print(moves_list)
 
         self.timer.start()
-        for move in (moves_list):
+        for move in moves_list:
+            print(move)
             control.do_move(move)
 
     def apply_move(face_colors, move):
@@ -289,11 +292,11 @@ class CubeDisplay(QWidget):
                    ('Top', (0, 2), (0, 1), (0, 0)),
                    ('Bottom', (0, 2), (0, 1), (0, 0))],
             "Bi'": [('Back', (0, 2), (0, 1), (0, 0)),
-                   ('Right', (0, 0), (1, 0), (2, 0)),
-                   ('Front', (2, 0), (2, 1), (2, 2)),
-                   ('Left', (0, 2), (1, 2), (2, 2)),
-                   ('Top', (0, 0), (0, 1), (0, 2)),
-                   ('Bottom', (0, 0), (0, 1), (0, 2))],
+                    ('Right', (0, 0), (1, 0), (2, 0)),
+                    ('Front', (2, 0), (2, 1), (2, 2)),
+                    ('Left', (0, 2), (1, 2), (2, 2)),
+                    ('Top', (0, 0), (0, 1), (0, 2)),
+                    ('Bottom', (0, 0), (0, 1), (0, 2))],
             'M': [('Right', (0, 1), (1, 1), (2, 1)),
                   ('Front', (0, 1), (1, 1), (2, 1)),
                   ('Left', (0, 1), (1, 1), (2, 1)),
@@ -367,42 +370,42 @@ class CubeDisplay(QWidget):
                   ('Left', (2, 0), (2, 1), (2, 2)),
                   ('Front', (2, 0), (2, 1), (2, 2))],
             'li': [('Right', (0, 2), (1, 2), (2, 2)),
-                  ('Back', (0, 0), (1, 0), (2, 0)),
-                  ('Top', (0, 0), (1, 0), (2, 0)),
-                  ('Front', (0, 0), (1, 0), (2, 0)),
-                  ('Bottom', (0, 0), (1, 0), (2, 0)),
-                  ('Left', (0, 0), (1, 0), (2, 0))],
+                   ('Back', (0, 0), (1, 0), (2, 0)),
+                   ('Top', (0, 0), (1, 0), (2, 0)),
+                   ('Front', (0, 0), (1, 0), (2, 0)),
+                   ('Bottom', (0, 0), (1, 0), (2, 0)),
+                   ('Left', (0, 0), (1, 0), (2, 0))],
             'ri': [('Left', (0, 0), (1, 0), (2, 0)),
-                  ('Back', (0, 2), (1, 2), (2, 2)),
-                  ('Top', (0, 2), (1, 2), (2, 2)),
-                  ('Front', (0, 2), (1, 2), (2, 2)),
-                  ('Bottom', (0, 2), (1, 2), (2, 2)),
-                  ('Right', (0, 0), (1, 0), (2, 0))],
+                   ('Back', (0, 2), (1, 2), (2, 2)),
+                   ('Top', (0, 2), (1, 2), (2, 2)),
+                   ('Front', (0, 2), (1, 2), (2, 2)),
+                   ('Bottom', (0, 2), (1, 2), (2, 2)),
+                   ('Right', (0, 0), (1, 0), (2, 0))],
             'ui': [('Bottom', (2, 0), (2, 1), (2, 2)),
-                  ('Left', (0, 0), (0, 1), (0, 2)),
-                  ('Back', (0, 0), (0, 1), (0, 2)),
-                  ('Front', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (0, 0), (0, 1), (0, 2)),
-                  ('Top', (0, 0), (0, 1), (0, 2))],
+                   ('Left', (0, 0), (0, 1), (0, 2)),
+                   ('Back', (0, 0), (0, 1), (0, 2)),
+                   ('Front', (0, 0), (0, 1), (0, 2)),
+                   ('Right', (0, 0), (0, 1), (0, 2)),
+                   ('Top', (0, 0), (0, 1), (0, 2))],
             'di': [('Top', (0, 0), (0, 1), (0, 2)),
-                  ('Left', (2, 0), (2, 1), (2, 2)),
-                  ('Back', (2, 0), (2, 1), (2, 2)),
-                  ('Front', (2, 0), (2, 1), (2, 2)),
-                  ('Right', (2, 0), (2, 1), (2, 2)),
-                  ('Bottom', (0, 0), (0, 1), (0, 2))],
+                   ('Left', (2, 0), (2, 1), (2, 2)),
+                   ('Back', (2, 0), (2, 1), (2, 2)),
+                   ('Front', (2, 0), (2, 1), (2, 2)),
+                   ('Right', (2, 0), (2, 1), (2, 2)),
+                   ('Bottom', (0, 0), (0, 1), (0, 2))],
             'fi': [('Back', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (0, 0), (0, 1), (0, 2)),
-                  ('Bottom', (0, 0), (0, 1), (0, 2)),
-                  ('Top', (0, 0), (0, 1), (0, 2)),
-                  ('Left', (0, 0), (0, 1), (0, 2)),
-                  ('Front', (0, 0), (0, 1), (0, 2))],
+                   ('Right', (0, 0), (0, 1), (0, 2)),
+                   ('Bottom', (0, 0), (0, 1), (0, 2)),
+                   ('Top', (0, 0), (0, 1), (0, 2)),
+                   ('Left', (0, 0), (0, 1), (0, 2)),
+                   ('Front', (0, 0), (0, 1), (0, 2))],
             'bi': [('Front', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (2, 0), (2, 1), (2, 2)),
-                  ('Bottom', (0, 2), (0, 1), (0, 0)),
-                  ('Top', (0, 2), (0, 1), (0, 0)),
-                  ('Left', (2, 0), (2, 1), (2, 2)),
-                  ('Back', (2, 0), (2, 1), (2, 2))]
-            }
+                   ('Right', (2, 0), (2, 1), (2, 2)),
+                   ('Bottom', (0, 2), (0, 1), (0, 0)),
+                   ('Top', (0, 2), (0, 1), (0, 0)),
+                   ('Left', (2, 0), (2, 1), (2, 2)),
+                   ('Back', (2, 0), (2, 1), (2, 2))]
+        }
 
         # Apply the move to the face colors dictionary
         for face, *positions in move_mapping[move]:
@@ -412,20 +415,19 @@ class CubeDisplay(QWidget):
             for pos, color in zip(positions, new_colors):
                 face_color[pos[0]][pos[1]] = color
 
-
-#if __name__ == '__main__':
-    # # Initialize face colors to all white
-    # initial_face_colors = {
-    #     "Back": ['red'] * 9,
-    #     "Left": ['green'] * 9,
-    #     "Top": ['yellow'] * 9,
-    #     "Right": ['blue'] * 9,
-    #     "Front": ['orange'] * 9,
-    #     "Bottom": ['white'] * 9
-    # }
-    #
-    # app = QApplication(sys.argv)
-    # cube_display = CubeDisplay(initial_face_colors)
-    # cube_display.show()
-    #
-    # sys.exit(app.exec_())
+# if __name__ == '__main__':
+# # Initialize face colors to all white
+# initial_face_colors = {
+#     "Back": ['red'] * 9,
+#     "Left": ['green'] * 9,
+#     "Top": ['yellow'] * 9,
+#     "Right": ['blue'] * 9,
+#     "Front": ['orange'] * 9,
+#     "Bottom": ['white'] * 9
+# }
+#
+# app = QApplication(sys.argv)
+# cube_display = CubeDisplay(initial_face_colors)
+# cube_display.show()
+#
+# sys.exit(app.exec_())
