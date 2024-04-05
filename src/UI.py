@@ -116,7 +116,7 @@ class CubeDisplay(QWidget):
 
     def stop(self):
         self.stop_timer()
-
+        QApplication.quit()
         sys.exit(0)
 
     def stop_timer(self):
