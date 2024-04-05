@@ -76,7 +76,7 @@ class CubeDisplay(QWidget):
         self.start_solve_button.setEnabled(True)
 
         time.sleep(0.1)
-        # control.initialisation()
+        control.initialisation()
 
     def setup_faces(self):
         # Clear any existing widgets
