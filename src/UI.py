@@ -114,6 +114,11 @@ class CubeDisplay(QWidget):
             for face_name, colors in self.face_colors.items():
                 print(f"{face_name}: {colors}")
 
+    def stop(self):
+        self.stop_timer()
+
+        sys.exit(0)
+
     def stop_timer(self):
         if hasattr(self, 'timer'):
             self.timer.stop()
@@ -132,8 +137,6 @@ class CubeDisplay(QWidget):
         self.start_solve_button.setEnabled(True)
         self.apply_button.setEnabled(True)  # Re-enable apply button
 
-    def stop(self):
-        QApplication.quit()
 
     def update_timer(self):
         current_time = QTime.currentTime()
