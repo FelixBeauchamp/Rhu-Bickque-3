@@ -1,12 +1,13 @@
 import sys
 import time
 import control
+import threading
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
 SolvingState = 0
-stop_pressed = False
+stop_flag = False
 clamp = False
 mapping = False
 Solve = False
@@ -115,8 +116,9 @@ class CubeDisplay(QWidget):
                 print(f"{face_name}: {colors}")
 
     def stop(self):
+        global stop_flag
+        stop_flag = True
         self.stop_timer()
-        QApplication.quit()
         sys.exit(0)
 
     def stop_timer(self):
@@ -219,6 +221,8 @@ class CubeDisplay(QWidget):
 
     def start_solve(self):
         global moves_list
+        global stop_flag
+        stop_flag = False
         self.can_change_colors = False
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
@@ -259,6 +263,8 @@ class CubeDisplay(QWidget):
                 self.update_face_colors(self.face_colors)
                 self.can_change_colors = False
             i = i + 1
+        solving_thread = threading.Thread(target=self.solve_cube)
+        solving_thread.start()
 
     def apply_move(self, color_to_change, move):
         # Define the mapping of faces affected by each move
