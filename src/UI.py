@@ -149,11 +149,11 @@ class CubeDisplay(QWidget):
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
         control.clamp()
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(True)
         self.start_solve_button.setEnabled(False)
 
@@ -176,7 +176,7 @@ class CubeDisplay(QWidget):
         global mapping_array
         global moves_list
 
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
 
@@ -207,14 +207,14 @@ class CubeDisplay(QWidget):
         # Print the modified dictionary
         print(modified_dict)
         self.update_face_colors(modified_dict)
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(True)
 
     def start_solve(self):
         global moves_list
         self.can_change_colors = False
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
 
