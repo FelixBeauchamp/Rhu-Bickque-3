@@ -19,12 +19,15 @@ total_moves = 0
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
+        self.start_time = None
         self.face_colors = initial_colors  # Store the initial colors of each face
         self.face_buttons = {}
         self.can_change_colors = True  # Flag to control color changes
         self.start_solve_button_clicked = False  # Flag to track if start button has been clicked
         self.elapsed_time = 0  # Variable to store elapsed time
         self.initUI()
+        self.actual_move = 0
+        self.total_moves = 0
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -63,17 +66,17 @@ class CubeDisplay(QWidget):
         # Add progress bar and percentage label
         self.progress_label = QLabel("Progress: 0%")
         self.progress_bar = QProgressBar()
-        self.progress_bar.setRange(0, 120)  # Set the range of the progress bar
+        self.progress_bar.setRange(0, 100)  # Set the range of the progress bar
         self.progress_bar.setValue(0)  # Start with the progress bar empty
         self.progress_bar.setFixedSize(500, 30)  # Set fixed size
         layout.addWidget(self.progress_bar, alignment=Qt.AlignHCenter)  # Align progress bar to center
         self.setLayout(layout)
         self.start_clamping_button.setEnabled(True)
         self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
+        self.start_solve_button.setEnabled(True)
 
         time.sleep(0.1)
-        control.initialisation()
+        # control.initialisation()
 
     def setup_faces(self):
         # Clear any existing widgets
@@ -118,7 +121,7 @@ class CubeDisplay(QWidget):
         if hasattr(self, 'timer'):
             self.timer.stop()
             self.elapsed_time = self.start_time.elapsed()
-            self.close()  # Close the UI when stop button is pressed
+            # self.close()  # Close the UI when stop button is pressed
 
     def reset_timer(self):
         self.timer_label.setText("Time elapsed: 0:00.00")
@@ -143,17 +146,17 @@ class CubeDisplay(QWidget):
         QApplication.processEvents()
 
         # Update progress bar value and percentage label
-        # self.progress_bar.setValue(seconds)
-        # progress_percent = (seconds / 120) * 100
-        # self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
+        self.progress_bar.setValue(self.actual_move)
+        progress_percent = (self.actual_move / self.total_moves) * 100
+        self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
         control.clamp()
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(True)
         self.start_solve_button.setEnabled(False)
 
@@ -176,7 +179,7 @@ class CubeDisplay(QWidget):
         global mapping_array
         global moves_list
 
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
 
@@ -207,14 +210,14 @@ class CubeDisplay(QWidget):
         # Print the modified dictionary
         print(modified_dict)
         self.update_face_colors(modified_dict)
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(True)
 
     def start_solve(self):
         global moves_list
         self.can_change_colors = False
-        self.start_mapping_button.setEnabled(False)
+        self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
 
@@ -236,219 +239,386 @@ class CubeDisplay(QWidget):
             # Ajouter les sous-tableaux à notre tableau principal
             converted_face_colors.append(face_subarrays)
         moves_list = control.solving_moves(converted_face_colors)
+        self.total_moves = len(moves_list[1])
+        self.progress_bar.setRange(0, self.total_moves)
         self.start_time = QTime.currentTime()
         self.timer.start(10)
-        print((len(moves_list)))
         i = 0
-        print(moves_list)
         for move in moves_list[2]:
             print(move)
             for sub_move in move:
                 print(sub_move)
                 control.do_move(sub_move)
-            if i < len(moves_list[2]) - 1:
-                print(moves_list[0][i])
-                self.apply_move(self.face_colors, moves_list[0][i])
-                self.can_change_colors = True
-                self.update_face_colors(self.face_colors)
-                self.can_change_colors = False
+                self.actual_move = self.actual_move + 1
+                self.update_timer()
+            self.apply_move(moves_list[0][i])
+            self.can_change_colors = True
+            self.update_face_colors(self.face_colors)
+            self.can_change_colors = False
             i = i + 1
+        print('Done solving')
+        self.stop_timer()
 
-    def apply_move(self, color_to_change, move):
-        # Define the mapping of faces affected by each move
-        move_mapping = {
-            'L': [('Left', (0, 0), (1, 0), (2, 0)),
-                  ('Front', (0, 0), (1, 0), (2, 0)),
-                  ('Right', (0, 0), (1, 0), (2, 0)),
-                  ('Back', (0, 0), (1, 0), (2, 0)),
-                  ('Top', (0, 0), (1, 0), (2, 0)),
-                  ('Bottom', (0, 0), (1, 0), (2, 0))],
-            'R': [('Right', (0, 2), (1, 2), (2, 2)),
-                  ('Front', (0, 2), (1, 2), (2, 2)),
-                  ('Left', (0, 2), (1, 2), (2, 2)),
-                  ('Back', (0, 2), (1, 2), (2, 2)),
-                  ('Top', (0, 2), (1, 2), (2, 2)),
-                  ('Bottom', (0, 2), (1, 2), (2, 2))],
-            'U': [('Top', (0, 0), (0, 1), (0, 2)),
-                  ('Front', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (0, 0), (0, 1), (0, 2)),
-                  ('Back', (0, 0), (0, 1), (0, 2)),
-                  ('Left', (0, 0), (0, 1), (0, 2)),
-                  ('Bottom', (0, 0), (0, 1), (0, 2))],
-            'D': [('Bottom', (0, 0), (0, 1), (0, 2)),
-                  ('Front', (2, 0), (2, 1), (2, 2)),
-                  ('Right', (2, 0), (2, 1), (2, 2)),
-                  ('Back', (2, 0), (2, 1), (2, 2)),
-                  ('Left', (2, 0), (2, 1), (2, 2)),
-                  ('Top', (0, 0), (0, 1), (0, 2))],
-            'F': [('Front', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (0, 0), (1, 0), (2, 0)),
-                  ('Back', (2, 2), (2, 1), (2, 0)),
-                  ('Left', (0, 2), (1, 2), (2, 2)),
-                  ('Top', (2, 0), (2, 1), (2, 2)),
-                  ('Bottom', (0, 0), (0, 1), (0, 2))],
-            'B': [('Back', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (0, 2), (1, 2), (2, 2)),
-                  ('Front', (2, 2), (2, 1), (2, 0)),
-                  ('Left', (0, 0), (1, 0), (2, 0)),
-                  ('Top', (0, 0), (0, 1), (0, 2)),
-                  ('Bottom', (2, 0), (2, 1), (2, 2))],
-            "Li": [('Left', (2, 0), (1, 0), (0, 0)),
-                   ('Front', (2, 0), (1, 0), (0, 0)),
-                   ('Right', (2, 0), (1, 0), (0, 0)),
-                   ('Back', (2, 0), (1, 0), (0, 0)),
-                   ('Top', (2, 0), (1, 0), (0, 0)),
-                   ('Bottom', (2, 0), (1, 0), (0, 0))],
-            "Ri": [('Right', (2, 2), (1, 2), (0, 2)),
-                   ('Front', (0, 2), (1, 2), (2, 2)),
-                   ('Left', (2, 2), (1, 2), (0, 2)),
-                   ('Back', (0, 2), (1, 2), (2, 2)),
-                   ('Top', (0, 2), (1, 2), (2, 2)),
-                   ('Bottom', (0, 2), (1, 2), (2, 2))],
-            "Ui": [('Top', (0, 2), (0, 1), (0, 0)),
-                   ('Front', (0, 2), (0, 1), (0, 0)),
-                   ('Right', (0, 2), (0, 1), (0, 0)),
-                   ('Back', (0, 2), (0, 1), (0, 0)),
-                   ('Left', (0, 2), (0, 1), (0, 0)),
-                   ('Bottom', (0, 2), (0, 1), (0, 0))],
-            "Di": [('Bottom', (0, 2), (0, 1), (0, 0)),
-                   ('Front', (0, 0), (0, 1), (0, 2)),
-                   ('Right', (0, 0), (0, 1), (0, 2)),
-                   ('Back', (0, 0), (0, 1), (0, 2)),
-                   ('Left', (0, 0), (0, 1), (0, 2)),
-                   ('Top', (0, 0), (0, 1), (0, 2))],
-            "Fi": [('Front', (0, 2), (0, 1), (0, 0)),
-                   ('Right', (0, 2), (1, 2), (2, 2)),
-                   ('Back', (2, 0), (2, 1), (2, 2)),
-                   ('Left', (0, 0), (1, 0), (2, 0)),
-                   ('Top', (0, 2), (0, 1), (0, 0)),
-                   ('Bottom', (0, 2), (0, 1), (0, 0))],
-            "Bi'": [('Back', (0, 2), (0, 1), (0, 0)),
-                    ('Right', (0, 0), (1, 0), (2, 0)),
-                    ('Front', (2, 0), (2, 1), (2, 2)),
-                    ('Left', (0, 2), (1, 2), (2, 2)),
-                    ('Top', (0, 0), (0, 1), (0, 2)),
-                    ('Bottom', (0, 0), (0, 1), (0, 2))],
-            'M': [('Right', (0, 1), (1, 1), (2, 1)),
-                  ('Front', (0, 1), (1, 1), (2, 1)),
-                  ('Left', (0, 1), (1, 1), (2, 1)),
-                  ('Back', (0, 1), (1, 1), (2, 1)),
-                  ('Top', (0, 1), (1, 1), (2, 1)),
-                  ('Bottom', (0, 1), (1, 1), (2, 1))],
-            'E': [('Top', (1, 0), (1, 1), (1, 2)),
-                  ('Front', (1, 0), (1, 1), (1, 2)),
-                  ('Right', (1, 0), (1, 1), (1, 2)),
-                  ('Back', (1, 0), (1, 1), (1, 2)),
-                  ('Left', (1, 0), (1, 1), (1, 2)),
-                  ('Bottom', (1, 0), (1, 1), (1, 2))],
-            'S': [('Front', (1, 0), (1, 1), (1, 2)),
-                  ('Right', (1, 0), (1, 1), (1, 2)),
-                  ('Back', (1, 0), (1, 1), (1, 2)),
-                  ('Left', (1, 0), (1, 1), (1, 2)),
-                  ('Top', (1, 0), (1, 1), (1, 2)),
-                  ('Bottom', (1, 0), (1, 1), (1, 2))],
-            "Mi": [('Right', (2, 1), (1, 1), (0, 1)),
-                   ('Front', (2, 1), (1, 1), (0, 1)),
-                   ('Left', (2, 1), (1, 1), (0, 1)),
-                   ('Back', (2, 1), (1, 1), (0, 1)),
-                   ('Top', (2, 1), (1, 1), (0, 1)),
-                   ('Bottom', (2, 1), (1, 1), (0, 1))],
-            "Ei": [('Top', (1, 2), (1, 1), (1, 0)),
-                   ('Front', (1, 2), (1, 1), (1, 0)),
-                   ('Right', (1, 2), (1, 1), (1, 0)),
-                   ('Back', (1, 2), (1, 1), (1, 0)),
-                   ('Left', (1, 2), (1, 1), (1, 0)),
-                   ('Bottom', (1, 2), (1, 1), (1, 0))],
-            "Si": [('Front', (1, 2), (1, 1), (1, 0)),
-                   ('Right', (1, 2), (1, 1), (1, 0)),
-                   ('Back', (1, 2), (1, 1), (1, 0)),
-                   ('Left', (1, 2), (1, 1), (1, 0)),
-                   ('Top', (1, 2), (1, 1), (1, 0)),
-                   ('Bottom', (1, 2), (1, 1), (1, 0))],
-            'l': [('Left', (0, 0), (1, 0), (2, 0)),
-                  ('Front', (0, 0), (1, 0), (2, 0)),
-                  ('Top', (0, 0), (1, 0), (2, 0)),
-                  ('Back', (0, 0), (1, 0), (2, 0)),
-                  ('Bottom', (0, 0), (1, 0), (2, 0)),
-                  ('Right', (0, 2), (1, 2), (2, 2))],
-            'r': [('Right', (0, 2), (1, 2), (2, 2)),
-                  ('Front', (0, 2), (1, 2), (2, 2)),
-                  ('Top', (0, 2), (1, 2), (2, 2)),
-                  ('Back', (0, 2), (1, 2), (2, 2)),
-                  ('Bottom', (0, 2), (1, 2), (2, 2)),
-                  ('Left', (0, 0), (1, 0), (2, 0))],
-            'u': [('Top', (0, 0), (0, 1), (0, 2)),
-                  ('Front', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (0, 0), (0, 1), (0, 2)),
-                  ('Back', (0, 0), (0, 1), (0, 2)),
-                  ('Left', (0, 0), (0, 1), (0, 2)),
-                  ('Bottom', (2, 0), (2, 1), (2, 2))],
-            'd': [('Bottom', (0, 0), (0, 1), (0, 2)),
-                  ('Front', (2, 0), (2, 1), (2, 2)),
-                  ('Right', (2, 0), (2, 1), (2, 2)),
-                  ('Back', (2, 0), (2, 1), (2, 2)),
-                  ('Left', (2, 0), (2, 1), (2, 2)),
-                  ('Top', (0, 0), (0, 1), (0, 2))],
-            'f': [('Front', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (0, 0), (0, 1), (0, 2)),
-                  ('Top', (0, 0), (0, 1), (0, 2)),
-                  ('Bottom', (0, 0), (0, 1), (0, 2)),
-                  ('Back', (0, 0), (0, 1), (0, 2)),
-                  ('Left', (0, 0), (0, 1), (0, 2))],
-            'b': [('Back', (0, 0), (0, 1), (0, 2)),
-                  ('Right', (2, 0), (2, 1), (2, 2)),
-                  ('Top', (0, 2), (0, 1), (0, 0)),
-                  ('Bottom', (0, 2), (0, 1), (0, 0)),
-                  ('Left', (2, 0), (2, 1), (2, 2)),
-                  ('Front', (2, 0), (2, 1), (2, 2))],
-            'li': [('Right', (0, 2), (1, 2), (2, 2)),
-                   ('Back', (0, 0), (1, 0), (2, 0)),
-                   ('Top', (0, 0), (1, 0), (2, 0)),
-                   ('Front', (0, 0), (1, 0), (2, 0)),
-                   ('Bottom', (0, 0), (1, 0), (2, 0)),
-                   ('Left', (0, 0), (1, 0), (2, 0))],
-            'ri': [('Left', (0, 0), (1, 0), (2, 0)),
-                   ('Back', (0, 2), (1, 2), (2, 2)),
-                   ('Top', (0, 2), (1, 2), (2, 2)),
-                   ('Front', (0, 2), (1, 2), (2, 2)),
-                   ('Bottom', (0, 2), (1, 2), (2, 2)),
-                   ('Right', (0, 0), (1, 0), (2, 0))],
-            'ui': [('Bottom', (2, 0), (2, 1), (2, 2)),
-                   ('Left', (0, 0), (0, 1), (0, 2)),
-                   ('Back', (0, 0), (0, 1), (0, 2)),
-                   ('Front', (0, 0), (0, 1), (0, 2)),
-                   ('Right', (0, 0), (0, 1), (0, 2)),
-                   ('Top', (0, 0), (0, 1), (0, 2))],
-            'di': [('Top', (0, 0), (0, 1), (0, 2)),
-                   ('Left', (2, 0), (2, 1), (2, 2)),
-                   ('Back', (2, 0), (2, 1), (2, 2)),
-                   ('Front', (2, 0), (2, 1), (2, 2)),
-                   ('Right', (2, 0), (2, 1), (2, 2)),
-                   ('Bottom', (0, 0), (0, 1), (0, 2))],
-            'fi': [('Back', (0, 0), (0, 1), (0, 2)),
-                   ('Right', (0, 0), (0, 1), (0, 2)),
-                   ('Bottom', (0, 0), (0, 1), (0, 2)),
-                   ('Top', (0, 0), (0, 1), (0, 2)),
-                   ('Left', (0, 0), (0, 1), (0, 2)),
-                   ('Front', (0, 0), (0, 1), (0, 2))],
-            'bi': [('Front', (0, 0), (0, 1), (0, 2)),
-                   ('Right', (2, 0), (2, 1), (2, 2)),
-                   ('Bottom', (0, 2), (0, 1), (0, 0)),
-                   ('Top', (0, 2), (0, 1), (0, 0)),
-                   ('Left', (2, 0), (2, 1), (2, 2)),
-                   ('Back', (2, 0), (2, 1), (2, 2))]
-        }
-        if move not in move_mapping:
-            print("Invalid move:", move)
-            return False
-        # Apply the move to the face colors dictionary
-        for face, *positions in move_mapping[move]:
-            face_color = color_to_change[face]
-            colors = [face_color[pos[0]][pos[1]] for pos in positions]
-            new_colors = colors[-1:] + colors[:-1]  # Shift the colors
-            for pos, color in zip(positions, new_colors):
-                face_color[pos[0]][pos[1]] = color
+    def apply_move(self, move):
+        print('Applying move')
+        if move == 'R':
+            temp_top = [self.face_colors['Top'][2], self.face_colors['Top'][5], self.face_colors['Top'][8]]
+            temp_front = [self.face_colors['Front'][2], self.face_colors['Front'][5], self.face_colors['Front'][8]]
+            temp_bottom = [self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8]]
+            temp_back = [self.face_colors['Back'][0], self.face_colors['Back'][3], self.face_colors['Back'][6]]
+
+
+            self.face_colors['Back'][0], self.face_colors['Back'][3], self.face_colors['Back'][6] = temp_top[::-1]
+            self.face_colors['Top'][2], self.face_colors['Top'][5], self.face_colors['Top'][8] = temp_front
+            self.face_colors['Front'][2], self.face_colors['Front'][5], self.face_colors['Front'][8] = temp_bottom
+            self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8] = temp_back[::-1]
+
+            # # Rotation de la face droite dans le sens horaire
+            self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2], \
+            self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5], \
+            self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = \
+            self.face_colors['Right'][6], self.face_colors['Right'][3], self.face_colors['Right'][0], \
+            self.face_colors['Right'][7], self.face_colors['Right'][4], self.face_colors['Right'][1], \
+            self.face_colors['Right'][8], self.face_colors['Right'][5], self.face_colors['Right'][2]
+
+        elif move == "Ri":
+            self.apply_move('R')
+            self.apply_move('R')
+            self.apply_move('R')
+        elif move == 'duoR':
+            self.apply_move('R')
+            self.apply_move('R')
+        elif move == 'duoRi':
+            self.apply_move('R')
+            self.apply_move('R')
+            self.apply_move('R')
+            self.apply_move('R')
+            self.apply_move('R')
+            self.apply_move('R')
+        elif move == 'L':
+            temp_top = [self.face_colors['Top'][0], self.face_colors['Top'][3], self.face_colors['Top'][6]]
+            temp_front = [self.face_colors['Front'][0], self.face_colors['Front'][3], self.face_colors['Front'][6]]
+            temp_bottom = [self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6]]
+            temp_back = [self.face_colors['Back'][2], self.face_colors['Back'][5], self.face_colors['Back'][8]]
+
+            self.face_colors['Back'][2], self.face_colors['Back'][5], self.face_colors['Back'][8] = temp_bottom[::-1]
+            self.face_colors['Top'][0], self.face_colors['Top'][3], self.face_colors['Top'][6] = temp_back[::-1]
+            self.face_colors['Front'][0], self.face_colors['Front'][3], self.face_colors['Front'][6] = temp_top
+            self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6] = temp_front
+
+            # # Rotation de la face droite dans le sens horaire
+            self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2], \
+            self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5], \
+            self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = \
+            self.face_colors['Left'][6], self.face_colors['Left'][3], self.face_colors['Left'][0], \
+            self.face_colors['Left'][7], self.face_colors['Left'][4], self.face_colors['Left'][1], \
+            self.face_colors['Left'][8], self.face_colors['Left'][5], self.face_colors['Left'][2]
+        elif move == "Li":
+            self.apply_move('L')
+            self.apply_move('L')
+            self.apply_move('L')
+        elif move == 'duoL':
+            self.apply_move('L')
+            self.apply_move('L')
+        elif move == 'duoLi':
+            self.apply_move('L')
+            self.apply_move('L')
+            self.apply_move('L')
+            self.apply_move('L')
+            self.apply_move('L')
+            self.apply_move('L')
+        elif move == 'U':
+            temp_right = [self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2]]
+            temp_front = [self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2]]
+            temp_left = [self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2]]
+            temp_back = [self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2]]
+
+            self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2] = temp_back
+            self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2] = temp_right
+            self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2] = temp_front
+            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2] = temp_left
+
+            # # Rotation de la face droite dans le sens horaire
+            self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2], \
+            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5], \
+            self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8] = \
+            self.face_colors['Top'][6], self.face_colors['Top'][3], self.face_colors['Top'][0], \
+            self.face_colors['Top'][7], self.face_colors['Top'][4], self.face_colors['Top'][1], \
+            self.face_colors['Top'][8], self.face_colors['Top'][5], self.face_colors['Top'][2]
+        elif move == "Ui":
+            self.apply_move('U')
+            self.apply_move('U')
+            self.apply_move('U')
+        elif move == 'duoU':
+            self.apply_move('U')
+            self.apply_move('U')
+        elif move == 'duoUi':
+            self.apply_move('U')
+            self.apply_move('U')
+            self.apply_move('U')
+            self.apply_move('U')
+            self.apply_move('U')
+            self.apply_move('U')
+        elif move == 'D':
+            temp_right = [self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8]]
+            temp_front = [self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8]]
+            temp_left = [self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8]]
+            temp_back = [self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8]]
+
+            self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = temp_front
+            self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_left
+            self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = temp_back
+            self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_right
+
+            # # Rotation de la face droite dans le sens horaire
+            self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2], \
+            self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][5], \
+            self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = \
+            self.face_colors['Bottom'][6], self.face_colors['Bottom'][3], self.face_colors['Bottom'][0], \
+            self.face_colors['Bottom'][7], self.face_colors['Bottom'][4], self.face_colors['Bottom'][1], \
+            self.face_colors['Bottom'][8], self.face_colors['Bottom'][5], self.face_colors['Bottom'][2]
+        elif move == "Di":
+            self.apply_move('D')
+            self.apply_move('D')
+            self.apply_move('D')
+        elif move == 'duoD':
+            self.apply_move('D')
+            self.apply_move('D')
+        elif move == 'duoDi':
+            self.apply_move('D')
+            self.apply_move('D')
+            self.apply_move('D')
+            self.apply_move('D')
+            self.apply_move('D')
+            self.apply_move('D')
+        elif move == 'F':
+            temp_right = [self.face_colors['Right'][0], self.face_colors['Right'][3], self.face_colors['Right'][6]]
+            temp_top = [self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8]]
+            temp_bottom = [self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2]]
+            temp_left = [self.face_colors['Left'][2], self.face_colors['Left'][5], self.face_colors['Left'][8]]
+
+            self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = temp_top
+            self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8] = temp_left[::-1]
+            self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = temp_bottom
+            self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2] = temp_right[::-1]
+
+            # # Rotation de la face droite dans le sens horaire
+            self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2], \
+            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
+            self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = \
+            self.face_colors['Front'][6], self.face_colors['Front'][3], self.face_colors['Front'][0], \
+            self.face_colors['Front'][7], self.face_colors['Front'][4], self.face_colors['Front'][1], \
+            self.face_colors['Front'][8], self.face_colors['Front'][5], self.face_colors['Front'][2]
+        elif move == "Fi":
+            self.apply_move('F')
+            self.apply_move('F')
+            self.apply_move('F')
+        elif move == 'duoF':
+            self.apply_move('F')
+            self.apply_move('F')
+        elif move == 'duoFi':
+            self.apply_move('F')
+            self.apply_move('F')
+            self.apply_move('F')
+            self.apply_move('F')
+            self.apply_move('F')
+            self.apply_move('F')
+        elif move == 'B':
+            temp_right = [self.face_colors['Right'][2], self.face_colors['Right'][5], self.face_colors['Right'][8]]
+            temp_top = [self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2]]
+            temp_bottom = [self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8]]
+            temp_left = [self.face_colors['Left'][0], self.face_colors['Left'][3], self.face_colors['Left'][6]]
+
+            self.face_colors['Right'][2], self.face_colors['Right'][5], self.face_colors['Right'][8] = temp_bottom[::-1]
+            self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2] = temp_right
+            self.face_colors['Left'][0], self.face_colors['Left'][3], self.face_colors['Left'][6] = temp_top[::-1]
+            self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = temp_left
+
+            # # Rotation de la face droite dans le sens horaire
+            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2], \
+            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
+            self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = \
+            self.face_colors['Back'][6], self.face_colors['Back'][3], self.face_colors['Back'][0], \
+            self.face_colors['Back'][7], self.face_colors['Back'][4], self.face_colors['Back'][1], \
+            self.face_colors['Back'][8], self.face_colors['Back'][5], self.face_colors['Back'][2]
+        elif move == "B'":
+            self.apply_move('B')
+            self.apply_move('B')
+            self.apply_move('B')
+        elif move == 'duoB':
+            self.apply_move('B')
+            self.apply_move('B')
+        elif move == 'duoBi':
+            self.apply_move('B')
+            self.apply_move('B')
+            self.apply_move('B')
+            self.apply_move('B')
+            self.apply_move('B')
+            self.apply_move('B')
+        elif move == 'M':
+            # Implémentez la logique pour le mouvement M (rotation du cube dans le sens de la colonne centrale droite)
+            temp_top = [self.face_colors['Top'][1], self.face_colors['Top'][4], self.face_colors['Top'][7]]
+            temp_front = [self.face_colors['Front'][1], self.face_colors['Front'][4],
+                          self.face_colors['Front'][7]]
+            temp_bottom = [self.face_colors['Bottom'][1], self.face_colors['Bottom'][4],
+                           self.face_colors['Bottom'][7]]
+            temp_back = [self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7]]
+
+            self.face_colors['Top'][1], self.face_colors['Top'][4], self.face_colors['Top'][7] = temp_back[::-1]
+            self.face_colors['Front'][1], self.face_colors['Front'][4], self.face_colors['Front'][7] = temp_top
+            self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
+                7] = temp_front[::-1]
+            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom
+
+            # Rotation de la colonne centrale droite dans le sens horaire
+            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][7] = \
+                self.face_colors['Right'][7], self.face_colors['Right'][1], self.face_colors['Right'][4]
+
+        elif move == "Mi":
+            # Mouvement M inverse (dans le sens antihoraire)
+            self.apply_move('M')
+            self.apply_move('M')
+            self.apply_move('M')
+        elif move == 'duoM':
+            self.apply_move('M')
+            self.apply_move('M')
+        elif move == 'duoMi':
+            self.apply_move('M')
+            self.apply_move('M')
+            self.apply_move('M')
+            self.apply_move('M')
+            self.apply_move('M')
+            self.apply_move('M')
+        elif move == 'E':
+            # Implémentez la logique pour le mouvement E (rotation du cube dans le sens de la ligne centrale du haut)
+            temp_front = self.face_colors['Front'][3:6]
+            temp_right = self.face_colors['Right'][3:6]
+            temp_back = self.face_colors['Back'][3:6]
+            temp_left = self.face_colors['Left'][3:6]
+
+            self.face_colors['Front'][3:6] = temp_left
+            self.face_colors['Right'][3:6] = temp_front
+            self.face_colors['Back'][3:6] = temp_right
+            self.face_colors['Left'][3:6] = temp_back
+
+            # Rotation de la ligne centrale du haut dans le sens horaire
+            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = \
+                self.face_colors['Top'][5], self.face_colors['Top'][3], self.face_colors['Top'][4]
+
+        elif move == "Ei":
+            # Mouvement E inverse (dans le sens antihoraire)
+            self.apply_move('E')
+            self.apply_move('E')
+            self.apply_move('E')
+        elif move == 'duoE':
+            self.apply_move('E')
+            self.apply_move('E')
+        elif move == 'duoEi':
+            self.apply_move('E')
+            self.apply_move('E')
+            self.apply_move('E')
+            self.apply_move('E')
+            self.apply_move('E')
+            self.apply_move('E')
+        elif move == 'S':
+            # Implémentez la logique pour le mouvement S (rotation du cube dans le sens de la ligne centrale de droite)
+            temp_top = [self.face_colors['Top'][5], self.face_colors['Top'][4], self.face_colors['Top'][3]]
+            temp_front = [self.face_colors['Front'][5], self.face_colors['Front'][4],
+                          self.face_colors['Front'][3]]
+            temp_bottom = [self.face_colors['Bottom'][5], self.face_colors['Bottom'][4],
+                           self.face_colors['Bottom'][3]]
+            temp_back = [self.face_colors['Back'][5], self.face_colors['Back'][4], self.face_colors['Back'][3]]
+
+            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_front
+            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][
+                5] = temp_bottom[::-1]
+            self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
+                5] = temp_back
+            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5] = temp_top[
+                                                                                                    ::-1]
+
+            # Rotation de la ligne centrale de droite dans le sens horaire
+            self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5] = \
+                self.face_colors['Right'][5], self.face_colors['Right'][3], self.face_colors['Right'][4]
+
+        elif move == "Si":
+            # Mouvement S inverse (dans le sens antihoraire)
+            self.apply_move('S')
+            self.apply_move('S')
+            self.apply_move('S')
+        elif move == 'duoS':
+            self.apply_move('S')
+            self.apply_move('S')
+        elif move == 'duoSi':
+            self.apply_move('S')
+            self.apply_move('S')
+            self.apply_move('S')
+            self.apply_move('S')
+            self.apply_move('S')
+            self.apply_move('S')
+
+        elif move in ['X', 'Xi', "Y", 'Yi', 'Z', "Zi"]:
+            self.rotate_cube(self.face_colors, move)
+
+        else:
+            print("Mouvement non reconnu")
+
+        print("Move applied successfully")
         return True
+
+    # Function to rotate the entire cube around the X axis
+    def rotate_cube(self, cube, rotation):
+        if rotation == 'X':
+            cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Bottom'], cube['Back'], cube['Top'], \
+                cube['Front']
+            cube['Left'] = [cube['Left'][6], cube['Left'][3], cube['Left'][0], cube['Left'][7], cube['Left'][4],
+                            cube['Left'][1], cube['Left'][8], cube['Left'][5], cube['Left'][2]]
+            cube['Right'] = [cube['Right'][2], cube['Right'][5], cube['Right'][8], cube['Right'][1],
+                             cube['Right'][4],
+                             cube['Right'][7], cube['Right'][0], cube['Right'][3], cube['Right'][6]]
+        elif rotation == 'Xi':
+            cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Top'], cube['Front'], cube['Bottom'], \
+                cube['Back']
+            cube['Left'] = [cube['Left'][2], cube['Left'][5], cube['Left'][8], cube['Left'][1], cube['Left'][4],
+                            cube['Left'][7], cube['Left'][0], cube['Left'][3], cube['Left'][6]]
+            cube['Right'] = [cube['Right'][6], cube['Right'][3], cube['Right'][0], cube['Right'][7],
+                             cube['Right'][4],
+                             cube['Right'][1], cube['Right'][8], cube['Right'][5], cube['Right'][2]]
+
+        elif rotation == 'Z':
+            cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Left'], cube['Top'], cube['Right'], \
+                cube['Bottom']
+            cube['Front'] = [cube['Front'][6], cube['Front'][3], cube['Front'][0], cube['Front'][7],
+                             cube['Front'][4],
+                             cube['Front'][1], cube['Front'][8], cube['Front'][5], cube['Front'][2]]
+            cube['Back'] = [cube['Back'][2], cube['Back'][5], cube['Back'][8], cube['Back'][1], cube['Back'][4],
+                            cube['Back'][7], cube['Back'][0], cube['Back'][3], cube['Back'][6]]
+        elif rotation == 'Zi':
+            cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Right'], cube['Bottom'], cube['Left'], \
+                cube['Top']
+            cube['Front'] = [cube['Front'][2], cube['Front'][5], cube['Front'][8], cube['Front'][1],
+                             cube['Front'][4],
+                             cube['Front'][7], cube['Front'][0], cube['Front'][3], cube['Front'][6]]
+            cube['Back'] = [cube['Back'][6], cube['Back'][3], cube['Back'][0], cube['Back'][7], cube['Back'][4],
+                            cube['Back'][1], cube['Back'][8], cube['Back'][5], cube['Back'][2]]
+
+        elif rotation == 'Y':
+            cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Right'], cube['Back'], cube['Left'], \
+                cube['Front']
+            cube['Top'] = [cube['Top'][6], cube['Top'][3], cube['Top'][0], cube['Top'][7], cube['Top'][4],
+                           cube['Top'][1], cube['Top'][8], cube['Top'][5], cube['Top'][2]]
+            cube['Bottom'] = [cube['Bottom'][2], cube['Bottom'][5], cube['Bottom'][8], cube['Bottom'][1],
+                              cube['Bottom'][4], cube['Bottom'][7], cube['Bottom'][0], cube['Bottom'][3],
+                              cube['Bottom'][6]]
+        elif rotation == 'Yi':
+            cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Left'], cube['Front'], cube['Right'], \
+                cube['Back']
+            cube['Top'] = [cube['Top'][2], cube['Top'][5], cube['Top'][8], cube['Top'][1], cube['Top'][4],
+                           cube['Top'][7], cube['Top'][0], cube['Top'][3], cube['Top'][6]]
+            cube['Bottom'] = [cube['Bottom'][6], cube['Bottom'][3], cube['Bottom'][0], cube['Bottom'][7],
+                              cube['Bottom'][4], cube['Bottom'][1], cube['Bottom'][8], cube['Bottom'][5],
+                              cube['Bottom'][2]]
+
 
 # if __name__ == '__main__':
 # # Initialize face colors to all white
