@@ -5,12 +5,6 @@ import control
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
 
-SolvingState = 0
-stop_pressed = False
-clamp = False
-mapping = False
-Solve = False
-
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
@@ -56,7 +50,7 @@ class CubeDisplay(QWidget):
         self.start_solve_button.clicked.connect(self.start_solve)
         self.stop_button = QPushButton("Stop")
         self.stop_button.setFixedSize(500, 30)  # Set fixed size
-        self.stop_button.clicked.connect(self.stop_timer)
+        self.stop_button.clicked.connect(self.stop)
         layout.addWidget(self.timer_label, alignment=Qt.AlignHCenter)  # Align label to center
         layout.addWidget(self.start_clamping_button, alignment=Qt.AlignHCenter)  # Align button to center
         layout.addWidget(self.start_mapping_button, alignment=Qt.AlignHCenter)  # Align button to center
@@ -117,6 +111,11 @@ class CubeDisplay(QWidget):
             for face_name, colors in self.face_colors.items():
                 print(f"{face_name}: {colors}")
 
+    def stop(self):
+        self.stop_timer()
+        QApplication.quit()
+        sys.exit(0)
+
     def stop_timer(self):
         if hasattr(self, 'timer'):
             self.timer.stop()
@@ -134,6 +133,7 @@ class CubeDisplay(QWidget):
         self.start_solve_button_clicked = False  # Reset start button clicked flag
         self.start_solve_button.setEnabled(True)
         self.apply_button.setEnabled(True)  # Re-enable apply button
+
 
     def update_timer(self):
         current_time = QTime.currentTime()
@@ -216,6 +216,8 @@ class CubeDisplay(QWidget):
 
     def start_solve(self):
         global moves_list
+        global stop_flag
+        stop_flag = False
         self.can_change_colors = False
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
