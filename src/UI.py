@@ -53,7 +53,7 @@ class CubeDisplay(QWidget):
         self.start_solve_button.clicked.connect(self.start_solve)
         self.stop_button = QPushButton("Stop")
         self.stop_button.setFixedSize(500, 30)  # Set fixed size
-        self.stop_button.clicked.connect(self.stop_timer)
+        self.stop_button.clicked.connect(self.stop)
         layout.addWidget(self.timer_label, alignment=Qt.AlignHCenter)  # Align label to center
         layout.addWidget(self.start_clamping_button, alignment=Qt.AlignHCenter)  # Align button to center
         layout.addWidget(self.start_mapping_button, alignment=Qt.AlignHCenter)  # Align button to center
@@ -131,6 +131,9 @@ class CubeDisplay(QWidget):
         self.start_solve_button_clicked = False  # Reset start button clicked flag
         self.start_solve_button.setEnabled(True)
         self.apply_button.setEnabled(True)  # Re-enable apply button
+
+    def stop(self):
+        QApplication.quit()
 
     def update_timer(self):
         current_time = QTime.currentTime()
