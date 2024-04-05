@@ -4,7 +4,7 @@ import sys
 if __name__ == '__main__':
     # Initialize face colors to all white
     initial_face_colors = {
-        "B  ack": ['red'] * 9,
+        "Back": ['red'] * 9,
         "Left": ['green'] * 9,
         "Top": ['yellow'] * 9,
         "Right": ['blue'] * 9,
