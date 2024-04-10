@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import os
 
-directory = r'C:\Users\Xavier\Documents\Université\S4\Projet de session\Traitement image\frames'
+directory = r'C:\Users\beaud\Documents\foto cam rubik'
 os.chdir(directory)
 
 YellowL_limit = np.array([15, 10, 0])  # setting the yellow lower limit
@@ -73,7 +73,7 @@ def colorofsquare(leframe):
 
 
 def faceofdacube():
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     ret, frame_test = cap.read()
     # Number of frames to capture
     num_frames =1
