@@ -11,12 +11,12 @@ BlueL_limit = np.array([100, 0, 0])  # setting the blue lower limit
 BlueU_limit = np.array([110, 255, 220])
 
 RedL_limit_high = np.array([140, 0, 0])  # setting the red lower limit
-RedU_limit_high = np.array([180, 255, 220])
+RedU_limit_high = np.array([178, 255, 220])
 
 #RedL_limit_low = np.array([0, 0, 0])  # setting the red lower limit
 #RedU_limit_low = np.array([5, 255, 255])
 
-OrangeL_limit = np.array([0, 0, 0])  # setting the orange lower limit
+OrangeL_limit = np.array([2, 0, 0])  # setting the orange lower limit
 OrangeU_limit = np.array([15, 255, 220])
 
 GreenL_limit = np.array([45, 0, 0])  # setting the green lower limit

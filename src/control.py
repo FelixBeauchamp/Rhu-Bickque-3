@@ -27,29 +27,32 @@ def initialisation():
 
 
 def clamp():
-    input("Press Enter to clamp the cube")
+    print("Press Enter to clamp the cube")
     ArduinoCom.sendmessage('CXCY')
 
 
 def mapping_sequence():
-    input("Press Enter to start the mapping sequence")
-    mapp = ['O', 'B', 'B', 'G', 'G', 'Y', 'O', 'G', 'R', 'W', 'B', 'W', 'Y', 'W', 'G', 'B', 'W', 'W',
-            'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
-            'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
+    print("Press Enter to start the mapping sequence")
+    # mapp = ['O', 'B', 'B', 'G', 'G', 'Y', 'O', 'G', 'R', 'W', 'B', 'W', 'Y', 'W', 'G', 'B', 'W', 'W',
+    #         'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
+    #         'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
+
     # Iterate through the camera motor sequence and analizing the
-    map_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
-    # for move in solver.sequence_camera:
-    #     if move[0] == 'M':
-    #         OpenRBCom.sendmessage(move)
-    #     elif move[0] == 'S':
-    #         input('SNAP')
-    #         temp = traitement_image.faceofdacube()
-    #         mapp.extend(temp)
-    #     else:
-    #         ArduinoCom.sendmessage(move)
+    mapp = []
+    for move in solver.sequence_camera:
+        if move[0] == 'M':
+            OpenRBCom.sendmessage(move)
+        elif move[0] == 'S':
+            print('SNAP')
+            temp = traitement_image.faceofdacube()
+            mapp.extend(temp)
+        else:
+            ArduinoCom.sendmessage(move)
+    print(mapp)
     map_array = solver.reformat(mapp)
-    cb = cube.Cube(map_array)
-    print(cb)
+    c = cube.Cube(map_array)
+    print("Solving:\n")
+    print(c)
     return map_array
 
 
@@ -63,14 +66,15 @@ def solving_moves(map_array):
 
     moves_list = solver.Solver.reformat(mov)
     print(f"{len(moves_list)} moves: {' '.join(moves_list)}")
-    solution.translate(moves_list)
+    array_of_arrays = solution.translate(moves_list)
     print(f"{len(solution.sequence_motors)} moves: {' '.join(solution.sequence_motors)}")
 
-    return solution.sequence_motors
+    MEGA_MOVES = [moves_list, solution.sequence_motors, array_of_arrays]
+    return MEGA_MOVES
 
 
 def do_move(move):
-    input('bibos dick')
+    print(move)
     if move[0] == 'M' or move[0] == 'H':
         OpenRBCom.sendmessage(move)
     else:
@@ -78,12 +82,20 @@ def do_move(move):
 
 
 def close_ports():
+    ArduinoCom.sendmessage('OXOY')
     ArduinoCom.closeportarduino()
     OpenRBCom.closeport()
 
 
 if __name__ == '__main__':
-    print("MEGAWHAAAT")
+    input("MEGAWHAAAT")
+    initialisation()
+    clamp()
+    deez = mapping_sequence()
+    balls = solving_moves(deez)
+    for dicks in balls:
+        do_move(dicks)
+    close_ports()
 
     # print("Initialisation: OPENING/HOMING")
     # OpenRBCom.openport(port_OpenRB)
