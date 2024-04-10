@@ -10,15 +10,6 @@ mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
 
-class CustomButton(QPushButton):
-    def __init__(self, text='', parent=None):
-        super().__init__(text, parent)
-
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton and self.isEnabled():
-            self.clicked.emit()
-        else:
-            super().mousePressEvent(event)
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
@@ -51,16 +42,16 @@ class CubeDisplay(QWidget):
         self.timer_label = QLabel("Time elapsed: 0:00.00")
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_timer)
-        self.start_clamping_button = CustomButton("Start Clamping")
+        self.start_clamping_button = QPushButton("Start Clamping")
         self.start_clamping_button.setFixedSize(500, 30)  # Set fixed size
         self.start_clamping_button.clicked.connect(self.start_clamping)
-        self.start_mapping_button = CustomButton("Start Mapping")
+        self.start_mapping_button = QPushButton("Start Mapping")
         self.start_mapping_button.setFixedSize(500, 30)  # Set fixed size
         self.start_mapping_button.clicked.connect(self.start_mapping)
-        self.start_solve_button = CustomButton("Start Solve")
+        self.start_solve_button = QPushButton("Start Solve")
         self.start_solve_button.setFixedSize(500, 30)  # Set fixed size
         self.start_solve_button.clicked.connect(self.start_solve)
-        self.stop_button = CustomButton("Stop")
+        self.stop_button = QPushButton("Stop")
         self.stop_button.setFixedSize(500, 30)  # Set fixed size
         self.stop_button.clicked.connect(self.stop)
         layout.addWidget(self.timer_label, alignment=Qt.AlignHCenter)  # Align label to center
