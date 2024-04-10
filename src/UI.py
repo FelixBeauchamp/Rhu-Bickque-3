@@ -10,15 +10,23 @@ mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
 
-class CustomButton(QPushButton):
+class CustomButton(QWidget):
+    clicked = pyqtSignal()
+
+    def __init__(self, text='', parent=None):
+        super().__init__(parent)
+        self.setEnabled(True)
+
+        self.button = QPushButton(text)
+        layout = QVBoxLayout()
+        layout.addWidget(self.button)
+        self.setLayout(layout)
+
     def mousePressEvent(self, event):
-        if self.isEnabled():
-            super().mousePressEvent(event)
-
-    def mouseReleaseEvent(self, event):
-        if self.isEnabled():
-            super().mouseReleaseEvent(event)
-
+        if self.isEnabled() and event.button() == Qt.LeftButton:
+            self.clicked.emit()
+        else:
+            event.ignore()
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
