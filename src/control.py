@@ -3,6 +3,7 @@ import OpenRBCom
 import traitement_image
 import keyboard
 import time
+import UI
 
 import sys
 import os
