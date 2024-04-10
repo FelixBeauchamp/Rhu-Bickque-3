@@ -1,8 +1,10 @@
 # The file to analyze the colors on the cube
 import numpy as np
 import cv2
+import os
 
-
+directory = r'C:\Users\Xavier\Documents\Université\S4\Projet de session\Traitement image\frames'
+os.chdir(directory)
 
 YellowL_limit = np.array([15, 10, 0])  # setting the yellow lower limit
 YellowU_limit = np.array([35, 255, 200])  # setting the yellow upper limit
@@ -71,7 +73,7 @@ def colorofsquare(leframe):
 
 
 def faceofdacube():
-    cap = cv2.VideoCapture(0)
+    cap = cv2.VideoCapture(1)
     ret, frame_test = cap.read()
     # Number of frames to capture
     num_frames =1
@@ -95,28 +97,29 @@ def faceofdacube():
     #coin_inf_droit = [width, height]
 
     cote_cube = 85
-    frame_loose = 15
+    frame_loose = 6
+    length_pince = 55
+    edge_width = 15
     # Barre horizontales
     haut_1_x = 100
     bas_1_x = haut_1_x+cote_cube
 
-    haut_2_x = haut_1_x + cote_cube + 15
+    haut_2_x = haut_1_x + cote_cube + edge_width
     bas_2_x = haut_2_x + cote_cube
 
-    haut_3_x = haut_2_x + cote_cube + 15
+    haut_3_x = haut_2_x + cote_cube + edge_width
     bas_3_x = haut_3_x + cote_cube
 
     # Barres verticales
     gauche_x_1 = 210
     droite_x_1 = gauche_x_1+cote_cube
 
-    gauche_x_2 = gauche_x_1 + cote_cube + 15
+    gauche_x_2 = gauche_x_1 + cote_cube +edge_width
     droite_x_2 = gauche_x_2 + cote_cube
 
-    gauche_x_3 = gauche_x_2 + cote_cube + 15
+    gauche_x_3 = gauche_x_2 + cote_cube +edge_width
     droite_x_3 = gauche_x_3 + cote_cube
 
-    length_pince = 55
     cv2.imshow('Vision initiale', avg_frame)
     filtered_avg = cv2.GaussianBlur(avg_frame, (5, 5), cv2.BORDER_DEFAULT)
     cv2.imshow('Face du cube avg nor', filtered_avg)
@@ -127,24 +130,33 @@ def faceofdacube():
 
     frame_1_1 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
     cv2.imshow('Face 1_1', frame_1_1)
-    frame_2_1 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_1+length_pince:droite_x_1].copy()
+    cv2.imwrite('frame_11.png', frame_1_1)
+    frame_2_1 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_1+length_pince:droite_x_1-frame_loose].copy()
     cv2.imshow('Face 2_1', frame_2_1)
+    cv2.imwrite('frame_21.png',frame_2_1)
     frame_3_1 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
     cv2.imshow('Face 3_1', frame_3_1)
+    cv2.imwrite('frame_31.png',frame_3_1)
 
-    frame_1_2 = into_hsv_filtered_avg[haut_1_x+length_pince:bas_1_x, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
+    frame_1_2 = into_hsv_filtered_avg[haut_1_x+length_pince:bas_1_x-frame_loose, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
     cv2.imshow('Face 1_2', frame_1_2)
+    cv2.imwrite('frame_12.png',frame_1_2)
     frame_2_2 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
     cv2.imshow('Face 2_2', frame_2_2)
+    cv2.imwrite('frame_22.png',frame_2_2)
     frame_3_2 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-length_pince, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
     cv2.imshow('Face 3_2', frame_3_2)
+    cv2.imwrite('frame_32.png',frame_3_2)
 
     frame_1_3 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-frame_loose].copy()
     cv2.imshow('Face 1_3', frame_1_3)
-    frame_2_3 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_3:droite_x_3-length_pince].copy()
+    cv2.imwrite('frame_13.png',frame_1_3)
+    frame_2_3 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-length_pince].copy()
     cv2.imshow('Face 2_3', frame_2_3)
+    cv2.imwrite('frame_23.png',frame_2_3)
     frame_3_3 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-frame_loose].copy()
     cv2.imshow('Face 3_3', frame_3_3)
+    cv2.imwrite('frame_33.png',frame_3_3)
 
     square1_1 = colorofsquare(frame_1_1)
     square2_1 = colorofsquare(frame_2_1)
