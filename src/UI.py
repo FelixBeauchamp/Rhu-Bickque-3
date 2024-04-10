@@ -118,9 +118,8 @@ class CubeDisplay(QWidget):
                 print(f"{face_name}: {colors}")
 
     def stop(self):
-        self.stop_timer()
-        QApplication.quit()
-        sys.exit(0)
+        if self.stop_thread:
+            self.stop_signal.emit()
 
     def monitor_stop_button(self):
         while not self.stop_signal:
