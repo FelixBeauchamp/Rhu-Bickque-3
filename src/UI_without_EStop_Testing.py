@@ -367,55 +367,142 @@ def apply_move(marde, move):
 # Function to rotate the entire cube around the X axis
 def rotate_cube(cube, rotation):
     if rotation == 'X':
-        cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Bottom'], cube['Back'], cube['Top'], \
-            cube['Front']
-        cube['Left'] = [cube['Left'][6], cube['Left'][3], cube['Left'][0], cube['Left'][7], cube['Left'][4],
-                        cube['Left'][1], cube['Left'][8], cube['Left'][5], cube['Left'][2]]
-        cube['Right'] = [cube['Right'][2], cube['Right'][5], cube['Right'][8], cube['Right'][1],
-                         cube['Right'][4],
-                         cube['Right'][7], cube['Right'][0], cube['Right'][3], cube['Right'][6]]
+        temp_top = [cube['Top'][0], cube['Top'][1], cube['Top'][2],
+                    cube['Top'][3], cube['Top'][4], cube['Top'][5],
+                    cube['Top'][6], cube['Top'][7], cube['Top'][8]]
+        temp_front = [cube['Front'][0], cube['Front'][1], cube['Front'][2],
+                      cube['Front'][3], cube['Front'][4], cube['Front'][5],
+                      cube['Front'][6], cube['Front'][7], cube['Front'][8]]
+        temp_bottom = [cube['Bottom'][0], cube['Bottom'][1], cube['Bottom'][2],
+                       cube['Bottom'][3], cube['Bottom'][4], cube['Bottom'][5],
+                       cube['Bottom'][6], cube['Bottom'][7], cube['Bottom'][8]]
+        temp_back = [cube['Back'][0], cube['Back'][1], cube['Back'][2],
+                     cube['Back'][3], cube['Back'][4], cube['Back'][5],
+                     cube['Back'][6], cube['Back'][7], cube['Back'][8]]
+
+        cube['Top'][0], cube['Top'][1], cube['Top'][2], cube['Top'][3], \
+        cube['Top'][4], cube['Top'][5], cube['Top'][6], cube['Top'][7], \
+        cube['Top'][8] = temp_front
+        cube['Front'][0], cube['Front'][1], cube['Front'][2], \
+        cube['Front'][3], cube['Front'][4], cube['Front'][5], \
+        cube['Front'][6], cube['Front'][7], cube['Front'][8] = temp_bottom
+        cube['Bottom'][0], cube['Bottom'][1], cube['Bottom'][2], \
+        cube['Bottom'][3], cube['Bottom'][4], cube['Bottom'][5], \
+        cube['Bottom'][6], cube['Bottom'][7], cube['Bottom'][8] = temp_back[::-1]
+        cube['Back'][0], cube['Back'][1], cube['Back'][2], cube['Back'][
+            3], cube['Back'][4], cube['Back'][5], cube['Back'][6], \
+        cube['Back'][7], cube['Back'][8] = temp_top[::-1]
+
+        cube['Left'][0], cube['Left'][1], cube['Left'][2], \
+            cube['Left'][3], cube['Left'][4], cube['Left'][5], \
+            cube['Left'][6], cube['Left'][7], cube['Left'][8] = \
+            cube['Left'][6], cube['Left'][3], cube['Left'][0], \
+                cube['Left'][7], cube['Left'][4], cube['Left'][1], \
+                cube['Left'][8], cube['Left'][5], cube['Left'][2]
+
+        cube['Right'][0], cube['Right'][1], cube['Right'][2], \
+            cube['Right'][3], cube['Right'][4], cube['Right'][5], \
+            cube['Right'][6], cube['Right'][7], cube['Right'][8] = \
+            cube['Right'][2], cube['Right'][5], cube['Right'][8], \
+                cube['Right'][1], cube['Right'][4], cube['Right'][7], \
+                cube['Right'][0], cube['Right'][3], cube['Right'][6]
+
     elif rotation == 'Xi':
-        cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Top'], cube['Front'], cube['Bottom'], \
-            cube['Back']
-        cube['Left'] = [cube['Left'][2], cube['Left'][5], cube['Left'][8], cube['Left'][1], cube['Left'][4],
-                        cube['Left'][7], cube['Left'][0], cube['Left'][3], cube['Left'][6]]
-        cube['Right'] = [cube['Right'][6], cube['Right'][3], cube['Right'][0], cube['Right'][7],
-                         cube['Right'][4],
-                         cube['Right'][1], cube['Right'][8], cube['Right'][5], cube['Right'][2]]
+        rotate_cube(cube, 'X')
+        rotate_cube(cube, 'X')
+        rotate_cube(cube, 'X')
+
 
     elif rotation == 'Z':
-        cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Left'], cube['Top'], cube['Right'], \
-            cube['Bottom']
-        cube['Front'] = [cube['Front'][6], cube['Front'][3], cube['Front'][0], cube['Front'][7],
-                         cube['Front'][4],
-                         cube['Front'][1], cube['Front'][8], cube['Front'][5], cube['Front'][2]]
-        cube['Back'] = [cube['Back'][2], cube['Back'][5], cube['Back'][8], cube['Back'][1], cube['Back'][4],
-                        cube['Back'][7], cube['Back'][0], cube['Back'][3], cube['Back'][6]]
+        temp_top = [cube['Top'][0], cube['Top'][1], cube['Top'][2],
+                    cube['Top'][3], cube['Top'][4], cube['Top'][5],
+                    cube['Top'][6], cube['Top'][7], cube['Top'][8]]
+        temp_right = [cube['Right'][0], cube['Right'][1], cube['Right'][2],
+                      cube['Right'][3], cube['Right'][4], cube['Right'][5],
+                      cube['Right'][6], cube['Right'][7], cube['Right'][8]]
+        temp_bottom = [cube['Bottom'][0], cube['Bottom'][1], cube['Bottom'][2],
+                       cube['Bottom'][3], cube['Bottom'][4], cube['Bottom'][5],
+                       cube['Bottom'][6], cube['Bottom'][7], cube['Bottom'][8]]
+        temp_left = [cube['Left'][0], cube['Left'][1], cube['Left'][2],
+                     cube['Left'][3], cube['Left'][4], cube['Left'][5],
+                     cube['Left'][6], cube['Left'][7], cube['Left'][8]]
+
+        cube['Top'][2], cube['Top'][5], cube['Top'][8], cube['Top'][1], \
+        cube['Top'][4], cube['Top'][7], cube['Top'][0], cube['Top'][3], \
+        cube['Top'][6] = temp_left
+        cube['Right'][2], cube['Right'][5], cube['Right'][8], \
+            cube['Right'][1], cube['Right'][4], cube['Right'][7], \
+            cube['Right'][0], cube['Right'][3], cube['Right'][6] = temp_top
+        cube['Bottom'][2], cube['Bottom'][5], cube['Bottom'][8], \
+            cube['Bottom'][1], cube['Bottom'][4], cube['Bottom'][7], \
+            cube['Bottom'][0], cube['Bottom'][3], cube['Bottom'][6] = temp_right
+        cube['Left'][2], cube['Left'][5], cube['Left'][8], \
+            cube['Left'][1], cube['Left'][4], cube['Left'][7], \
+            cube['Left'][0], cube['Left'][3], cube['Left'][6] = temp_bottom
+
+        cube['Back'][0], cube['Back'][1], cube['Back'][2], \
+            cube['Back'][3], cube['Back'][4], cube['Back'][5], \
+            cube['Back'][6], cube['Back'][7], cube['Back'][8] = \
+            cube['Back'][6], cube['Back'][3], cube['Back'][0], \
+                cube['Back'][7], cube['Back'][4], cube['Back'][1], \
+                cube['Back'][8], cube['Back'][5], cube['Back'][2]
+
+        cube['Front'][0], cube['Front'][1], cube['Front'][2], \
+            cube['Front'][3], cube['Front'][4], cube['Front'][5], \
+            cube['Front'][6], cube['Front'][7], cube['Front'][8] = \
+            cube['Front'][2], cube['Front'][5], cube['Front'][8], \
+                cube['Front'][1], cube['Front'][4], cube['Front'][7], \
+                cube['Front'][0], cube['Front'][3], cube['Front'][6]
     elif rotation == 'Zi':
-        cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Right'], cube['Bottom'], cube['Left'], \
-            cube['Top']
-        cube['Front'] = [cube['Front'][2], cube['Front'][5], cube['Front'][8], cube['Front'][1],
-                         cube['Front'][4],
-                         cube['Front'][7], cube['Front'][0], cube['Front'][3], cube['Front'][6]]
-        cube['Back'] = [cube['Back'][6], cube['Back'][3], cube['Back'][0], cube['Back'][7], cube['Back'][4],
-                        cube['Back'][1], cube['Back'][8], cube['Back'][5], cube['Back'][2]]
+        rotate_cube(cube, 'Z')
+        rotate_cube(cube, 'Z')
+        rotate_cube(cube, 'Z')
+
 
     elif rotation == 'Y':
-        cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Right'], cube['Back'], cube['Left'], \
-            cube['Front']
-        cube['Top'] = [cube['Top'][6], cube['Top'][3], cube['Top'][0], cube['Top'][7], cube['Top'][4],
-                       cube['Top'][1], cube['Top'][8], cube['Top'][5], cube['Top'][2]]
-        cube['Bottom'] = [cube['Bottom'][2], cube['Bottom'][5], cube['Bottom'][8], cube['Bottom'][1],
-                          cube['Bottom'][4], cube['Bottom'][7], cube['Bottom'][0], cube['Bottom'][3],
-                          cube['Bottom'][6]]
+        temp_front = [cube['Front'][0], cube['Front'][1], cube['Front'][2],
+                      cube['Front'][3], cube['Front'][4], cube['Front'][5],
+                      cube['Front'][6], cube['Front'][7], cube['Front'][8]]
+        temp_right = [cube['Right'][0], cube['Right'][1], cube['Right'][2],
+                      cube['Right'][3], cube['Right'][4], cube['Right'][5],
+                      cube['Right'][6], cube['Right'][7], cube['Right'][8]]
+        temp_back = [cube['Back'][0], cube['Back'][1], cube['Back'][2],
+                     cube['Back'][3], cube['Back'][4], cube['Back'][5],
+                     cube['Back'][6], cube['Back'][7], cube['Back'][8]]
+        temp_left = [cube['Left'][0], cube['Left'][1], cube['Left'][2],
+                     cube['Left'][3], cube['Left'][4], cube['Left'][5],
+                     cube['Left'][6], cube['Left'][7], cube['Left'][8]]
+
+        cube['Front'][0], cube['Front'][1], cube['Front'][2], \
+        cube['Front'][3], cube['Front'][4], cube['Front'][5], \
+        cube['Front'][6], cube['Front'][7], cube['Front'][8] = temp_right
+        cube['Right'][0], cube['Right'][1], cube['Right'][2], \
+        cube['Right'][3], cube['Right'][4], cube['Right'][5], \
+        cube['Right'][6], cube['Right'][7], cube['Right'][8] = temp_back
+        cube['Back'][0], cube['Back'][1], cube['Back'][2], cube['Back'][
+            3], cube['Back'][4], cube['Back'][5], cube['Back'][6], \
+        cube['Back'][7], cube['Back'][8] = temp_left
+        cube['Left'][0], cube['Left'][1], cube['Left'][2], cube['Left'][
+            3], cube['Left'][4], cube['Left'][5], cube['Left'][6], \
+        cube['Left'][7], cube['Left'][8] = temp_front
+
+        cube['Bottom'][0], cube['Bottom'][1], cube['Bottom'][2], \
+            cube['Bottom'][3], cube['Bottom'][4], cube['Bottom'][5], \
+            cube['Bottom'][6], cube['Bottom'][7], cube['Bottom'][8] = \
+            cube['Bottom'][6], cube['Bottom'][3], cube['Bottom'][0], \
+                cube['Bottom'][7], cube['Bottom'][4], cube['Bottom'][1], \
+                cube['Bottom'][8], cube['Bottom'][5], cube['Bottom'][2]
+
+        cube['Top'][0], cube['Top'][1], cube['Top'][2], \
+            cube['Top'][3], cube['Top'][4], cube['Top'][5], \
+            cube['Top'][6], cube['Top'][7], cube['Top'][8] = \
+            cube['Top'][2], cube['Top'][5], cube['Top'][8], \
+                cube['Top'][1], cube['Top'][4], cube['Top'][7], \
+                cube['Top'][0], cube['Top'][3], cube['Top'][6]
     elif rotation == 'Yi':
-        cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Left'], cube['Front'], cube['Right'], \
-            cube['Back']
-        cube['Top'] = [cube['Top'][2], cube['Top'][5], cube['Top'][8], cube['Top'][1], cube['Top'][4],
-                       cube['Top'][7], cube['Top'][0], cube['Top'][3], cube['Top'][6]]
-        cube['Bottom'] = [cube['Bottom'][6], cube['Bottom'][3], cube['Bottom'][0], cube['Bottom'][7],
-                          cube['Bottom'][4], cube['Bottom'][1], cube['Bottom'][8], cube['Bottom'][5],
-                          cube['Bottom'][2]]
+        rotate_cube(cube, 'Y')
+        rotate_cube(cube, 'Y')
+        rotate_cube(cube, 'Y')
 
 
 if __name__ == '__main__':
