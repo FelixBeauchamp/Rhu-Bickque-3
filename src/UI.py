@@ -199,9 +199,11 @@ class CubeDisplay(QWidget):
     def start_mapping(self):
         global mapping_array
         global moves_list
+        global stop_flag
 
         if not self.can_map:
             return
+        stop_flag = False
         self.disable_buttons()
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
