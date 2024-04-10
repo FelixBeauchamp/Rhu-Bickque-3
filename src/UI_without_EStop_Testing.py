@@ -393,19 +393,19 @@ def rotate_cube(cube, rotation):
             3], cube['Back'][4], cube['Back'][5], cube['Back'][6], \
         cube['Back'][7], cube['Back'][8] = temp_top[::-1]
 
-        cube['Left'][0], cube['Left'][1], cube['Left'][2], \
-            cube['Left'][3], cube['Left'][4], cube['Left'][5], \
-            cube['Left'][6], cube['Left'][7], cube['Left'][8] = \
-            cube['Left'][6], cube['Left'][3], cube['Left'][0], \
-                cube['Left'][7], cube['Left'][4], cube['Left'][1], \
-                cube['Left'][8], cube['Left'][5], cube['Left'][2]
-
         cube['Right'][0], cube['Right'][1], cube['Right'][2], \
             cube['Right'][3], cube['Right'][4], cube['Right'][5], \
             cube['Right'][6], cube['Right'][7], cube['Right'][8] = \
-            cube['Right'][2], cube['Right'][5], cube['Right'][8], \
-                cube['Right'][1], cube['Right'][4], cube['Right'][7], \
-                cube['Right'][0], cube['Right'][3], cube['Right'][6]
+            cube['Right'][6], cube['Right'][3], cube['Right'][0], \
+                cube['Right'][7], cube['Right'][4], cube['Right'][1], \
+                cube['Right'][8], cube['Right'][5], cube['Right'][2]
+
+        cube['Left'][0], cube['Left'][1], cube['Left'][2], \
+            cube['Left'][3], cube['Left'][4], cube['Left'][5], \
+            cube['Left'][6], cube['Left'][7], cube['Left'][8] = \
+            cube['Left'][2], cube['Left'][5], cube['Left'][8], \
+                cube['Left'][1], cube['Left'][4], cube['Left'][7], \
+                cube['Left'][0], cube['Left'][3], cube['Left'][6]
 
     elif rotation == 'Xi':
         rotate_cube(cube, 'X')
