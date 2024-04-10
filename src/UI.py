@@ -1,16 +1,18 @@
 import sys
 import time
 import control
+import threading
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
+from PyQt5.QtCore import QObject, QEvent
 
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
 
-
 class CubeDisplay(QWidget):
+    stop_signal = pyqtSignal()
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
         self.start_time = None
@@ -22,6 +24,10 @@ class CubeDisplay(QWidget):
         self.initUI()
         self.actual_move = 0
         self.total_moves = 0
+        self.can_clamp = True
+        self.can_map = False
+        self.can_solve = False
+        self.stop_thread = None
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -67,7 +73,7 @@ class CubeDisplay(QWidget):
         self.setLayout(layout)
         self.start_clamping_button.setEnabled(True)
         self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(True)
+        self.start_solve_button.setEnabled(False)
 
         time.sleep(0.1)
         control.initialisation()
@@ -112,9 +118,13 @@ class CubeDisplay(QWidget):
                 print(f"{face_name}: {colors}")
 
     def stop(self):
-        self.stop_timer()
-        QApplication.quit()
-        sys.exit(0)
+        if self.stop_thread:
+            self.stop_signal.emit()
+
+    def monitor_stop_button(self):
+        while not self.stop_signal:
+            time.sleep(0.1)
+        print("Stop button pressed. Stopping the solving process.")
 
     def stop_timer(self):
         if hasattr(self, 'timer'):
@@ -150,8 +160,22 @@ class CubeDisplay(QWidget):
         progress_percent = (self.actual_move / self.total_moves) * 100
         self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
 
+    def disable_buttons(self):
+        self.start_clamping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
+
+    def enable_buttons(self):
+
+        self.start_clamping_button.setEnabled(self.can_clamp)
+        self.start_mapping_button.setEnabled(self.can_map)
+        self.start_solve_button.setEnabled(self.can_solve)
+
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
+        if not self.can_clamp:
+            return
+        self.disable_buttons()
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
@@ -159,6 +183,9 @@ class CubeDisplay(QWidget):
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(True)
         self.start_solve_button.setEnabled(False)
+        self.can_map = True
+        self.can_clamp = False
+        self.enable_buttons()
 
     def update_face_colors(self, modified_dict):
         if self.can_change_colors:
@@ -179,6 +206,9 @@ class CubeDisplay(QWidget):
         global mapping_array
         global moves_list
 
+        if not self.can_map:
+            return
+        self.disable_buttons()
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
@@ -213,15 +243,25 @@ class CubeDisplay(QWidget):
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(True)
+        self.can_solve = True
+        self.can_map = False
+        self.enable_buttons()
 
     def start_solve(self):
         global moves_list
         global stop_flag
+
+        if not self.can_solve:
+            return
+        self.disable_buttons()
+        self.stop_thread = threading.Thread(target=self.monitor_stop_button)
+        self.stop_thread.start()
         stop_flag = False
         self.can_change_colors = False
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(False)
+        self.can_solve = False
 
         # Change the mapping array back to its original form after applying manual change
         color_map = {
@@ -247,6 +287,8 @@ class CubeDisplay(QWidget):
         self.timer.start(10)
         i = 0
         for move in moves_list[2]:
+            if self.stop_signal:
+                break
             print(move)
             for sub_move in move:
                 print(sub_move)
@@ -260,6 +302,7 @@ class CubeDisplay(QWidget):
             i = i + 1
         print('Done solving')
         self.stop_timer()
+
 
     def apply_move(self, move):
         print('Applying move')
@@ -469,12 +512,8 @@ class CubeDisplay(QWidget):
             self.face_colors['Top'][1], self.face_colors['Top'][4], self.face_colors['Top'][7] = temp_back[::-1]
             self.face_colors['Front'][1], self.face_colors['Front'][4], self.face_colors['Front'][7] = temp_top
             self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                7] = temp_front[::-1]
-            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom
-
-            # Rotation de la colonne centrale droite dans le sens horaire
-            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][7] = \
-                self.face_colors['Right'][7], self.face_colors['Right'][1], self.face_colors['Right'][4]
+                7] = temp_front
+            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom[::-1]
 
         elif move == "Mi":
             # Mouvement M inverse (dans le sens antihoraire)
@@ -503,10 +542,6 @@ class CubeDisplay(QWidget):
             self.face_colors['Back'][3:6] = temp_right
             self.face_colors['Left'][3:6] = temp_back
 
-            # Rotation de la ligne centrale du haut dans le sens horaire
-            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = \
-                self.face_colors['Top'][5], self.face_colors['Top'][3], self.face_colors['Top'][4]
-
         elif move == "Ei":
             # Mouvement E inverse (dans le sens antihoraire)
             self.apply_move('E')
@@ -524,20 +559,19 @@ class CubeDisplay(QWidget):
             self.apply_move('E')
         elif move == 'S':
             # Implémentez la logique pour le mouvement S (rotation du cube dans le sens de la ligne centrale de droite)
-            temp_top = [self.face_colors['Top'][5], self.face_colors['Top'][4], self.face_colors['Top'][3]]
-            temp_front = [self.face_colors['Front'][5], self.face_colors['Front'][4],
-                          self.face_colors['Front'][3]]
-            temp_bottom = [self.face_colors['Bottom'][5], self.face_colors['Bottom'][4],
-                           self.face_colors['Bottom'][3]]
-            temp_back = [self.face_colors['Back'][5], self.face_colors['Back'][4], self.face_colors['Back'][3]]
+            temp_top = [self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5]]
+            temp_right = [self.face_colors['Right'][1], self.face_colors['Right'][4],
+                          self.face_colors['Right'][7]]
+            temp_bottom = [self.face_colors['Bottom'][3], self.face_colors['Bottom'][4],
+                           self.face_colors['Bottom'][5]]
+            temp_left = [self.face_colors['Left'][2], self.face_colors['Left'][4], self.face_colors['Left'][7]]
 
-            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_front
-            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][
-                5] = temp_bottom[::-1]
+            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_left[::-1]
+            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][
+                7] = temp_top
             self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                5] = temp_back
-            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5] = temp_top[
-                                                                                                    ::-1]
+                5] = temp_right[::-1]
+            self.face_colors['Left'][1], self.face_colors['Left'][4], self.face_colors['Left'][7] = temp_bottom
 
             # Rotation de la ligne centrale de droite dans le sens horaire
             self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5] = \
