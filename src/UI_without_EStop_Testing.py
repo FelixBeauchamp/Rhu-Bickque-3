@@ -1,686 +1,435 @@
-import sys
-import time
-import control
-import threading
+moves = dict(F=['M1_R'], duoF=['M1_180'], Fi=['M1_L'], duoFi=['M1_180'], R=['M4_R'], duoR=['M4_180'],
+             Ri=['M4_L'], duoRi=['M4_180'], U=['M2M4_L_F', 'M3_L', 'M2M4_R_F'],
+             duoU=['M2M4_L_F', 'M3_180', 'M2M4_R_F'], Ui=['M2M4_L_F', 'M3_R', 'M2M4_R_F'],
+             duoUi=['M2M4_L_F', 'M3_180', 'M2M4_R_F'], L=['M2_R'], duoL=['M2_180'], Li=['M2_L'],
+             duoLi=['M2_180'], B=['M3_L'], duoB=['M3_180'], Bi=['M3_R'], duoBi=['M3_180'],
+             D=['M2M4_L_F', 'M1_R', 'M2M4_R_F'], duoD=['M2M4_L_F', 'M1_180', 'M2M4_R_F'],
+             Di=['M2M4_L_F', 'M1_L', 'M2M4_R_F'], duoDi=['M2M4_L_F', 'M1_180', 'M2M4_R_F'],
+             M=['M2M4_L_B', 'M2M4_R_F'], duoM=['duoM2M4_B', 'duoM2M4_F'], Mi=['M2M4_R_B', 'M2M4_L_F'],
+             duoMi=['duoM2M4_B', 'duoM2M4_F'], E=['M1M3_L_F', 'M2M4_R_B', 'M2M4_L_F', 'M1M3_R_F'],
+             duoE=['M1M3_L_F', 'duoM2M4_B', 'duoM2M4_F', 'M1M3_R_F'],
+             Ei=['M1M3_L_F', 'M2M4_L_B', 'M2M4_R_F', 'M1M3_R_F'],
+             duoEi=['M1M3_L_F', 'duoM2M4_B', 'duoM2M4_F', 'M1M3_R_F'], S=['M1M3_L_B', 'M1M3_R_F'],
+             duoS=['duoM1M3_B', 'duoM1M3_F'], Si=['M1M3_R_B', 'M1M3_L_F'],
+             duoSi=['duoM1M3_B', 'duoM1M3_F'], f=['M3_L', 'M1M3_R_F'], fi=['M3_R', 'M1M3_L_F'],
+             r=['M2_R', 'M2M4_L_F'], ri=['M2_L', 'M2M4_R_F'],
+             u=['M2M4_L_F', 'M1_R', 'M1M3_L_F', 'M2M4_R_F'],
+             ui=['M2M4_L_F', 'M1_L', 'M1M3_R_F', 'M2M4_R_F'],
+             l=['M4_R', 'M2M4_R_F'], li=['M4_L', 'M2M4_L_F'],
+             b=['M1_R', 'M1M3_L_F'], bi=['M1_L', 'M1M3_R_F'],
+             d=['M2M4_L_F', 'M3_L', 'M1M3_R_F', 'M2M4_R_F'],
+             di=['M2M4_L_F', 'M3_R', 'M1M3_L_F', 'M2M4_R_F'], X=['M2M4_L_F'], Xi=['M2M4_R_F'],
+             Y=['M2M4_R_F', 'M1M3_R_F', 'M2M4_L_F'], Yi=['M1M3_L_F', 'M2M4_L_F', 'M1M3_R_F'],
+             Z=['M1M3_R_F'], Zi=['M1M3_L_F'], duoX=['duoM2M4_F'],
+             duoY=['M1M3_L_F', 'duoM2M4_F', 'M1M3_R_F'], duoZ=['duoM1M3_F'])
 
-from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
-from PyQt5.QtCore import QObject, QEvent
 
-mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
-moves_list = []
-total_moves = 0
+def print_marde(marde):
+    arranged_colors = [
+        [' ', ' ', ' ', marde['Top'][0], marde['Top'][1], marde['Top'][2], ' ',
+         ' ', ' '],
+        [' ', ' ', ' ', marde['Top'][3], marde['Top'][4], marde['Top'][5], ' ',
+         ' ', ' '],
+        [' ', ' ', ' ', marde['Top'][6], marde['Top'][7], marde['Top'][8], ' ',
+         ' ', ' '],
+        [marde['Left'][0], marde['Left'][1], marde['Left'][2],
+         marde['Front'][0],
+         marde['Front'][1], marde['Front'][2], marde['Right'][0],
+         marde['Right'][1],
+         marde['Right'][2], marde['Back'][0], marde['Back'][1],
+         marde['Back'][2]],
+        [marde['Left'][3], marde['Left'][4], marde['Left'][5],
+         marde['Front'][3],
+         marde['Front'][4], marde['Front'][5], marde['Right'][3],
+         marde['Right'][4],
+         marde['Right'][5], marde['Back'][3], marde['Back'][4],
+         marde['Back'][5]],
+        [marde['Left'][6], marde['Left'][7], marde['Left'][8],
+         marde['Front'][6],
+         marde['Front'][7], marde['Front'][8], marde['Right'][6],
+         marde['Right'][7],
+         marde['Right'][8], marde['Back'][6], marde['Back'][7],
+         marde['Back'][8]],
+        [' ', ' ', ' ', marde['Bottom'][0], marde['Bottom'][1],
+         marde['Bottom'][2], ' ', ' ',
+         ' '],
+        [' ', ' ', ' ', marde['Bottom'][3], marde['Bottom'][4],
+         marde['Bottom'][5], ' ', ' ',
+         ' '],
+        [' ', ' ', ' ', marde['Bottom'][6], marde['Bottom'][7],
+         marde['Bottom'][8], ' ', ' ',
+         ' '],
+    ]
+    for row in arranged_colors:
+        print(''.join(row))
+    print('Move done applying')
 
 
-class CubeDisplay(QWidget):
-    def __init__(self, initial_colors, parent=None):
-        super().__init__(parent)
-        self.start_time = None
-        self.face_colors = initial_colors  # Store the initial colors of each face
-        self.face_buttons = {}
-        self.can_change_colors = True  # Flag to control color changes
-        self.start_solve_button_clicked = False  # Flag to track if start button has been clicked
-        self.elapsed_time = 0  # Variable to store elapsed time
-        self.initUI()
-        self.actual_move = 0
-        self.total_moves = 0
-        self.can_clamp = True
-        self.can_map = False
-        self.can_solve = True
 
-    def initUI(self):
-        layout = QVBoxLayout()
-        self.grid_layout = QGridLayout()
-        self.setup_faces()
-        layout.addLayout(self.grid_layout)
+        
 
-        # Add apply button
-        self.apply_button = QPushButton("Apply")
-        self.apply_button.setFixedSize(60, 30)  # Set fixed size
-        self.apply_button.clicked.connect(self.apply_changes)
-        layout.addWidget(self.apply_button, alignment=Qt.AlignHCenter)  # Align button to center
 
-        # Add timer widgets
-        self.timer_label = QLabel("Time elapsed: 0:00.00")
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.update_timer)
-        self.start_clamping_button = QPushButton("Start Clamping")
-        self.start_clamping_button.setFixedSize(500, 30)  # Set fixed size
-        self.start_clamping_button.clicked.connect(self.start_clamping)
-        self.start_mapping_button = QPushButton("Start Mapping")
-        self.start_mapping_button.setFixedSize(500, 30)  # Set fixed size
-        self.start_mapping_button.clicked.connect(self.start_mapping)
-        self.start_solve_button = QPushButton("Start Solve")
-        self.start_solve_button.setFixedSize(500, 30)  # Set fixed size
-        self.start_solve_button.clicked.connect(self.start_solve)
-        self.stop_button = QPushButton("Stop")
-        self.stop_button.setFixedSize(500, 30)  # Set fixed size
-        self.stop_button.clicked.connect(self.stop)
-        layout.addWidget(self.timer_label, alignment=Qt.AlignHCenter)  # Align label to center
-        layout.addWidget(self.start_clamping_button, alignment=Qt.AlignHCenter)  # Align button to center
-        layout.addWidget(self.start_mapping_button, alignment=Qt.AlignHCenter)  # Align button to center
-        layout.addWidget(self.start_solve_button, alignment=Qt.AlignHCenter)  # Align button to center
-        layout.addWidget(self.stop_button, alignment=Qt.AlignHCenter)  # Align button to center
 
-        # Add progress bar and percentage label
-        self.progress_label = QLabel("Progress: 0%")
-        self.progress_bar = QProgressBar()
-        self.progress_bar.setRange(0, 100)  # Set the range of the progress bar
-        self.progress_bar.setValue(0)  # Start with the progress bar empty
-        self.progress_bar.setFixedSize(500, 30)  # Set fixed size
-        layout.addWidget(self.progress_bar, alignment=Qt.AlignHCenter)  # Align progress bar to center
-        self.setLayout(layout)
-        self.start_clamping_button.setEnabled(True)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(True)
+def apply_move(marde, move):
+    if move == 'R':
+        temp_top = [marde['Top'][2], marde['Top'][5], marde['Top'][8]]
+        temp_front = [marde['Front'][2], marde['Front'][5], marde['Front'][8]]
+        temp_bottom = [marde['Bottom'][2], marde['Bottom'][5], marde['Bottom'][8]]
+        temp_back = [marde['Back'][0], marde['Back'][3], marde['Back'][6]]
 
-        time.sleep(0.1)
-        # control.initialisation()
+        marde['Back'][0], marde['Back'][3], marde['Back'][6] = temp_top[::-1]
+        marde['Top'][2], marde['Top'][5], marde['Top'][8] = temp_front
+        marde['Front'][2], marde['Front'][5], marde['Front'][8] = temp_bottom
+        marde['Bottom'][2], marde['Bottom'][5], marde['Bottom'][8] = temp_back[
+                                                                                                      ::-1]
 
-    def setup_faces(self):
-        # Clear any existing widgets
-        for i in reversed(range(self.grid_layout.count())):
-            layoutItem = self.grid_layout.itemAt(i)
-            if layoutItem.widget():
-                layoutItem.widget().setParent(None)
+        # # Rotation de la face droite dans le sens horaire
+        marde['Right'][0], marde['Right'][1], marde['Right'][2], \
+            marde['Right'][3], marde['Right'][4], marde['Right'][5], \
+            marde['Right'][6], marde['Right'][7], marde['Right'][8] = \
+            marde['Right'][6], marde['Right'][3], marde['Right'][0], \
+                marde['Right'][7], marde['Right'][4], marde['Right'][1], \
+                marde['Right'][8], marde['Right'][5], marde['Right'][2]
 
-        # Define the order of the faces for the cross shape
-        face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1), ("Back", 1, 3)]
-        for i, (face_name, row, col) in enumerate(face_order):
-            face_grid = QGridLayout()
-            face_grid.setHorizontalSpacing(0)  # Set spacing between squares to 0
-            face_grid.setVerticalSpacing(0)  # Set spacing between squares to 0
-            face_colors = self.face_colors[face_name]
-            for seg_idx, color in enumerate(face_colors):
-                label = QPushButton()
-                # label.setProperty("face_name", face_name)
-                label.setStyleSheet(f"background-color: {color}; border: 1px solid black;")
-                label.setFixedSize(50, 50)
-                label.clicked.connect(lambda state, f=face_name, s=seg_idx: self.change_color(f, s))
-                face_grid.addWidget(label, seg_idx // 3, seg_idx % 3)
-                self.face_buttons[(face_name, seg_idx)] = label
-            self.grid_layout.addLayout(face_grid, row, col)
+    elif move == "Ri":
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+    elif move == 'duoR':
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+    elif move == 'duoRi':
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+        apply_move(marde, 'R')
+    elif move == 'L':
+        temp_top = [marde['Top'][0], marde['Top'][3], marde['Top'][6]]
+        temp_front = [marde['Front'][0], marde['Front'][3], marde['Front'][6]]
+        temp_bottom = [marde['Bottom'][0], marde['Bottom'][3], marde['Bottom'][6]]
+        temp_back = [marde['Back'][2], marde['Back'][5], marde['Back'][8]]
 
-    def change_color(self, face_name, seg_idx):
-        if self.can_change_colors:
-            color_map = ['white', 'red', 'green', 'yellow', 'blue', 'orange']
-            current_color = self.face_colors[face_name][seg_idx]
-            next_color = color_map[(color_map.index(current_color) + 1) % len(color_map)]
-            self.face_colors[face_name][seg_idx] = next_color
-            sender = self.sender()
-            sender.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
+        marde['Back'][2], marde['Back'][5], marde['Back'][8] = temp_bottom[::-1]
+        marde['Top'][0], marde['Top'][3], marde['Top'][6] = temp_back[::-1]
+        marde['Front'][0], marde['Front'][3], marde['Front'][6] = temp_top
+        marde['Bottom'][0], marde['Bottom'][3], marde['Bottom'][6] = temp_front
 
-    def apply_changes(self):
-        if self.can_change_colors:
-            print("Initial face colors array after applying changes:")
-            for face_name, colors in self.face_colors.items():
-                print(f"{face_name}: {colors}")
+        # # Rotation de la face droite dans le sens horaire
+        marde['Left'][0], marde['Left'][1], marde['Left'][2], \
+            marde['Left'][3], marde['Left'][4], marde['Left'][5], \
+            marde['Left'][6], marde['Left'][7], marde['Left'][8] = \
+            marde['Left'][6], marde['Left'][3], marde['Left'][0], \
+                marde['Left'][7], marde['Left'][4], marde['Left'][1], \
+                marde['Left'][8], marde['Left'][5], marde['Left'][2]
+    elif move == "Li":
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+    elif move == 'duoL':
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+    elif move == 'duoLi':
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+        apply_move(marde, 'L')
+    elif move == 'U':
+        temp_right = [marde['Right'][0], marde['Right'][1], marde['Right'][2]]
+        temp_front = [marde['Front'][0], marde['Front'][1], marde['Front'][2]]
+        temp_left = [marde['Left'][0], marde['Left'][1], marde['Left'][2]]
+        temp_back = [marde['Back'][0], marde['Back'][1], marde['Back'][2]]
 
-    def stop(self):
-        self.stop_timer()
-        QApplication.quit()
-        sys.exit(0)
+        marde['Right'][0], marde['Right'][1], marde['Right'][2] = temp_back
+        marde['Front'][0], marde['Front'][1], marde['Front'][2] = temp_right
+        marde['Left'][0], marde['Left'][1], marde['Left'][2] = temp_front
+        marde['Back'][0], marde['Back'][1], marde['Back'][2] = temp_left
 
-    def stop_timer(self):
-        if hasattr(self, 'timer'):
-            self.timer.stop()
-            self.elapsed_time = self.start_time.elapsed()
-            # self.close()  # Close the UI when stop button is pressed
+        # # Rotation de la face droite dans le sens horaire
+        marde['Top'][0], marde['Top'][1], marde['Top'][2], \
+            marde['Top'][3], marde['Top'][4], marde['Top'][5], \
+            marde['Top'][6], marde['Top'][7], marde['Top'][8] = \
+            marde['Top'][6], marde['Top'][3], marde['Top'][0], \
+                marde['Top'][7], marde['Top'][4], marde['Top'][1], \
+                marde['Top'][8], marde['Top'][5], marde['Top'][2]
+    elif move == "Ui":
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+    elif move == 'duoU':
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+    elif move == 'duoUi':
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+        apply_move(marde, 'U')
+    elif move == 'D':
+        temp_right = [marde['Right'][6], marde['Right'][7], marde['Right'][8]]
+        temp_front = [marde['Front'][6], marde['Front'][7], marde['Front'][8]]
+        temp_left = [marde['Left'][6], marde['Left'][7], marde['Left'][8]]
+        temp_back = [marde['Back'][6], marde['Back'][7], marde['Back'][8]]
 
-    def reset_timer(self):
-        self.timer_label.setText("Time elapsed: 0:00.00")
-        if hasattr(self, 'timer'):
-            self.timer.stop()
-            self.elapsed_time = 0  # Reset elapsed time
-        self.progress_bar.setValue(0)  # Reset progress bar value
-        self.progress_label.setText("Progress: 0%")
-        self.can_change_colors = True  # Enable color changes
-        self.start_solve_button_clicked = False  # Reset start button clicked flag
-        self.start_solve_button.setEnabled(True)
-        self.apply_button.setEnabled(True)  # Re-enable apply button
+        marde['Right'][6], marde['Right'][7], marde['Right'][8] = temp_front
+        marde['Front'][6], marde['Front'][7], marde['Front'][8] = temp_left
+        marde['Left'][6], marde['Left'][7], marde['Left'][8] = temp_back
+        marde['Back'][6], marde['Back'][7], marde['Back'][8] = temp_right
 
-    def update_timer(self):
-        current_time = QTime.currentTime()
-        self.elapsed_time = self.start_time.msecsTo(current_time)
-        minutes = self.elapsed_time // 60000
-        seconds = (self.elapsed_time % 60000) // 1000
-        milliseconds = self.elapsed_time % 1000
-        self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}.{milliseconds:02}")
-        self.timer_label.update()
-        QApplication.processEvents()
+        # # Rotation de la face droite dans le sens horaire
+        marde['Bottom'][0], marde['Bottom'][1], marde['Bottom'][2], \
+            marde['Bottom'][3], marde['Bottom'][4], marde['Bottom'][5], \
+            marde['Bottom'][6], marde['Bottom'][7], marde['Bottom'][8] = \
+            marde['Bottom'][6], marde['Bottom'][3], marde['Bottom'][0], \
+                marde['Bottom'][7], marde['Bottom'][4], marde['Bottom'][1], \
+                marde['Bottom'][8], marde['Bottom'][5], marde['Bottom'][2]
+    elif move == "Di":
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+    elif move == 'duoD':
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+    elif move == 'duoDi':
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+        apply_move(marde, 'D')
+    elif move == 'F':
+        temp_right = [marde['Right'][0], marde['Right'][3], marde['Right'][6]]
+        temp_top = [marde['Top'][6], marde['Top'][7], marde['Top'][8]]
+        temp_bottom = [marde['Bottom'][0], marde['Bottom'][1], marde['Bottom'][2]]
+        temp_left = [marde['Left'][2], marde['Left'][5], marde['Left'][8]]
 
-        # Update progress bar value and percentage label
-        self.progress_bar.setValue(self.actual_move)
-        progress_percent = (self.actual_move / self.total_moves) * 100
-        self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
+        marde['Right'][0], marde['Right'][3], marde['Right'][6] = temp_top
+        marde['Top'][6], marde['Top'][7], marde['Top'][8] = temp_left[::-1]
+        marde['Left'][2], marde['Left'][5], marde['Left'][8] = temp_bottom
+        marde['Bottom'][0], marde['Bottom'][1], marde['Bottom'][2] = temp_right[
+                                                                                                      ::-1]
 
-    def disable_buttons(self):
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
+        # # Rotation de la face droite dans le sens horaire
+        marde['Front'][0], marde['Front'][1], marde['Front'][2], \
+            marde['Front'][3], marde['Front'][4], marde['Front'][5], \
+            marde['Front'][6], marde['Front'][7], marde['Front'][8] = \
+            marde['Front'][6], marde['Front'][3], marde['Front'][0], \
+                marde['Front'][7], marde['Front'][4], marde['Front'][1], \
+                marde['Front'][8], marde['Front'][5], marde['Front'][2]
+    elif move == "Fi":
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+    elif move == 'duoF':
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+    elif move == 'duoFi':
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+        apply_move(marde, 'F')
+    elif move == 'B':
+        temp_right = [marde['Right'][2], marde['Right'][5], marde['Right'][8]]
+        temp_top = [marde['Top'][0], marde['Top'][1], marde['Top'][2]]
+        temp_bottom = [marde['Bottom'][6], marde['Bottom'][7], marde['Bottom'][8]]
+        temp_left = [marde['Left'][0], marde['Left'][3], marde['Left'][6]]
 
-    def enable_buttons(self):
+        marde['Right'][2], marde['Right'][5], marde['Right'][8] = temp_bottom[::-1]
+        marde['Top'][0], marde['Top'][1], marde['Top'][2] = temp_right
+        marde['Left'][0], marde['Left'][3], marde['Left'][6] = temp_top[::-1]
+        marde['Bottom'][6], marde['Bottom'][7], marde['Bottom'][8] = temp_left
 
-        self.start_clamping_button.setEnabled(self.can_clamp)
-        self.start_mapping_button.setEnabled(self.can_map)
-        self.start_solve_button.setEnabled(self.can_solve)
+        # # Rotation de la face droite dans le sens horaire
+        marde['Back'][0], marde['Back'][1], marde['Back'][2], \
+            marde['Back'][3], marde['Back'][4], marde['Back'][5], \
+            marde['Back'][6], marde['Back'][7], marde['Back'][8] = \
+            marde['Back'][6], marde['Back'][3], marde['Back'][0], \
+                marde['Back'][7], marde['Back'][4], marde['Back'][1], \
+                marde['Back'][8], marde['Back'][5], marde['Back'][2]
+    elif move == "B'":
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+    elif move == 'duoB':
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+    elif move == 'duoBi':
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+        apply_move(marde, 'B')
+    elif move == 'M':
+        # Implémentez la logique pour le mouvement M (rotation du cube dans le sens de la colonne centrale droite)
+        temp_top = [marde['Top'][1], marde['Top'][4], marde['Top'][7]]
+        temp_front = [marde['Front'][1], marde['Front'][4],
+                      marde['Front'][7]]
+        temp_bottom = [marde['Bottom'][1], marde['Bottom'][4],
+                       marde['Bottom'][7]]
+        temp_back = [marde['Back'][1], marde['Back'][4], marde['Back'][7]]
 
-    # Additional methods for start_clamping and start_mapping buttons
-    def start_clamping(self):
-        if not self.can_clamp:
-            return
-        self.disable_buttons()
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
-        # control.clamp()
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(True)
-        self.start_solve_button.setEnabled(False)
-        self.can_map = True
-        self.can_clamp = False
-        self.enable_buttons()
+        marde['Top'][1], marde['Top'][4], marde['Top'][7] = temp_back[::-1]
+        marde['Front'][1], marde['Front'][4], marde['Front'][7] = temp_top
+        marde['Bottom'][1], marde['Bottom'][4], marde['Bottom'][
+            7] = temp_front
+        marde['Back'][1], marde['Back'][4], marde['Back'][7] = temp_bottom[::-1]
 
-    def update_face_colors(self, modified_dict):
-        if self.can_change_colors:
-            face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1),
-                          ("Back", 1, 3)]
-            for i, (face_name, row, col) in enumerate(face_order):
-                face_colors = modified_dict[face_name]
-                for seg_idx, color in enumerate(face_colors):
-                    next_color = modified_dict[face_name][seg_idx]
-                    self.face_colors[face_name][seg_idx] = next_color
-                    button = self.face_buttons.get((face_name, seg_idx))
-                    if button:
-                        button.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
-                        # Update the stored color in the face_colors dictionary
-                        self.face_colors[face_name][seg_idx] = next_color
+    elif move == "Mi":
+        # Mouvement M inverse (dans le sens antihoraire)
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+    elif move == 'duoM':
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+    elif move == 'duoMi':
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+        apply_move(marde, 'M')
+    elif move == 'E':
+        # Implémentez la logique pour le mouvement E (rotation du cube dans le sens de la ligne centrale du haut)
+        temp_front = marde['Front'][3:6]
+        temp_right = marde['Right'][3:6]
+        temp_back = marde['Back'][3:6]
+        temp_left = marde['Left'][3:6]
 
-    def start_mapping(self):
-        global mapping_array
-        global moves_list
+        marde['Front'][3:6] = temp_left
+        marde['Right'][3:6] = temp_front
+        marde['Back'][3:6] = temp_right
+        marde['Left'][3:6] = temp_back
 
-        if not self.can_map:
-            return
-        self.disable_buttons()
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
+    elif move == "Ei":
+        # Mouvement E inverse (dans le sens antihoraire)
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+    elif move == 'duoE':
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+    elif move == 'duoEi':
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+        apply_move(marde, 'E')
+    elif move == 'S':
+        # Implémentez la logique pour le mouvement S (rotation du cube dans le sens de la ligne centrale de droite)
+        temp_top = [marde['Top'][3], marde['Top'][4], marde['Top'][5]]
+        temp_right = [marde['Right'][1], marde['Right'][4],
+                      marde['Right'][7]]
+        temp_bottom = [marde['Bottom'][3], marde['Bottom'][4],
+                       marde['Bottom'][5]]
+        temp_left = [marde['Left'][1], marde['Left'][4], marde['Left'][7]]
 
-        mapping_array = control.mapping_sequence()
-        print(mapping_array)
-        # Modified dictionnary to show colors on UI
-        # Empty dictionary to store the modified array
-        modified_dict = {}
+        marde['Top'][3], marde['Top'][4], marde['Top'][5] = temp_left[::-1]
+        marde['Right'][1], marde['Right'][4], marde['Right'][
+            7] = temp_top
+        marde['Bottom'][3], marde['Bottom'][4], marde['Bottom'][
+            5] = temp_right[::-1]
+        marde['Left'][1], marde['Left'][4], marde['Left'][7] = temp_bottom
 
-        # Define the names of the faces
-        face_names = ['Front', 'Right', 'Back', 'Left', 'Bottom', 'Top']
+    elif move == "Si":
+        # Mouvement S inverse (dans le sens antihoraire)
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
+    elif move == 'duoS':
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
+    elif move == 'duoSi':
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
+        apply_move(marde, 'S')
 
-        # Iterate through the input array and convert each list of colors into lists of RGB values
-        for i, face_name in enumerate(face_names):
-            # Extract three consecutive lists of colors
-            face_colors = mapping_array[i]
+    elif move in ['X', 'Xi', "Y", 'Yi', 'Z', "Zi"]:
+        rotate_cube(marde, move)
 
-            # Convert colors to RGB format
-            face_rgb = [
-                'red' if color == 'R' else 'green' if color == 'G' else 'blue' if color == 'B' else
-                'white' if color == 'W' else 'yellow' if color == 'Y' else 'orange' for row in face_colors
-                for color in row
-            ]
+    else:
+        print("Mouvement non reconnu")
 
-            # Append the converted RGB values to the modified dictionary with the face name as the key
-            modified_dict[face_name] = face_rgb
+    return marde
 
-        # Print the modified dictionary
-        print(modified_dict)
-        self.update_face_colors(modified_dict)
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(True)
-        self.can_solve = True
-        self.can_map = False
-        self.enable_buttons()
 
-    def start_solve(self):
-        global moves_list
-        global stop_flag
+# Function to rotate the entire cube around the X axis
+def rotate_cube(cube, rotation):
+    if rotation == 'X':
+        cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Bottom'], cube['Back'], cube['Top'], \
+            cube['Front']
+        cube['Left'] = [cube['Left'][6], cube['Left'][3], cube['Left'][0], cube['Left'][7], cube['Left'][4],
+                        cube['Left'][1], cube['Left'][8], cube['Left'][5], cube['Left'][2]]
+        cube['Right'] = [cube['Right'][2], cube['Right'][5], cube['Right'][8], cube['Right'][1],
+                         cube['Right'][4],
+                         cube['Right'][7], cube['Right'][0], cube['Right'][3], cube['Right'][6]]
+    elif rotation == 'Xi':
+        cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Top'], cube['Front'], cube['Bottom'], \
+            cube['Back']
+        cube['Left'] = [cube['Left'][2], cube['Left'][5], cube['Left'][8], cube['Left'][1], cube['Left'][4],
+                        cube['Left'][7], cube['Left'][0], cube['Left'][3], cube['Left'][6]]
+        cube['Right'] = [cube['Right'][6], cube['Right'][3], cube['Right'][0], cube['Right'][7],
+                         cube['Right'][4],
+                         cube['Right'][1], cube['Right'][8], cube['Right'][5], cube['Right'][2]]
 
-        if not self.can_solve:
-            return
-        self.disable_buttons()
-        stop_flag = False
-        self.can_change_colors = False
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
-        self.can_solve = False
+    elif rotation == 'Z':
+        cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Left'], cube['Top'], cube['Right'], \
+            cube['Bottom']
+        cube['Front'] = [cube['Front'][6], cube['Front'][3], cube['Front'][0], cube['Front'][7],
+                         cube['Front'][4],
+                         cube['Front'][1], cube['Front'][8], cube['Front'][5], cube['Front'][2]]
+        cube['Back'] = [cube['Back'][2], cube['Back'][5], cube['Back'][8], cube['Back'][1], cube['Back'][4],
+                        cube['Back'][7], cube['Back'][0], cube['Back'][3], cube['Back'][6]]
+    elif rotation == 'Zi':
+        cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Right'], cube['Bottom'], cube['Left'], \
+            cube['Top']
+        cube['Front'] = [cube['Front'][2], cube['Front'][5], cube['Front'][8], cube['Front'][1],
+                         cube['Front'][4],
+                         cube['Front'][7], cube['Front'][0], cube['Front'][3], cube['Front'][6]]
+        cube['Back'] = [cube['Back'][6], cube['Back'][3], cube['Back'][0], cube['Back'][7], cube['Back'][4],
+                        cube['Back'][1], cube['Back'][8], cube['Back'][5], cube['Back'][2]]
 
-        # Change the mapping array back to its original form after applying manual change
-        color_map = {
-            'green': 'G',
-            'red': 'R',
-            'blue': 'B',
-            'white': 'W',
-            'yellow': 'Y',
-            'orange': 'O'
-        }
-        # 'R': None, 'Ri': None, 'duoR': None, 'duoRi': None, 'L': None, 'Li': None, 'duoL': None,
-        # 'duoLi': None, 'U': None, 'Ui': None, 'duoU': None, 'duoUi': None, 'D': None, 'Di': None,
-        # 'duoD': None, 'duoDi': None, 'F': None, 'Fi': None, 'duoF': None, 'duoFi': None,'B': None,
-        #                      'Bi': None, 'duoB': None, 'duoBi': None
-        move_dict = {'M': None,
-                     'Mi': None,'E': None, 'Ei': None, 'S': None, 'Si': None}
-
-        for move in move_dict:
-            print('Press enter to start:')
-            input(move)
-            self.apply_move(move)
-            arranged_colors = [
-                [' ', ' ', ' ', self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2], ' ',
-                 ' ', ' '],
-                [' ', ' ', ' ', self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5], ' ',
-                 ' ', ' '],
-                [' ', ' ', ' ', self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8], ' ',
-                 ' ', ' '],
-                [self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2],
-                 self.face_colors['Front'][0],
-                 self.face_colors['Front'][1], self.face_colors['Front'][2], self.face_colors['Right'][0],
-                 self.face_colors['Right'][1],
-                 self.face_colors['Right'][2], self.face_colors['Back'][0], self.face_colors['Back'][1],
-                 self.face_colors['Back'][2]],
-                [self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5],
-                 self.face_colors['Front'][3],
-                 self.face_colors['Front'][4], self.face_colors['Front'][5], self.face_colors['Right'][3],
-                 self.face_colors['Right'][4],
-                 self.face_colors['Right'][5], self.face_colors['Back'][3], self.face_colors['Back'][4],
-                 self.face_colors['Back'][5]],
-                [self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8],
-                 self.face_colors['Front'][6],
-                 self.face_colors['Front'][7], self.face_colors['Front'][8], self.face_colors['Right'][6],
-                 self.face_colors['Right'][7],
-                 self.face_colors['Right'][8], self.face_colors['Back'][6], self.face_colors['Back'][7],
-                 self.face_colors['Back'][8]],
-                [' ', ' ', ' ', self.face_colors['Bottom'][0], self.face_colors['Bottom'][1],
-                 self.face_colors['Bottom'][2], ' ', ' ',
-                 ' '],
-                [' ', ' ', ' ', self.face_colors['Bottom'][3], self.face_colors['Bottom'][4],
-                 self.face_colors['Bottom'][5], ' ', ' ',
-                 ' '],
-                [' ', ' ', ' ', self.face_colors['Bottom'][6], self.face_colors['Bottom'][7],
-                 self.face_colors['Bottom'][8], ' ', ' ',
-                 ' '],
-            ]
-            # Print the arranged colors
-            for row in arranged_colors:
-                print(''.join(row))
-            print('Move done applying')
-
-    def apply_move(self, move):
-        print('Applying move')
-        if move == 'R':
-            temp_top = [self.face_colors['Top'][2], self.face_colors['Top'][5], self.face_colors['Top'][8]]
-            temp_front = [self.face_colors['Front'][2], self.face_colors['Front'][5], self.face_colors['Front'][8]]
-            temp_bottom = [self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8]]
-            temp_back = [self.face_colors['Back'][0], self.face_colors['Back'][3], self.face_colors['Back'][6]]
-
-            self.face_colors['Back'][0], self.face_colors['Back'][3], self.face_colors['Back'][6] = temp_top[::-1]
-            self.face_colors['Top'][2], self.face_colors['Top'][5], self.face_colors['Top'][8] = temp_front
-            self.face_colors['Front'][2], self.face_colors['Front'][5], self.face_colors['Front'][8] = temp_bottom
-            self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8] = temp_back[
-                                                                                                          ::-1]
-
-            # # Rotation de la face droite dans le sens horaire
-            self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2], \
-                self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5], \
-                self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = \
-                self.face_colors['Right'][6], self.face_colors['Right'][3], self.face_colors['Right'][0], \
-                    self.face_colors['Right'][7], self.face_colors['Right'][4], self.face_colors['Right'][1], \
-                    self.face_colors['Right'][8], self.face_colors['Right'][5], self.face_colors['Right'][2]
-
-        elif move == "Ri":
-            self.apply_move('R')
-            self.apply_move('R')
-            self.apply_move('R')
-        elif move == 'duoR':
-            self.apply_move('R')
-            self.apply_move('R')
-        elif move == 'duoRi':
-            self.apply_move('R')
-            self.apply_move('R')
-            self.apply_move('R')
-            self.apply_move('R')
-            self.apply_move('R')
-            self.apply_move('R')
-        elif move == 'L':
-            temp_top = [self.face_colors['Top'][0], self.face_colors['Top'][3], self.face_colors['Top'][6]]
-            temp_front = [self.face_colors['Front'][0], self.face_colors['Front'][3], self.face_colors['Front'][6]]
-            temp_bottom = [self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6]]
-            temp_back = [self.face_colors['Back'][2], self.face_colors['Back'][5], self.face_colors['Back'][8]]
-
-            self.face_colors['Back'][2], self.face_colors['Back'][5], self.face_colors['Back'][8] = temp_bottom[::-1]
-            self.face_colors['Top'][0], self.face_colors['Top'][3], self.face_colors['Top'][6] = temp_back[::-1]
-            self.face_colors['Front'][0], self.face_colors['Front'][3], self.face_colors['Front'][6] = temp_top
-            self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6] = temp_front
-
-            # # Rotation de la face droite dans le sens horaire
-            self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2], \
-                self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5], \
-                self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = \
-                self.face_colors['Left'][6], self.face_colors['Left'][3], self.face_colors['Left'][0], \
-                    self.face_colors['Left'][7], self.face_colors['Left'][4], self.face_colors['Left'][1], \
-                    self.face_colors['Left'][8], self.face_colors['Left'][5], self.face_colors['Left'][2]
-        elif move == "Li":
-            self.apply_move('L')
-            self.apply_move('L')
-            self.apply_move('L')
-        elif move == 'duoL':
-            self.apply_move('L')
-            self.apply_move('L')
-        elif move == 'duoLi':
-            self.apply_move('L')
-            self.apply_move('L')
-            self.apply_move('L')
-            self.apply_move('L')
-            self.apply_move('L')
-            self.apply_move('L')
-        elif move == 'U':
-            temp_right = [self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2]]
-            temp_front = [self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2]]
-            temp_left = [self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2]]
-            temp_back = [self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2]]
-
-            self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2] = temp_back
-            self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2] = temp_right
-            self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2] = temp_front
-            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2] = temp_left
-
-            # # Rotation de la face droite dans le sens horaire
-            self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2], \
-                self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5], \
-                self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8] = \
-                self.face_colors['Top'][6], self.face_colors['Top'][3], self.face_colors['Top'][0], \
-                    self.face_colors['Top'][7], self.face_colors['Top'][4], self.face_colors['Top'][1], \
-                    self.face_colors['Top'][8], self.face_colors['Top'][5], self.face_colors['Top'][2]
-        elif move == "Ui":
-            self.apply_move('U')
-            self.apply_move('U')
-            self.apply_move('U')
-        elif move == 'duoU':
-            self.apply_move('U')
-            self.apply_move('U')
-        elif move == 'duoUi':
-            self.apply_move('U')
-            self.apply_move('U')
-            self.apply_move('U')
-            self.apply_move('U')
-            self.apply_move('U')
-            self.apply_move('U')
-        elif move == 'D':
-            temp_right = [self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8]]
-            temp_front = [self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8]]
-            temp_left = [self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8]]
-            temp_back = [self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8]]
-
-            self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = temp_front
-            self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_left
-            self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = temp_back
-            self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_right
-
-            # # Rotation de la face droite dans le sens horaire
-            self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2], \
-                self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][5], \
-                self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = \
-                self.face_colors['Bottom'][6], self.face_colors['Bottom'][3], self.face_colors['Bottom'][0], \
-                    self.face_colors['Bottom'][7], self.face_colors['Bottom'][4], self.face_colors['Bottom'][1], \
-                    self.face_colors['Bottom'][8], self.face_colors['Bottom'][5], self.face_colors['Bottom'][2]
-        elif move == "Di":
-            self.apply_move('D')
-            self.apply_move('D')
-            self.apply_move('D')
-        elif move == 'duoD':
-            self.apply_move('D')
-            self.apply_move('D')
-        elif move == 'duoDi':
-            self.apply_move('D')
-            self.apply_move('D')
-            self.apply_move('D')
-            self.apply_move('D')
-            self.apply_move('D')
-            self.apply_move('D')
-        elif move == 'F':
-            temp_right = [self.face_colors['Right'][0], self.face_colors['Right'][3], self.face_colors['Right'][6]]
-            temp_top = [self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8]]
-            temp_bottom = [self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2]]
-            temp_left = [self.face_colors['Left'][2], self.face_colors['Left'][5], self.face_colors['Left'][8]]
-
-            self.face_colors['Right'][0], self.face_colors['Right'][3], self.face_colors['Right'][6] = temp_top
-            self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8] = temp_left[::-1]
-            self.face_colors['Left'][2], self.face_colors['Left'][5], self.face_colors['Left'][8] = temp_bottom
-            self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2] = temp_right[
-                                                                                                          ::-1]
-
-            # # Rotation de la face droite dans le sens horaire
-            self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2], \
-                self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
-                self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = \
-                self.face_colors['Front'][6], self.face_colors['Front'][3], self.face_colors['Front'][0], \
-                    self.face_colors['Front'][7], self.face_colors['Front'][4], self.face_colors['Front'][1], \
-                    self.face_colors['Front'][8], self.face_colors['Front'][5], self.face_colors['Front'][2]
-        elif move == "Fi":
-            self.apply_move('F')
-            self.apply_move('F')
-            self.apply_move('F')
-        elif move == 'duoF':
-            self.apply_move('F')
-            self.apply_move('F')
-        elif move == 'duoFi':
-            self.apply_move('F')
-            self.apply_move('F')
-            self.apply_move('F')
-            self.apply_move('F')
-            self.apply_move('F')
-            self.apply_move('F')
-        elif move == 'B':
-            temp_right = [self.face_colors['Right'][2], self.face_colors['Right'][5], self.face_colors['Right'][8]]
-            temp_top = [self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2]]
-            temp_bottom = [self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8]]
-            temp_left = [self.face_colors['Left'][0], self.face_colors['Left'][3], self.face_colors['Left'][6]]
-
-            self.face_colors['Right'][2], self.face_colors['Right'][5], self.face_colors['Right'][8] = temp_bottom[::-1]
-            self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2] = temp_right
-            self.face_colors['Left'][0], self.face_colors['Left'][3], self.face_colors['Left'][6] = temp_top[::-1]
-            self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = temp_left
-
-            # # Rotation de la face droite dans le sens horaire
-            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2], \
-                self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
-                self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = \
-                self.face_colors['Back'][6], self.face_colors['Back'][3], self.face_colors['Back'][0], \
-                    self.face_colors['Back'][7], self.face_colors['Back'][4], self.face_colors['Back'][1], \
-                    self.face_colors['Back'][8], self.face_colors['Back'][5], self.face_colors['Back'][2]
-        elif move == "B'":
-            self.apply_move('B')
-            self.apply_move('B')
-            self.apply_move('B')
-        elif move == 'duoB':
-            self.apply_move('B')
-            self.apply_move('B')
-        elif move == 'duoBi':
-            self.apply_move('B')
-            self.apply_move('B')
-            self.apply_move('B')
-            self.apply_move('B')
-            self.apply_move('B')
-            self.apply_move('B')
-        elif move == 'M':
-            # Implémentez la logique pour le mouvement M (rotation du cube dans le sens de la colonne centrale droite)
-            temp_top = [self.face_colors['Top'][1], self.face_colors['Top'][4], self.face_colors['Top'][7]]
-            temp_front = [self.face_colors['Front'][1], self.face_colors['Front'][4],
-                          self.face_colors['Front'][7]]
-            temp_bottom = [self.face_colors['Bottom'][1], self.face_colors['Bottom'][4],
-                           self.face_colors['Bottom'][7]]
-            temp_back = [self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7]]
-
-            self.face_colors['Top'][1], self.face_colors['Top'][4], self.face_colors['Top'][7] = temp_back[::-1]
-            self.face_colors['Front'][1], self.face_colors['Front'][4], self.face_colors['Front'][7] = temp_top
-            self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                7] = temp_front
-            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom[::-1]
-
-        elif move == "Mi":
-            # Mouvement M inverse (dans le sens antihoraire)
-            self.apply_move('M')
-            self.apply_move('M')
-            self.apply_move('M')
-        elif move == 'duoM':
-            self.apply_move('M')
-            self.apply_move('M')
-        elif move == 'duoMi':
-            self.apply_move('M')
-            self.apply_move('M')
-            self.apply_move('M')
-            self.apply_move('M')
-            self.apply_move('M')
-            self.apply_move('M')
-        elif move == 'E':
-            # Implémentez la logique pour le mouvement E (rotation du cube dans le sens de la ligne centrale du haut)
-            temp_front = self.face_colors['Front'][3:6]
-            temp_right = self.face_colors['Right'][3:6]
-            temp_back = self.face_colors['Back'][3:6]
-            temp_left = self.face_colors['Left'][3:6]
-
-            self.face_colors['Front'][3:6] = temp_left
-            self.face_colors['Right'][3:6] = temp_front
-            self.face_colors['Back'][3:6] = temp_right
-            self.face_colors['Left'][3:6] = temp_back
-
-        elif move == "Ei":
-            # Mouvement E inverse (dans le sens antihoraire)
-            self.apply_move('E')
-            self.apply_move('E')
-            self.apply_move('E')
-        elif move == 'duoE':
-            self.apply_move('E')
-            self.apply_move('E')
-        elif move == 'duoEi':
-            self.apply_move('E')
-            self.apply_move('E')
-            self.apply_move('E')
-            self.apply_move('E')
-            self.apply_move('E')
-            self.apply_move('E')
-        elif move == 'S':
-            # Implémentez la logique pour le mouvement S (rotation du cube dans le sens de la ligne centrale de droite)
-            temp_top = [self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5]]
-            temp_right = [self.face_colors['Right'][1], self.face_colors['Right'][4],
-                          self.face_colors['Right'][7]]
-            temp_bottom = [self.face_colors['Bottom'][3], self.face_colors['Bottom'][4],
-                           self.face_colors['Bottom'][5]]
-            temp_left = [self.face_colors['Left'][1], self.face_colors['Left'][4], self.face_colors['Left'][7]]
-
-            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_left[::-1]
-            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][
-                7] = temp_top
-            self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                5] = temp_right[::-1]
-            self.face_colors['Left'][1], self.face_colors['Left'][4], self.face_colors['Left'][7] = temp_bottom
-
-            # Rotation de la ligne centrale de droite dans le sens horaire
-            self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5] = \
-                self.face_colors['Right'][5], self.face_colors['Right'][3], self.face_colors['Right'][4]
-
-        elif move == "Si":
-            # Mouvement S inverse (dans le sens antihoraire)
-            self.apply_move('S')
-            self.apply_move('S')
-            self.apply_move('S')
-        elif move == 'duoS':
-            self.apply_move('S')
-            self.apply_move('S')
-        elif move == 'duoSi':
-            self.apply_move('S')
-            self.apply_move('S')
-            self.apply_move('S')
-            self.apply_move('S')
-            self.apply_move('S')
-            self.apply_move('S')
-
-        elif move in ['X', 'Xi', "Y", 'Yi', 'Z', "Zi"]:
-            self.rotate_cube(self.face_colors, move)
-
-        else:
-            print("Mouvement non reconnu")
-
-        print("Move applied successfully")
-        return True
-
-    # Function to rotate the entire cube around the X axis
-    def rotate_cube(self, cube, rotation):
-        if rotation == 'X':
-            cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Bottom'], cube['Back'], cube['Top'], \
-                cube['Front']
-            cube['Left'] = [cube['Left'][6], cube['Left'][3], cube['Left'][0], cube['Left'][7], cube['Left'][4],
-                            cube['Left'][1], cube['Left'][8], cube['Left'][5], cube['Left'][2]]
-            cube['Right'] = [cube['Right'][2], cube['Right'][5], cube['Right'][8], cube['Right'][1],
-                             cube['Right'][4],
-                             cube['Right'][7], cube['Right'][0], cube['Right'][3], cube['Right'][6]]
-        elif rotation == 'Xi':
-            cube['Front'], cube['Bottom'], cube['Back'], cube['Top'] = cube['Top'], cube['Front'], cube['Bottom'], \
-                cube['Back']
-            cube['Left'] = [cube['Left'][2], cube['Left'][5], cube['Left'][8], cube['Left'][1], cube['Left'][4],
-                            cube['Left'][7], cube['Left'][0], cube['Left'][3], cube['Left'][6]]
-            cube['Right'] = [cube['Right'][6], cube['Right'][3], cube['Right'][0], cube['Right'][7],
-                             cube['Right'][4],
-                             cube['Right'][1], cube['Right'][8], cube['Right'][5], cube['Right'][2]]
-
-        elif rotation == 'Z':
-            cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Left'], cube['Top'], cube['Right'], \
-                cube['Bottom']
-            cube['Front'] = [cube['Front'][6], cube['Front'][3], cube['Front'][0], cube['Front'][7],
-                             cube['Front'][4],
-                             cube['Front'][1], cube['Front'][8], cube['Front'][5], cube['Front'][2]]
-            cube['Back'] = [cube['Back'][2], cube['Back'][5], cube['Back'][8], cube['Back'][1], cube['Back'][4],
-                            cube['Back'][7], cube['Back'][0], cube['Back'][3], cube['Back'][6]]
-        elif rotation == 'Zi':
-            cube['Top'], cube['Right'], cube['Bottom'], cube['Left'] = cube['Right'], cube['Bottom'], cube['Left'], \
-                cube['Top']
-            cube['Front'] = [cube['Front'][2], cube['Front'][5], cube['Front'][8], cube['Front'][1],
-                             cube['Front'][4],
-                             cube['Front'][7], cube['Front'][0], cube['Front'][3], cube['Front'][6]]
-            cube['Back'] = [cube['Back'][6], cube['Back'][3], cube['Back'][0], cube['Back'][7], cube['Back'][4],
-                            cube['Back'][1], cube['Back'][8], cube['Back'][5], cube['Back'][2]]
-
-        elif rotation == 'Y':
-            cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Right'], cube['Back'], cube['Left'], \
-                cube['Front']
-            cube['Top'] = [cube['Top'][6], cube['Top'][3], cube['Top'][0], cube['Top'][7], cube['Top'][4],
-                           cube['Top'][1], cube['Top'][8], cube['Top'][5], cube['Top'][2]]
-            cube['Bottom'] = [cube['Bottom'][2], cube['Bottom'][5], cube['Bottom'][8], cube['Bottom'][1],
-                              cube['Bottom'][4], cube['Bottom'][7], cube['Bottom'][0], cube['Bottom'][3],
-                              cube['Bottom'][6]]
-        elif rotation == 'Yi':
-            cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Left'], cube['Front'], cube['Right'], \
-                cube['Back']
-            cube['Top'] = [cube['Top'][2], cube['Top'][5], cube['Top'][8], cube['Top'][1], cube['Top'][4],
-                           cube['Top'][7], cube['Top'][0], cube['Top'][3], cube['Top'][6]]
-            cube['Bottom'] = [cube['Bottom'][6], cube['Bottom'][3], cube['Bottom'][0], cube['Bottom'][7],
-                              cube['Bottom'][4], cube['Bottom'][1], cube['Bottom'][8], cube['Bottom'][5],
-                              cube['Bottom'][2]]
+    elif rotation == 'Y':
+        cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Right'], cube['Back'], cube['Left'], \
+            cube['Front']
+        cube['Top'] = [cube['Top'][6], cube['Top'][3], cube['Top'][0], cube['Top'][7], cube['Top'][4],
+                       cube['Top'][1], cube['Top'][8], cube['Top'][5], cube['Top'][2]]
+        cube['Bottom'] = [cube['Bottom'][2], cube['Bottom'][5], cube['Bottom'][8], cube['Bottom'][1],
+                          cube['Bottom'][4], cube['Bottom'][7], cube['Bottom'][0], cube['Bottom'][3],
+                          cube['Bottom'][6]]
+    elif rotation == 'Yi':
+        cube['Front'], cube['Right'], cube['Back'], cube['Left'] = cube['Left'], cube['Front'], cube['Right'], \
+            cube['Back']
+        cube['Top'] = [cube['Top'][2], cube['Top'][5], cube['Top'][8], cube['Top'][1], cube['Top'][4],
+                       cube['Top'][7], cube['Top'][0], cube['Top'][3], cube['Top'][6]]
+        cube['Bottom'] = [cube['Bottom'][6], cube['Bottom'][3], cube['Bottom'][0], cube['Bottom'][7],
+                          cube['Bottom'][4], cube['Bottom'][1], cube['Bottom'][8], cube['Bottom'][5],
+                          cube['Bottom'][2]]
 
 
 if __name__ == '__main__':
-    # Initialize face colors to all white
-    initial_face_colors = {
-        "Back": ['orange','red','orange','red','orange','red','orange','red','orange'] ,
-        "Left": ['blue','green','blue','green','blue','green','blue','green','blue'] ,
-        "Top": ['yellow','white','yellow','white','yellow','white','yellow','white','yellow'] ,
-        "Right": ['green','blue','green','blue','green','blue','green','blue','green'] ,
-        "Front": ['red','orange','red','orange','red','orange','red','orange','red'] ,
-        "Bottom": ['white','yellow','white','yellow','white','yellow','white','yellow','white']
-    }
+    basic_moves = moves.keys()
 
-    app = QApplication(sys.argv)
-    cube_display = CubeDisplay(initial_face_colors)
-    cube_display.show()
-
-    sys.exit(app.exec_())
+    for move in basic_moves:
+        initial_face_colors = {
+    'Back': ['r', 'g', 'g', 'b', 'g', 'g', 'o', 'o', 'w'],
+    'Left': ['w', 'g', 'w', 'r', 'o', 'b', 'r', 'w', 'o'],
+    'Top': ['o', 'y', 'y', 'w', 'y', 'y', 'b', 'b', 'y'],
+    'Right': ['g', 'r', 'b', 'y', 'r', 'r', 'b', 'o', 'w'],
+    'Front': ['r', 'w', 'r', 'o', 'b', 'b', 'g', 'r', 'y'],
+    'Bottom': ['y', 'w', 'o', 'o', 'w', 'y', 'g', 'g', 'b']
+}
+        input(move)
+        merde = apply_move(initial_face_colors, move)
+        print_marde(merde)
