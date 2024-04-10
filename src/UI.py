@@ -160,9 +160,9 @@ class CubeDisplay(QWidget):
         self.start_solve_button.setEnabled(False)
 
     def enable_buttons(self):
-        self.start_clamping_button.setEnabled(self.allow_start_clamping)
-        self.start_mapping_button.setEnabled(self.allow_start_mapping)
-        self.start_solve_button.setEnabled(self.allow_start_solve)
+        self.start_clamping_button.setEnabled(self.can_clamp)
+        self.start_mapping_button.setEnabled(self.can_map)
+        self.start_solve_button.setEnabled(self.can_solve)
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
