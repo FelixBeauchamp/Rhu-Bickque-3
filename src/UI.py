@@ -526,7 +526,7 @@ class CubeDisplay(QWidget):
             self.apply_move('S')
 
 
-        elif move in ['X', 'Xi', "Y", 'Yi', 'Z', "Zi"]:
+        elif move in ['X', 'Xi','duoX','duoXi', "Y", 'Yi','duoY','duoYi', 'Z', "Zi",'duoZ','duoZi',]:
             self.rotate_cube(self.face_colors, move)
 
         else:
@@ -574,6 +574,9 @@ class CubeDisplay(QWidget):
             self.rotate_cube('X')
             self.rotate_cube('X')
             self.rotate_cube('X')
+        elif rotation == 'duoX' or 'duoXi':
+            self.rotate_cube('X')
+            self.rotate_cube('X')
 
 
         elif rotation == 'Z':
@@ -618,6 +621,9 @@ class CubeDisplay(QWidget):
             self.rotate_cube('Z')
             self.rotate_cube('Z')
             self.rotate_cube('Z')
+        elif rotation == 'duoZ' or 'duoZi':
+            self.rotate_cube('Z')
+            self.rotate_cube('Z')
 
 
         elif rotation == 'Y':
@@ -655,6 +661,9 @@ class CubeDisplay(QWidget):
             self.face_colors['Top'][0], self.face_colors['Top'][3], self.face_colors['Top'][6]
         elif rotation == 'Yi':
             self.rotate_cube('Y')
+            self.rotate_cube('Y')
+            self.rotate_cube('Y')
+        elif rotation == 'duoY' or 'duoYi':
             self.rotate_cube('Y')
             self.rotate_cube('Y')
 
