@@ -469,12 +469,8 @@ class CubeDisplay(QWidget):
             self.face_colors['Top'][1], self.face_colors['Top'][4], self.face_colors['Top'][7] = temp_back[::-1]
             self.face_colors['Front'][1], self.face_colors['Front'][4], self.face_colors['Front'][7] = temp_top
             self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                7] = temp_front[::-1]
-            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom
-
-            # Rotation de la colonne centrale droite dans le sens horaire
-            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][7] = \
-                self.face_colors['Right'][7], self.face_colors['Right'][1], self.face_colors['Right'][4]
+                7] = temp_front
+            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom[::-1]
 
         elif move == "Mi":
             # Mouvement M inverse (dans le sens antihoraire)
@@ -503,10 +499,6 @@ class CubeDisplay(QWidget):
             self.face_colors['Back'][3:6] = temp_right
             self.face_colors['Left'][3:6] = temp_back
 
-            # Rotation de la ligne centrale du haut dans le sens horaire
-            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = \
-                self.face_colors['Top'][5], self.face_colors['Top'][3], self.face_colors['Top'][4]
-
         elif move == "Ei":
             # Mouvement E inverse (dans le sens antihoraire)
             self.apply_move('E')
@@ -524,20 +516,19 @@ class CubeDisplay(QWidget):
             self.apply_move('E')
         elif move == 'S':
             # Implémentez la logique pour le mouvement S (rotation du cube dans le sens de la ligne centrale de droite)
-            temp_top = [self.face_colors['Top'][5], self.face_colors['Top'][4], self.face_colors['Top'][3]]
-            temp_front = [self.face_colors['Front'][5], self.face_colors['Front'][4],
-                          self.face_colors['Front'][3]]
-            temp_bottom = [self.face_colors['Bottom'][5], self.face_colors['Bottom'][4],
-                           self.face_colors['Bottom'][3]]
-            temp_back = [self.face_colors['Back'][5], self.face_colors['Back'][4], self.face_colors['Back'][3]]
+            temp_top = [self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5]]
+            temp_right = [self.face_colors['Right'][1], self.face_colors['Right'][4],
+                          self.face_colors['Right'][7]]
+            temp_bottom = [self.face_colors['Bottom'][3], self.face_colors['Bottom'][4],
+                           self.face_colors['Bottom'][5]]
+            temp_left = [self.face_colors['Left'][2], self.face_colors['Left'][4], self.face_colors['Left'][7]]
 
-            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_front
-            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][
-                5] = temp_bottom[::-1]
+            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_left[::-1]
+            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][
+                7] = temp_top
             self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                5] = temp_back
-            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5] = temp_top[
-                                                                                                    ::-1]
+                5] = temp_right[::-1]
+            self.face_colors['Left'][1], self.face_colors['Left'][4], self.face_colors['Left'][7] = temp_bottom
 
             # Rotation de la ligne centrale de droite dans le sens horaire
             self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5] = \
