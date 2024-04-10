@@ -154,18 +154,31 @@ class CubeDisplay(QWidget):
         progress_percent = (self.actual_move / self.total_moves) * 100
         self.progress_label.setText(f"Progress: {progress_percent:.1f}%")
 
+    def disable_buttons(self):
+        self.start_clamping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
+
+    def enable_buttons(self):
+        self.start_clamping_button.setEnabled(self.allow_start_clamping)
+        self.start_mapping_button.setEnabled(self.allow_start_mapping)
+        self.start_solve_button.setEnabled(self.allow_start_solve)
+
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
-        if self.can_clamp:
-            self.start_clamping_button.setEnabled(False)
-            self.start_mapping_button.setEnabled(False)
-            self.start_solve_button.setEnabled(False)
-            control.clamp()
-            self.start_clamping_button.setEnabled(False)
-            self.start_mapping_button.setEnabled(True)
-            self.start_solve_button.setEnabled(False)
-            self.can_map = True
-            self.can_clamp = False
+        if not self.can_clamp:
+            return
+        self.disable_buttons()
+        self.start_clamping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
+        control.clamp()
+        self.start_clamping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(True)
+        self.start_solve_button.setEnabled(False)
+        self.can_map = True
+        self.can_clamp = False
+        self.enable_buttons()
 
     def update_face_colors(self, modified_dict):
         if self.can_change_colors:
@@ -187,9 +200,11 @@ class CubeDisplay(QWidget):
         global moves_list
 
         if self.can_map:
-            self.start_clamping_button.setEnabled(False)
-            self.start_mapping_button.setEnabled(False)
-            self.start_solve_button.setEnabled(False)
+            return
+        self.disable_buttons()
+        self.start_clamping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
 
         mapping_array = control.mapping_sequence()
         print(mapping_array)
@@ -223,56 +238,60 @@ class CubeDisplay(QWidget):
         self.start_solve_button.setEnabled(True)
         self.can_solve = True
         self.can_map = False
+        self.enable_buttons()
 
     def start_solve(self):
         global moves_list
         global stop_flag
 
-        if self.can_solve:
-            stop_flag = False
-            self.can_change_colors = False
-            self.start_clamping_button.setEnabled(False)
-            self.start_mapping_button.setEnabled(False)
-            self.start_solve_button.setEnabled(False)
-            self.can_solve = False
+        if not self.can_solve:
+            return
+        self.disable_buttons()
+        stop_flag = False
+        self.can_change_colors = False
+        self.start_clamping_button.setEnabled(False)
+        self.start_mapping_button.setEnabled(False)
+        self.start_solve_button.setEnabled(False)
+        self.can_solve = False
 
-            # Change the mapping array back to its original form after applying manual change
-            color_map = {
-                'green': 'G',
-                'red': 'R',
-                'blue': 'B',
-                'white': 'W',
-                'yellow': 'Y',
-                'orange': 'O'
-            }
-            converted_face_colors = []
-            for face_name in ['Front', 'Right', 'Back', 'Left', 'Bottom', 'Top']:
-                # Récupérer les couleurs de la face et les convertir selon la carte de couleur
-                face_colors = [color_map[color] for color in self.face_colors[face_name]]
-                # Diviser les couleurs en sous-tableaux de 3 éléments
-                face_subarrays = [face_colors[i:i + 3] for i in range(0, len(face_colors), 3)]
-                # Ajouter les sous-tableaux à notre tableau principal
-                converted_face_colors.append(face_subarrays)
-            moves_list = control.solving_moves(converted_face_colors)
-            self.total_moves = len(moves_list[1])
-            self.progress_bar.setRange(0, self.total_moves)
-            self.start_time = QTime.currentTime()
-            self.timer.start(10)
-            i = 0
-            for move in moves_list[2]:
-                print(move)
-                for sub_move in move:
-                    print(sub_move)
-                    control.do_move(sub_move)
-                    self.actual_move = self.actual_move + 1
-                    self.update_timer()
-                self.apply_move(moves_list[0][i])
-                self.can_change_colors = True
-                self.update_face_colors(self.face_colors)
-                self.can_change_colors = False
-                i = i + 1
-            print('Done solving')
-            self.stop_timer()
+        # Change the mapping array back to its original form after applying manual change
+        color_map = {
+            'green': 'G',
+            'red': 'R',
+            'blue': 'B',
+            'white': 'W',
+            'yellow': 'Y',
+            'orange': 'O'
+        }
+        converted_face_colors = []
+        for face_name in ['Front', 'Right', 'Back', 'Left', 'Bottom', 'Top']:
+            # Récupérer les couleurs de la face et les convertir selon la carte de couleur
+            face_colors = [color_map[color] for color in self.face_colors[face_name]]
+            # Diviser les couleurs en sous-tableaux de 3 éléments
+            face_subarrays = [face_colors[i:i + 3] for i in range(0, len(face_colors), 3)]
+            # Ajouter les sous-tableaux à notre tableau principal
+            converted_face_colors.append(face_subarrays)
+        moves_list = control.solving_moves(converted_face_colors)
+        self.total_moves = len(moves_list[1])
+        self.progress_bar.setRange(0, self.total_moves)
+        self.start_time = QTime.currentTime()
+        self.timer.start(10)
+        i = 0
+        for move in moves_list[2]:
+            print(move)
+            for sub_move in move:
+                print(sub_move)
+                control.do_move(sub_move)
+                self.actual_move = self.actual_move + 1
+                self.update_timer()
+            self.apply_move(moves_list[0][i])
+            self.can_change_colors = True
+            self.update_face_colors(self.face_colors)
+            self.can_change_colors = False
+            i = i + 1
+        print('Done solving')
+        self.stop_timer()
+
 
     def apply_move(self, move):
         print('Applying move')
@@ -482,12 +501,8 @@ class CubeDisplay(QWidget):
             self.face_colors['Top'][1], self.face_colors['Top'][4], self.face_colors['Top'][7] = temp_back[::-1]
             self.face_colors['Front'][1], self.face_colors['Front'][4], self.face_colors['Front'][7] = temp_top
             self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                7] = temp_front[::-1]
-            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom
-
-            # Rotation de la colonne centrale droite dans le sens horaire
-            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][7] = \
-                self.face_colors['Right'][7], self.face_colors['Right'][1], self.face_colors['Right'][4]
+                7] = temp_front
+            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7] = temp_bottom[::-1]
 
         elif move == "Mi":
             # Mouvement M inverse (dans le sens antihoraire)
@@ -516,10 +531,6 @@ class CubeDisplay(QWidget):
             self.face_colors['Back'][3:6] = temp_right
             self.face_colors['Left'][3:6] = temp_back
 
-            # Rotation de la ligne centrale du haut dans le sens horaire
-            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = \
-                self.face_colors['Top'][5], self.face_colors['Top'][3], self.face_colors['Top'][4]
-
         elif move == "Ei":
             # Mouvement E inverse (dans le sens antihoraire)
             self.apply_move('E')
@@ -537,20 +548,19 @@ class CubeDisplay(QWidget):
             self.apply_move('E')
         elif move == 'S':
             # Implémentez la logique pour le mouvement S (rotation du cube dans le sens de la ligne centrale de droite)
-            temp_top = [self.face_colors['Top'][5], self.face_colors['Top'][4], self.face_colors['Top'][3]]
-            temp_front = [self.face_colors['Front'][5], self.face_colors['Front'][4],
-                          self.face_colors['Front'][3]]
-            temp_bottom = [self.face_colors['Bottom'][5], self.face_colors['Bottom'][4],
-                           self.face_colors['Bottom'][3]]
-            temp_back = [self.face_colors['Back'][5], self.face_colors['Back'][4], self.face_colors['Back'][3]]
+            temp_top = [self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5]]
+            temp_right = [self.face_colors['Right'][1], self.face_colors['Right'][4],
+                          self.face_colors['Right'][7]]
+            temp_bottom = [self.face_colors['Bottom'][3], self.face_colors['Bottom'][4],
+                           self.face_colors['Bottom'][5]]
+            temp_left = [self.face_colors['Left'][2], self.face_colors['Left'][4], self.face_colors['Left'][7]]
 
-            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_front
-            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][
-                5] = temp_bottom[::-1]
+            self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5] = temp_left[::-1]
+            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][
+                7] = temp_top
             self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][
-                5] = temp_back
-            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5] = temp_top[
-                                                                                                    ::-1]
+                5] = temp_right[::-1]
+            self.face_colors['Left'][1], self.face_colors['Left'][4], self.face_colors['Left'][7] = temp_bottom
 
             # Rotation de la ligne centrale de droite dans le sens horaire
             self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5] = \
