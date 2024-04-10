@@ -1,6 +1,7 @@
 import sys
 import time
 import control
+import threading
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
@@ -11,6 +12,7 @@ moves_list = []
 total_moves = 0
 
 class CubeDisplay(QWidget):
+    stop_signal = pyqtSignal()
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
         self.start_time = None
@@ -25,6 +27,7 @@ class CubeDisplay(QWidget):
         self.can_clamp = True
         self.can_map = False
         self.can_solve = False
+        self.stop_thread = None
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -118,6 +121,11 @@ class CubeDisplay(QWidget):
         self.stop_timer()
         QApplication.quit()
         sys.exit(0)
+
+    def monitor_stop_button(self):
+        while not self.stop_signal:
+            time.sleep(0.1)
+        print("Stop button pressed. Stopping the solving process.")
 
     def stop_timer(self):
         if hasattr(self, 'timer'):
@@ -247,6 +255,8 @@ class CubeDisplay(QWidget):
         if not self.can_solve:
             return
         self.disable_buttons()
+        self.stop_thread = threading.Thread(target=self.monitor_stop_button)
+        self.stop_thread.start()
         stop_flag = False
         self.can_change_colors = False
         self.start_clamping_button.setEnabled(False)
@@ -278,6 +288,8 @@ class CubeDisplay(QWidget):
         self.timer.start(10)
         i = 0
         for move in moves_list[2]:
+            if self.stop_signal:
+                break
             print(move)
             for sub_move in move:
                 print(sub_move)
