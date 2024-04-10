@@ -1,10 +1,6 @@
 # The file to analyze the colors on the cube
 import numpy as np
 import cv2
-import os
-
-directory = r'C:\Users\beaud\Documents\foto cam rubik'
-os.chdir(directory)
 
 YellowL_limit = np.array([15, 10, 0])  # setting the yellow lower limit
 YellowU_limit = np.array([35, 255, 200])  # setting the yellow upper limit
@@ -130,33 +126,33 @@ def faceofdacube():
 
     frame_1_1 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
     cv2.imshow('Face 1_1', frame_1_1)
-    cv2.imwrite('frame_11.png', frame_1_1)
+    #cv2.imwrite('frame_11.png', frame_1_1)
     frame_2_1 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_1+length_pince:droite_x_1-frame_loose].copy()
     cv2.imshow('Face 2_1', frame_2_1)
-    cv2.imwrite('frame_21.png',frame_2_1)
+    #cv2.imwrite('frame_21.png',frame_2_1)
     frame_3_1 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
     cv2.imshow('Face 3_1', frame_3_1)
-    cv2.imwrite('frame_31.png',frame_3_1)
+    #cv2.imwrite('frame_31.png',frame_3_1)
 
     frame_1_2 = into_hsv_filtered_avg[haut_1_x+length_pince:bas_1_x-frame_loose, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
     cv2.imshow('Face 1_2', frame_1_2)
-    cv2.imwrite('frame_12.png',frame_1_2)
+    #cv2.imwrite('frame_12.png',frame_1_2)
     frame_2_2 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
     cv2.imshow('Face 2_2', frame_2_2)
-    cv2.imwrite('frame_22.png',frame_2_2)
+    #cv2.imwrite('frame_22.png',frame_2_2)
     frame_3_2 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-length_pince, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
     cv2.imshow('Face 3_2', frame_3_2)
-    cv2.imwrite('frame_32.png',frame_3_2)
+    #cv2.imwrite('frame_32.png',frame_3_2)
 
     frame_1_3 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-frame_loose].copy()
     cv2.imshow('Face 1_3', frame_1_3)
-    cv2.imwrite('frame_13.png',frame_1_3)
+    #cv2.imwrite('frame_13.png',frame_1_3)
     frame_2_3 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-length_pince].copy()
     cv2.imshow('Face 2_3', frame_2_3)
-    cv2.imwrite('frame_23.png',frame_2_3)
+    #cv2.imwrite('frame_23.png',frame_2_3)
     frame_3_3 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-frame_loose].copy()
     cv2.imshow('Face 3_3', frame_3_3)
-    cv2.imwrite('frame_33.png',frame_3_3)
+    #cv2.imwrite('frame_33.png',frame_3_3)
 
     square1_1 = colorofsquare(frame_1_1)
     square2_1 = colorofsquare(frame_2_1)

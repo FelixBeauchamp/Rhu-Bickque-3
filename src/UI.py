@@ -10,6 +10,7 @@ from PyQt5.QtCore import QObject, QEvent
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
+stop_flag = False
 
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
@@ -116,7 +117,8 @@ class CubeDisplay(QWidget):
                 print(f"{face_name}: {colors}")
 
     def stop(self):
-        self.stop_timer()
+        global stop_flag
+        stop_flag = True
         QApplication.quit()
         sys.exit(0)
 
@@ -199,7 +201,6 @@ class CubeDisplay(QWidget):
     def start_mapping(self):
         global mapping_array
         global moves_list
-
         if not self.can_map:
             return
         self.disable_buttons()
