@@ -4,14 +4,13 @@ import control
 import threading
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
-from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal, QObject, QEvent, QObject, pyqtSlot
+from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
+from PyQt5.QtCore import QObject, QEvent
 
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
 
-class StopThread(QObject):
-    stop_signal = pyqtSignal()
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
@@ -27,7 +26,6 @@ class CubeDisplay(QWidget):
         self.can_clamp = True
         self.can_map = False
         self.can_solve = False
-        self.stop_thread = None
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -118,16 +116,9 @@ class CubeDisplay(QWidget):
                 print(f"{face_name}: {colors}")
 
     def stop(self):
-        if self.stop_thread:
-            self.stop_signal.emit()
-
-    @pyqtSlot()
-    def stop_solving(self):
-        print("Stop button pressed. Stopping the solving process.")
-
-    def monitor_stop_button(self):
-        while not self.stop_signal:
-            time.sleep(0.1)
+        self.stop_timer()
+        QApplication.quit()
+        sys.exit(0)
 
     def stop_timer(self):
         if hasattr(self, 'timer'):
@@ -257,8 +248,6 @@ class CubeDisplay(QWidget):
         if not self.can_solve:
             return
         self.disable_buttons()
-        self.stop_thread = StopThread()
-        self.stop_thread.stop_signal.connect(self.stop_solving)
         stop_flag = False
         self.can_change_colors = False
         self.start_clamping_button.setEnabled(False)
@@ -290,8 +279,6 @@ class CubeDisplay(QWidget):
         self.timer.start(10)
         i = 0
         for move in moves_list[2]:
-            if self.stop_signal:
-                break
             print(move)
             for sub_move in move:
                 print(sub_move)
