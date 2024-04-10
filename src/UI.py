@@ -4,12 +4,18 @@ import control
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
+from PyQt5.QtCore import QObject, QEvent
 
 mapping_array = [[[0] * 3 for _ in range(3)] for _ in range(6)]
 moves_list = []
 total_moves = 0
 
-
+class ClickFilter(QObject):
+    def eventFilter(self, obj, event):
+        if event.type() == QEvent.MouseButtonPress:
+            if not obj.isEnabled():
+                return True  # Ignore the event if the button is disabled
+        return False
 
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
@@ -26,6 +32,10 @@ class CubeDisplay(QWidget):
         self.can_clamp = True
         self.can_map = False
         self.can_solve = False
+        self.click_filter = ClickFilter()
+        self.start_clamping_button.installEventFilter(self.click_filter)
+        self.start_mapping_button.installEventFilter(self.click_filter)
+        self.start_solve_button.installEventFilter(self.click_filter)
 
     def initUI(self):
         layout = QVBoxLayout()
