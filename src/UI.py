@@ -160,6 +160,7 @@ class CubeDisplay(QWidget):
         self.start_solve_button.setEnabled(False)
 
     def enable_buttons(self):
+
         self.start_clamping_button.setEnabled(self.can_clamp)
         self.start_mapping_button.setEnabled(self.can_map)
         self.start_solve_button.setEnabled(self.can_solve)
@@ -199,7 +200,7 @@ class CubeDisplay(QWidget):
         global mapping_array
         global moves_list
 
-        if self.can_map:
+        if not self.can_map:
             return
         self.disable_buttons()
         self.start_clamping_button.setEnabled(False)
