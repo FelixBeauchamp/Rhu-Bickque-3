@@ -15,6 +15,10 @@ class CustomButton(QPushButton):
         if self.isEnabled():
             super().mousePressEvent(event)
 
+    def mouseReleaseEvent(self, event):
+        if self.isEnabled():
+            super().mouseReleaseEvent(event)
+
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
