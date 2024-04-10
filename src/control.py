@@ -75,7 +75,7 @@ def solving_moves(map_array):
 
 
 def do_move(move):
-    print(move)
+    # print(move)
     if move[0] == 'M' or move[0] == 'H':
         OpenRBCom.sendmessage(move)
     else:
