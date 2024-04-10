@@ -184,6 +184,7 @@ class CubeDisplay(QWidget):
         self.enable_buttons()
 
     def update_face_colors(self, modified_dict):
+        print('Let s update my friends')
         if self.can_change_colors:
             face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1),
                           ("Back", 1, 3)]
@@ -197,6 +198,7 @@ class CubeDisplay(QWidget):
                         button.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
                         # Update the stored color in the face_colors dictionary
                         self.face_colors[face_name][seg_idx] = next_color
+        print('The Ui is now Juicy')
 
     def start_mapping(self):
         global mapping_array
@@ -280,9 +282,8 @@ class CubeDisplay(QWidget):
         self.timer.start(10)
         i = 0
         for move in moves_list[2]:
-            print(move)
+            print(moves_list[0][i])
             for sub_move in move:
-                print(sub_move)
                 control.do_move(sub_move)
                 self.actual_move = self.actual_move + 1
                 self.update_timer()
