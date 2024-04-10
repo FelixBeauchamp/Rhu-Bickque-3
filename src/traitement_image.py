@@ -71,21 +71,22 @@ def colorofsquare(leframe):
 
 
 def faceofdacube():
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
     ret, frame_test = cap.read()
     # Number of frames to capture
     num_frames =1
     frames = []
 
-    # Capture frames
+    #Capture frames
     for i in range(num_frames):
         ret, frame = cap.read()
         if not ret:
-            break
+           break
         frames.append(frame)
 
-    # Average the frames
-    avg_frame = sum(frames) // len(frames)
+    #Average the frames
+    #avg_frame = sum(frames) // len(frames)
+    ret, avg_frame = cap.read()
 
     width = np.size(avg_frame, 1)
     height = np.size(avg_frame, 0)
