@@ -10,6 +10,7 @@ moves_list = []
 total_moves = 0
 
 
+
 class CubeDisplay(QWidget):
     def __init__(self, initial_colors, parent=None):
         super().__init__(parent)
@@ -22,6 +23,9 @@ class CubeDisplay(QWidget):
         self.initUI()
         self.actual_move = 0
         self.total_moves = 0
+        self.can_clamp = True
+        self.can_map = False
+        self.can_solve = False
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -67,7 +71,7 @@ class CubeDisplay(QWidget):
         self.setLayout(layout)
         self.start_clamping_button.setEnabled(True)
         self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(True)
+        self.start_solve_button.setEnabled(False)
 
         time.sleep(0.1)
         control.initialisation()
@@ -152,13 +156,16 @@ class CubeDisplay(QWidget):
 
     # Additional methods for start_clamping and start_mapping buttons
     def start_clamping(self):
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
-        control.clamp()
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(True)
-        self.start_solve_button.setEnabled(False)
+        if self.can_clamp:
+            self.start_clamping_button.setEnabled(False)
+            self.start_mapping_button.setEnabled(False)
+            self.start_solve_button.setEnabled(False)
+            control.clamp()
+            self.start_clamping_button.setEnabled(False)
+            self.start_mapping_button.setEnabled(True)
+            self.start_solve_button.setEnabled(False)
+            self.can_map = True
+            self.can_clamp = False
 
     def update_face_colors(self, modified_dict):
         if self.can_change_colors:
@@ -179,9 +186,10 @@ class CubeDisplay(QWidget):
         global mapping_array
         global moves_list
 
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
+        if self.can_map:
+            self.start_clamping_button.setEnabled(False)
+            self.start_mapping_button.setEnabled(False)
+            self.start_solve_button.setEnabled(False)
 
         mapping_array = control.mapping_sequence()
         print(mapping_array)
@@ -213,53 +221,58 @@ class CubeDisplay(QWidget):
         self.start_clamping_button.setEnabled(False)
         self.start_mapping_button.setEnabled(False)
         self.start_solve_button.setEnabled(True)
+        self.can_solve = True
+        self.can_map = False
 
     def start_solve(self):
         global moves_list
         global stop_flag
-        stop_flag = False
-        self.can_change_colors = False
-        self.start_clamping_button.setEnabled(False)
-        self.start_mapping_button.setEnabled(False)
-        self.start_solve_button.setEnabled(False)
 
-        # Change the mapping array back to its original form after applying manual change
-        color_map = {
-            'green': 'G',
-            'red': 'R',
-            'blue': 'B',
-            'white': 'W',
-            'yellow': 'Y',
-            'orange': 'O'
-        }
-        converted_face_colors = []
-        for face_name in ['Front', 'Right', 'Back', 'Left', 'Bottom', 'Top']:
-            # Récupérer les couleurs de la face et les convertir selon la carte de couleur
-            face_colors = [color_map[color] for color in self.face_colors[face_name]]
-            # Diviser les couleurs en sous-tableaux de 3 éléments
-            face_subarrays = [face_colors[i:i + 3] for i in range(0, len(face_colors), 3)]
-            # Ajouter les sous-tableaux à notre tableau principal
-            converted_face_colors.append(face_subarrays)
-        moves_list = control.solving_moves(converted_face_colors)
-        self.total_moves = len(moves_list[1])
-        self.progress_bar.setRange(0, self.total_moves)
-        self.start_time = QTime.currentTime()
-        self.timer.start(10)
-        i = 0
-        for move in moves_list[2]:
-            print(move)
-            for sub_move in move:
-                print(sub_move)
-                control.do_move(sub_move)
-                self.actual_move = self.actual_move + 1
-                self.update_timer()
-            self.apply_move(moves_list[0][i])
-            self.can_change_colors = True
-            self.update_face_colors(self.face_colors)
+        if self.can_solve:
+            stop_flag = False
             self.can_change_colors = False
-            i = i + 1
-        print('Done solving')
-        self.stop_timer()
+            self.start_clamping_button.setEnabled(False)
+            self.start_mapping_button.setEnabled(False)
+            self.start_solve_button.setEnabled(False)
+            self.can_solve = False
+
+            # Change the mapping array back to its original form after applying manual change
+            color_map = {
+                'green': 'G',
+                'red': 'R',
+                'blue': 'B',
+                'white': 'W',
+                'yellow': 'Y',
+                'orange': 'O'
+            }
+            converted_face_colors = []
+            for face_name in ['Front', 'Right', 'Back', 'Left', 'Bottom', 'Top']:
+                # Récupérer les couleurs de la face et les convertir selon la carte de couleur
+                face_colors = [color_map[color] for color in self.face_colors[face_name]]
+                # Diviser les couleurs en sous-tableaux de 3 éléments
+                face_subarrays = [face_colors[i:i + 3] for i in range(0, len(face_colors), 3)]
+                # Ajouter les sous-tableaux à notre tableau principal
+                converted_face_colors.append(face_subarrays)
+            moves_list = control.solving_moves(converted_face_colors)
+            self.total_moves = len(moves_list[1])
+            self.progress_bar.setRange(0, self.total_moves)
+            self.start_time = QTime.currentTime()
+            self.timer.start(10)
+            i = 0
+            for move in moves_list[2]:
+                print(move)
+                for sub_move in move:
+                    print(sub_move)
+                    control.do_move(sub_move)
+                    self.actual_move = self.actual_move + 1
+                    self.update_timer()
+                self.apply_move(moves_list[0][i])
+                self.can_change_colors = True
+                self.update_face_colors(self.face_colors)
+                self.can_change_colors = False
+                i = i + 1
+            print('Done solving')
+            self.stop_timer()
 
     def apply_move(self, move):
         print('Applying move')
