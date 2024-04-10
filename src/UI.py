@@ -321,7 +321,7 @@ class CubeDisplay(QWidget):
             self.apply_move('R')
             self.apply_move('R')
             self.apply_move('R')
-        elif move == 'duoR' or 'duoRi':
+        elif move == 'duoR'or move =='duoRi':
             self.apply_move('R')
             self.apply_move('R')
 
@@ -347,7 +347,7 @@ class CubeDisplay(QWidget):
             self.apply_move('L')
             self.apply_move('L')
             self.apply_move('L')
-        elif move == 'duoL' or 'duoLi':
+        elif move == 'duoL'or move =='duoLi':
             self.apply_move('L')
             self.apply_move('L')
 
@@ -373,7 +373,7 @@ class CubeDisplay(QWidget):
             self.apply_move('U')
             self.apply_move('U')
             self.apply_move('U')
-        elif move == 'duoU' or 'duoUi':
+        elif move == 'duoU'or move =='duoUi':
             self.apply_move('U')
             self.apply_move('U')
 
@@ -399,7 +399,7 @@ class CubeDisplay(QWidget):
             self.apply_move('D')
             self.apply_move('D')
             self.apply_move('D')
-        elif move == 'duoD' or 'duoDi':
+        elif move == 'duoD'or move =='duoDi':
             self.apply_move('D')
             self.apply_move('D')
 
@@ -426,7 +426,7 @@ class CubeDisplay(QWidget):
             self.apply_move('F')
             self.apply_move('F')
             self.apply_move('F')
-        elif move == 'duoF' or 'duoFi':
+        elif move == 'duoF'or move =='duoFi':
             self.apply_move('F')
             self.apply_move('F')
 
@@ -452,7 +452,7 @@ class CubeDisplay(QWidget):
             self.apply_move('B')
             self.apply_move('B')
             self.apply_move('B')
-        elif move == 'duoB' or 'duoBi':
+        elif move == 'duoB'or move =='duoBi':
             self.apply_move('B')
             self.apply_move('B')
 
@@ -476,7 +476,7 @@ class CubeDisplay(QWidget):
             self.apply_move('M')
             self.apply_move('M')
             self.apply_move('M')
-        elif move == 'duoM' or 'duoMi':
+        elif move == 'duoM'or move =='duoMi':
             self.apply_move('M')
             self.apply_move('M')
 
@@ -497,7 +497,7 @@ class CubeDisplay(QWidget):
             self.apply_move('E')
             self.apply_move('E')
             self.apply_move('E')
-        elif move == 'duoE' or 'duoEi':
+        elif move == 'duoE'or move =='duoEi':
             self.apply_move('E')
             self.apply_move('E')
 
@@ -522,7 +522,7 @@ class CubeDisplay(QWidget):
             self.apply_move('S')
             self.apply_move('S')
             self.apply_move('S')
-        elif move == 'duoS' or 'duoSi':
+        elif move == 'duoS'or move =='duoSi':
             self.apply_move('S')
             self.apply_move('S')
 
@@ -584,7 +584,7 @@ class CubeDisplay(QWidget):
             self.rotate_cube('X')
             self.rotate_cube('X')
             self.rotate_cube('X')
-        elif rotation == 'duoX' or 'duoXi':
+        elif rotation == 'duoX'or rotation =='duoXi':
             self.rotate_cube('X')
             self.rotate_cube('X')
 
@@ -633,7 +633,7 @@ class CubeDisplay(QWidget):
             self.rotate_cube('Z')
             self.rotate_cube('Z')
             self.rotate_cube('Z')
-        elif rotation == 'duoZ' or 'duoZi':
+        elif rotation == 'duoZ'or rotation =='duoZi':
             self.rotate_cube('Z')
             self.rotate_cube('Z')
 
@@ -682,7 +682,7 @@ class CubeDisplay(QWidget):
             self.rotate_cube('Y')
             self.rotate_cube('Y')
             self.rotate_cube('Y')
-        elif rotation == 'duoY' or 'duoYi':
+        elif rotation == 'duoY'or rotation =='duoYi':
             self.rotate_cube('Y')
             self.rotate_cube('Y')
 
