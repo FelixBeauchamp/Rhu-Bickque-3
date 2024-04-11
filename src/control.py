@@ -16,6 +16,7 @@ from Algo_CFOP import solver, cube
 
 port_Arduino = 'COM'
 port_OpenRB = 'COM'
+cam_number_control = 0
 
 
 def initialisation():
@@ -45,7 +46,7 @@ def mapping_sequence():
             OpenRBCom.sendmessage(move)
         elif move[0] == 'S':
             print('SNAP')
-            temp = traitement_image.faceofdacube('')
+            temp = traitement_image.faceofdacube('', cam_number_control)
             mapp.extend(temp)
         else:
             ArduinoCom.sendmessage(move)
