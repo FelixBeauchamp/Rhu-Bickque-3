@@ -10,7 +10,7 @@ import traitement_image
 # The ports to be used and the expected colors results form the face of the cube to analyze must be decided before running tests
 port_Arduino_test = 'COM9'
 port_OpenRB_test = 'COM8'
-expected_result_faceofthecube = ['B', 'B', 'B', 'R', 'R', 'R', 'O', 'O', 'O']
+expected_result_faceofthecube = ['Y', 'B', 'Y', 'O', 'R', 'W', 'R', 'R', 'G']
 
 OpenRB_EndCom_Message = 'Finished Dynamixel spin'
 Arduino_EndCom_Message = 'Finished ServoMotor movement'
