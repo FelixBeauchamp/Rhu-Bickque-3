@@ -3,16 +3,13 @@ import numpy as np
 import cv2
 
 YellowL_limit = np.array([15, 10, 0])  # setting the yellow lower limit
-YellowU_limit = np.array([35, 255, 200])  # setting the yellow upper limit
+YellowU_limit = np.array([35, 255, 200])
 
 BlueL_limit = np.array([100, 0, 0])  # setting the blue lower limit
 BlueU_limit = np.array([110, 255, 220])
 
 RedL_limit_high = np.array([140, 0, 0])  # setting the red lower limit
 RedU_limit_high = np.array([178, 255, 220])
-
-#RedL_limit_low = np.array([0, 0, 0])  # setting the red lower limit
-#RedU_limit_low = np.array([5, 255, 255])
 
 OrangeL_limit = np.array([2, 0, 0])  # setting the orange lower limit
 OrangeU_limit = np.array([15, 255, 220])
@@ -68,26 +65,28 @@ def colorofsquare(leframe):
 
 
 
-def faceofdacube():
-    cap = cv2.VideoCapture(0)
-    ret, frame_test = cap.read()
-    # Number of frames to capture
-    num_frames =1
-    frames = []
+def faceofdacube(image):
+    if image == '':
+        cap = cv2.VideoCapture(0)
+        print('tbnk')
+        ret, frame_test = cap.read()
+        # Number of frames to capture
+        num_frames =1
+        frames = []
 
-    #Capture frames
-    for i in range(num_frames):
-        ret, frame = cap.read()
-        if not ret:
-           break
-        frames.append(frame)
+        #Capture frames
+        #for i in range(num_frames):
+        #    ret, frame = cap.read()
+        #    if not ret:
+        #       break
+        #    frames.append(frame)
 
-    #Average the frames
-    #avg_frame = sum(frames) // len(frames)
-    ret, avg_frame = cap.read()
+        #Average the frames
+        #avg_frame = sum(frames) // len(frames)
 
-    width = np.size(avg_frame, 1)
-    height = np.size(avg_frame, 0)
+        ret, avg_frame = cap.read()
+    else:
+        avg_frame = cv2.imread(image)
 
     #coin_sup_gauche = [0, 0]
     #coin_inf_droit = [width, height]
@@ -97,6 +96,7 @@ def faceofdacube():
     length_pince = 55
     edge_width = 15
     # Barre horizontales
+
     haut_1_x = 100
     bas_1_x = haut_1_x+cote_cube
 
@@ -123,6 +123,7 @@ def faceofdacube():
     into_hsv_filtered_avg = cv2.cvtColor(filtered_avg, cv2.COLOR_BGR2HSV)
     frame_cube_avg = into_hsv_filtered_avg[haut_1_x:bas_3_x, gauche_x_1:droite_x_3].copy()
     cv2.imshow('Face du cube avg', frame_cube_avg)
+    cv2.imwrite('frame_cube.png', avg_frame)
 
     frame_1_1 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
     cv2.imshow('Face 1_1', frame_1_1)
@@ -168,14 +169,15 @@ def faceofdacube():
 
     daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3, square3_1, square3_2, square3_3]
 
-    cap.release()
+    if image == '':
+        cap.release()
     # cv2.destroyAllWindows()
     return daresults
 
 
 if __name__ == '__main__':
     while 1:
-        print(faceofdacube())
+        print(faceofdacube('frame_cube.png'))
         if cv2.waitKey(3000) == 27:
             break
     # this function will be triggered when the ESC key is pressed
