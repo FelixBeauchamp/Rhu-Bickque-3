@@ -29,12 +29,12 @@ def initialisation():
 
 
 def clamp():
-    print("Press Enter to clamp the cube")
+    print("Clamping sequence initiated")
     ArduinoCom.sendmessage('CXCY')
 
 
 def mapping_sequence():
-    print("Press Enter to start the mapping sequence")
+    print("Mapping sequence initiated")
     # mapp = ['O', 'B', 'B', 'G', 'G', 'Y', 'O', 'G', 'R', 'W', 'B', 'W', 'Y', 'W', 'G', 'B', 'W', 'W',
     #         'B', 'B', 'Y', 'O', 'B', 'B', 'G', 'Y', 'G', 'G', 'R', 'B', 'W', 'Y', 'G', 'R', 'O', 'G',
     #         'R', 'R', 'Y', 'W', 'O', 'W', 'Y', 'R', 'Y', 'O', 'Y', 'O', 'O', 'R', 'R', 'W', 'O', 'R']
@@ -45,7 +45,7 @@ def mapping_sequence():
         if move[0] == 'M':
             OpenRBCom.sendmessage(move)
         elif move[0] == 'S':
-            print('SNAP')
+            # print('SNAP')
             temp = traitement_image.faceofdacube('', cam_number_control)
             mapp.extend(temp)
         else:
