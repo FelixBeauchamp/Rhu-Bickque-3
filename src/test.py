@@ -10,7 +10,7 @@ import traitement_image
 # The ports to be used and the expected colors results form the face of the cube to analyze must be decided before running tests
 port_Arduino_test = 'COM9'
 port_OpenRB_test = 'COM8'
-expected_result_faceofthecube = ['Y', 'B', 'Y', 'O', 'R', 'W', 'R', 'R', 'G']
+expected_result_faceofthecube = ['W', 'B', 'O', 'G', 'O', 'W', 'W', 'R', 'R']
 
 OpenRB_EndCom_Message = 'Finished Dynamixel spin'
 Arduino_EndCom_Message = 'Finished ServoMotor movement'
@@ -101,7 +101,7 @@ class TestTraitementImage(unittest.TestCase):
         self.expected_result = [x.strip() for x in expected_input]'''
     def test_faceofdacube(self):
         # Call the function
-        results = traitement_image.faceofdacube()
+        results = traitement_image.faceofdacube('frame_cube.png')
         # Compare the actual result with the expected result
         self.assertEqual(results, expected_result_faceofthecube, f"Expected: {expected_result_faceofthecube}, Got: {results}")
 

@@ -1,10 +1,6 @@
 # The file to analyze the colors on the cube
 import numpy as np
 import cv2
-import os
-
-directory = r'C:\Users\Xavier\Documents\Université\S4\Projet de session\Traitement image\frames'
-os.chdir(directory)
 
 YellowL_limit = np.array([15, 10, 0])  # setting the yellow lower limit
 YellowU_limit = np.array([35, 255, 200])
@@ -173,14 +169,15 @@ def faceofdacube(image):
 
     daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3, square3_1, square3_2, square3_3]
 
-    cap.release()
+    if image == '':
+        cap.release()
     # cv2.destroyAllWindows()
     return daresults
 
 
 if __name__ == '__main__':
     while 1:
-        print(faceofdacube(''))
+        print(faceofdacube('frame_cube.png'))
         if cv2.waitKey(3000) == 27:
             break
     # this function will be triggered when the ESC key is pressed
