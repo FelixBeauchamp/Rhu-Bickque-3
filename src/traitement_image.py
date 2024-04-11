@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 
 # Setting the lower and upper limits for each color of the rubik's cube
-YellowL_limit = np.array([21, 10, 0])
+YellowL_limit = np.array([18, 10, 0])
 YellowU_limit = np.array([35, 255, 235])
 
 BlueL_limit = np.array([100, 0, 0])
@@ -13,10 +13,10 @@ RedL_limit_high = np.array([160, 0, 0])
 RedU_limit_high = np.array([180, 255, 230])
 
 RedL_limit_low = np.array([0, 0, 0])
-RedU_limit_low = np.array([8, 255, 230])
+RedU_limit_low = np.array([6, 255, 230])
 
-OrangeL_limit = np.array([9, 0, 0])
-OrangeU_limit = np.array([20, 255, 230])
+OrangeL_limit = np.array([8, 0, 0])
+OrangeU_limit = np.array([17, 255, 230])
 
 GreenL_limit = np.array([45, 0, 0])
 GreenU_limit = np.array([95, 255, 230])
@@ -154,7 +154,7 @@ def faceofdacube(image):
 
 if __name__ == '__main__':
     while 1:
-        print(faceofdacube(''))
+        print(faceofdacube('frame_cube.png'))
         #Press esc to close the program
         if cv2.waitKey(3000) == 27:
             break
