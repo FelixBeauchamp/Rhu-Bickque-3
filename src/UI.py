@@ -28,6 +28,8 @@ class CubeDisplay(QWidget):
         self.can_clamp = True
         self.can_map = False
         self.can_solve = False
+        self.audio_timer = QTimer()
+        self.audio_timer.timeout.connect(self.play_audio_file)
 
     def initUI(self):
         layout = QVBoxLayout()
@@ -113,9 +115,9 @@ class CubeDisplay(QWidget):
 
     def apply_changes(self):
         if self.can_change_colors:
-            print("Initial face colors array after applying changes:")
+            # print("Initial face colors array after applying changes:")
             for face_name, colors in self.face_colors.items():
-                print(f"{face_name}: {colors}")
+                # print(f"{face_name}: {colors}")
 
     def stop(self):
         global stop_flag
@@ -294,10 +296,10 @@ class CubeDisplay(QWidget):
                 self.actual_move = self.actual_move + 1
             self.update_face_colors(self.face_colors)
             i = i + 1
-
+        self.update_face_colors(self.face_colors)
         self.stop_timer()
+        self.audio_timer.start(1000)
         print('Done solving')
-        self.play_audio_file()
         self.can_change_colors = False
 
     def apply_move(self, move):
@@ -904,6 +906,7 @@ class CubeDisplay(QWidget):
         return True
 
     def play_audio_file(self):
+        self.audio_timer.stop()
         self.update_face_colors(self.face_colors)
         pygame.init()
         pygame.mixer.init()
