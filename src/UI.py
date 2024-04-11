@@ -42,7 +42,7 @@ class CubeDisplay(QWidget):
         layout.addWidget(self.apply_button, alignment=Qt.AlignHCenter)  # Align button to center
 
         # Add timer widgets
-        self.timer_label = QLabel("Time elapsed: 0:00.00")
+        self.timer_label = QLabel("Time elapsed: 0:00")
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_timer)
         self.start_clamping_button = QPushButton("Start Clamping")
@@ -130,7 +130,7 @@ class CubeDisplay(QWidget):
             # self.close()  # Close the UI when stop button is pressed
 
     def reset_timer(self):
-        self.timer_label.setText("Time elapsed: 0:00.00")
+        self.timer_label.setText("Time elapsed: 0:00")
         if hasattr(self, 'timer'):
             self.timer.stop()
             self.elapsed_time = 0  # Reset elapsed time
@@ -146,8 +146,9 @@ class CubeDisplay(QWidget):
         self.elapsed_time = self.start_time.msecsTo(current_time)
         minutes = self.elapsed_time // 60000
         seconds = (self.elapsed_time % 60000) // 1000
-        milliseconds = self.elapsed_time % 1000
-        self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}.{milliseconds:02}")
+        # milliseconds = self.elapsed_time % 1000
+        # self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}.{milliseconds:02}")
+        self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}")
         self.timer_label.update()
         QApplication.processEvents()
 
@@ -184,7 +185,7 @@ class CubeDisplay(QWidget):
         self.enable_buttons()
 
     def update_face_colors(self, modified_dict):
-        print('Let s update my friends')
+        print('Starting UI update')
         if self.can_change_colors:
             face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1),
                           ("Back", 1, 3)]
@@ -198,7 +199,7 @@ class CubeDisplay(QWidget):
                         button.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
                         # Update the stored color in the face_colors dictionary
                         self.face_colors[face_name][seg_idx] = next_color
-        print('The Ui is now Juicy')
+        print('The Ui is now updated')
 
     def start_mapping(self):
         global mapping_array
@@ -280,33 +281,18 @@ class CubeDisplay(QWidget):
         self.progress_bar.setRange(0, self.total_moves)
         self.start_time = QTime.currentTime()
         self.timer.start(10)
-        # i = 0
-        # for move in moves_list[2]:
-        #     print(moves_list[0][i])
-        #     for sub_move in move:
-        #         control.do_move(sub_move)
-        #         self.actual_move = self.actual_move + 1
-        #         self.update_timer()
-        #     self.apply_move(moves_list[0][i])
-        #     self.can_change_colors = True
-        #     self.update_face_colors(self.face_colors)
-        #     self.can_change_colors = False
-        #     i = i + 1
-        for move_sequence, face in zip(moves_list[2], moves_list[0]):
-            print(face)
-            for move in move_sequence:
-                for sub_move in move:
-                    control.do_move(sub_move)
-                    self.actual_move += 1
-                    self.update_timer()
-
-                # Apply the move to the cube
-                self.apply_move(face)
-
-                # Update the face colors
-                self.can_change_colors = True
-                self.update_face_colors(self.face_colors)
-                self.can_change_colors = False
+        self.update_timer()
+        i = 0
+        self.can_change_colors = True
+        for move in moves_list[2]:
+            print(moves_list[0][i])
+            self.apply_move(moves_list[0][i])
+            for sub_move in move:
+                control.do_move(sub_move)
+                self.actual_move = self.actual_move + 1
+            self.update_face_colors(self.face_colors)
+            i = i + 1
+        self.can_change_colors = False
         print('Done solving')
         self.stop_timer()
 
@@ -640,7 +626,7 @@ class CubeDisplay(QWidget):
                 self.face_colors['Back'][6], self.face_colors['Back'][3], self.face_colors['Back'][0], \
                     self.face_colors['Back'][7], self.face_colors['Back'][4], self.face_colors['Back'][1], \
                     self.face_colors['Back'][8], self.face_colors['Back'][5], self.face_colors['Back'][2]
-        elif move == "B'":
+        elif move == "Bi":
             self.apply_move('B')
             self.apply_move('B')
             self.apply_move('B')
@@ -676,7 +662,7 @@ class CubeDisplay(QWidget):
                 self.face_colors['Back'][6], self.face_colors['Back'][3], self.face_colors['Back'][0], \
                     self.face_colors['Back'][7], self.face_colors['Back'][4], self.face_colors['Back'][1], \
                     self.face_colors['Back'][8], self.face_colors['Back'][5], self.face_colors['Back'][2]
-        elif move == "b'":
+        elif move == "bi":
             self.apply_move('b')
             self.apply_move('b')
             self.apply_move('b')
