@@ -50,11 +50,7 @@ def mapping_sequence():
             mapp.extend(temp)
         else:
             ArduinoCom.sendmessage(move)
-    print(mapp)
     map_array = solver.reformat(mapp)
-    c = cube.Cube(map_array)
-    print("Solving:\n")
-    print(c)
     return map_array
 
 
@@ -64,7 +60,6 @@ def solving_moves(map_array):
     solution = solver.Solver(c)
     solution.solveCube(optimize=True)
     mov = solution.getMoves(decorated=True)
-    print(mov)
 
     moves_list = solver.Solver.reformat(mov)
     print(f"{len(moves_list)} moves: {' '.join(moves_list)}")
@@ -90,7 +85,7 @@ def close_ports():
 
 
 if __name__ == '__main__':
-    input("MEGAWHAAAT")
+    input("start")
     initialisation()
     clamp()
     deez = mapping_sequence()
