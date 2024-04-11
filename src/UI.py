@@ -1,7 +1,7 @@
 import sys
 import time
 import control
-import threading
+import pygame
 
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QGridLayout, QPushButton, QProgressBar
 from PyQt5.QtCore import QTimer, QTime, Qt, pyqtSignal
@@ -292,6 +292,7 @@ class CubeDisplay(QWidget):
             self.update_face_colors(self.face_colors)
             i = i + 1
         self.can_change_colors = False
+        self.play_audio_file("ytmp3free.cc_jetta-id-love-to-change-the-world-matstubs-remix-youtubemp3free.org.mp3", 55)
         print('Done solving')
         self.stop_timer()
 
@@ -905,6 +906,15 @@ class CubeDisplay(QWidget):
 
         print("Move applied successfully")
         return True
+
+    def play_audio_file(file_path, start_time):
+        pygame.init()
+        pygame.mixer.init()
+        pygame.mixer.music.load(file_path)
+        pygame.mixer.music.play(start=start_time)
+
+        while pygame.mixer.music.get_busy():
+            pygame.time.Clock().tick(10)
 
 
 # if __name__ == '__main__':
