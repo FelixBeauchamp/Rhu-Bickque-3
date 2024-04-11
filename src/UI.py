@@ -880,7 +880,7 @@ class CubeDisplay(QWidget):
     def play_audio_file(self):
         pygame.init()
         pygame.mixer.init()
-        pygame.mixer.music.load("ytmp3free.cc_jetta-id-love-to-change-the-world-matstubs-remix-youtubemp3free.org.mp3")
+        pygame.mixer.music.load("Happy_Victory_Song.mp3")
         pygame.mixer.music.play(start=55)
         pygame.mixer.music.play(stop=65)
 
