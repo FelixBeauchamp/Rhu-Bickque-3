@@ -295,15 +295,10 @@ class CubeDisplay(QWidget):
             self.update_face_colors(self.face_colors)
             i = i + 1
 
-        solving_done = False
-        while not solving_done:
-            solving_done = self.update_face_colors(self.face_colors)
-            print('Nearly solved')
-
-        self.can_change_colors = False
         self.stop_timer()
         print('Done solving')
         self.play_audio_file()
+        self.can_change_colors = False
 
     def apply_move(self, move):
         # print('Applying move')
@@ -909,6 +904,7 @@ class CubeDisplay(QWidget):
         return True
 
     def play_audio_file(self):
+        self.update_face_colors(self.face_colors)
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load("Happy_Victory_Song.mp3")
