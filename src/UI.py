@@ -528,7 +528,7 @@ class CubeDisplay(QWidget):
 
 
         elif move in ['X', 'Xi', 'duoX', 'duoXi', "Y", 'Yi', 'duoY', 'duoYi', 'Z', "Zi", 'duoZ', 'duoZi', ]:
-            self.rotate_cube(self.face_colors)
+            self.rotate_cube(move)
 
         else:
             print("Mouvement non reconnu")
