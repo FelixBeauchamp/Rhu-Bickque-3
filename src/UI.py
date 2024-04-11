@@ -289,6 +289,7 @@ class CubeDisplay(QWidget):
             self.apply_move(moves_list[0][i])
             for sub_move in move:
                 control.do_move(sub_move)
+                self.update_timer()
                 self.actual_move = self.actual_move + 1
             self.update_face_colors(self.face_colors)
             i = i + 1
