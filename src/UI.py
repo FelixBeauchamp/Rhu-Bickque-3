@@ -625,7 +625,7 @@ class CubeDisplay(QWidget):
                 self.face_colors['Back'][6], self.face_colors['Back'][3], self.face_colors['Back'][0], \
                     self.face_colors['Back'][7], self.face_colors['Back'][4], self.face_colors['Back'][1], \
                     self.face_colors['Back'][8], self.face_colors['Back'][5], self.face_colors['Back'][2]
-        elif move == "B'":
+        elif move == "Bi":
             self.apply_move('B')
             self.apply_move('B')
             self.apply_move('B')
@@ -661,7 +661,7 @@ class CubeDisplay(QWidget):
                 self.face_colors['Back'][6], self.face_colors['Back'][3], self.face_colors['Back'][0], \
                     self.face_colors['Back'][7], self.face_colors['Back'][4], self.face_colors['Back'][1], \
                     self.face_colors['Back'][8], self.face_colors['Back'][5], self.face_colors['Back'][2]
-        elif move == "b'":
+        elif move == "bi":
             self.apply_move('b')
             self.apply_move('b')
             self.apply_move('b')
