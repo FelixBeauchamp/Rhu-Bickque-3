@@ -44,7 +44,7 @@ https://samclane.dev/Pycharm-Arduino/#:~:text=This%20can%20be%20accomplished%20t
 The code is pretty much plug and play. Once all the connection are made, it is only neccesary to change the ports for the Arduino, Open-Rb and camera in the main depending on the computer used to solve the cube.
 
 
-### Import Packages ###
+### 3-D model and assembly of the Rhu-Bickque-3 ###
 
 To print and change the design of the Rhu-Bickque-3, the Modélisation directory contains all the neccessary information to do so.
 
