@@ -38,3 +38,15 @@ There the documentation on each librairy and funciton will be available.
 
 The link explains very well how to set up PyCharm to use .ino files :
 https://samclane.dev/Pycharm-Arduino/#:~:text=This%20can%20be%20accomplished%20through,done%20this%20correctly%2C%20then%20your%20.
+
+
+### Main ###
+The code is pretty much plug and play. Once all the connection are made, it is only neccesary to change the ports for the Arduino, Open-Rb and camera in the main depending on the computer used to solve the cube.
+
+
+### Import Packages ###
+
+To print and change the design of the Rhu-Bickque-3, the Modélisation directory contains all the neccessary information to do so.
+
+
+
