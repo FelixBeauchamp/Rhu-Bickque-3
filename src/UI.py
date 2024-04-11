@@ -293,10 +293,14 @@ class CubeDisplay(QWidget):
                 self.actual_move = self.actual_move + 1
             self.update_face_colors(self.face_colors)
             i = i + 1
-        self.can_change_colors = False
-        self.play_audio_file()
+
         print('Done solving')
+
+        self.update_face_colors(self.face_colors)
+        self.can_change_colors = False
         self.stop_timer()
+
+        # self.play_audio_file()
 
     def apply_move(self, move):
         print('Applying move')
@@ -841,25 +845,30 @@ class CubeDisplay(QWidget):
 
             self.face_colors['Top'][2], self.face_colors['Top'][5], self.face_colors['Top'][8], self.face_colors['Top'][
                 1], self.face_colors['Top'][4], self.face_colors['Top'][7], self.face_colors['Top'][0], \
-            self.face_colors['Top'][3], self.face_colors['Top'][6] = temp_left
+                self.face_colors['Top'][3], self.face_colors['Top'][6] = temp_left
             self.face_colors['Right'][2], self.face_colors['Right'][5], self.face_colors['Right'][8], \
-            self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][7], \
-            self.face_colors['Right'][0], self.face_colors['Right'][3], self.face_colors['Right'][6] = temp_top
+                self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][7], \
+                self.face_colors['Right'][0], self.face_colors['Right'][3], self.face_colors['Right'][6] = temp_top
             self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8], \
-            self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][7], \
-            self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6] = temp_right
+                self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][7], \
+                self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6] = temp_right
             self.face_colors['Left'][2], self.face_colors['Left'][5], self.face_colors['Left'][8], \
-            self.face_colors['Left'][1], self.face_colors['Left'][4], self.face_colors['Left'][7], \
-            self.face_colors['Left'][0], self.face_colors['Left'][3], self.face_colors['Left'][6] = temp_bottom
+                self.face_colors['Left'][1], self.face_colors['Left'][4], self.face_colors['Left'][7], \
+                self.face_colors['Left'][0], self.face_colors['Left'][3], self.face_colors['Left'][6] = temp_bottom
 
             self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2], \
-            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
-            self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = \
-            self.face_colors['Front'][6], self.face_colors['Front'][3], self.face_colors['Front'][0], \
-            self.face_colors['Front'][7], self.face_colors['Front'][4], self.face_colors['Front'][1], \
-            self.face_colors['Front'][8], self.face_colors['Front'][5], self.face_colors['Front'][2]
+                self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
+                self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = \
+                self.face_colors['Front'][6], self.face_colors['Front'][3], self.face_colors['Front'][0], \
+                    self.face_colors['Front'][7], self.face_colors['Front'][4], self.face_colors['Front'][1], \
+                    self.face_colors['Front'][8], self.face_colors['Front'][5], self.face_colors['Front'][2]
 
-            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2],self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5],self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = self.face_colors['Back'][2], self.face_colors['Back'][5], self.face_colors['Back'][8],self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7],self.face_colors['Back'][0], self.face_colors['Back'][3], self.face_colors['Back'][6]
+            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2], \
+            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
+            self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = \
+            self.face_colors['Back'][2], self.face_colors['Back'][5], self.face_colors['Back'][8], \
+            self.face_colors['Back'][1], self.face_colors['Back'][4], self.face_colors['Back'][7], \
+            self.face_colors['Back'][0], self.face_colors['Back'][3], self.face_colors['Back'][6]
 
         elif move == 'Zi':
             self.apply_move('Z')
@@ -885,14 +894,32 @@ class CubeDisplay(QWidget):
                          self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5],
                          self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8]]
 
-            self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2],self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_right
-            self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2],self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5], self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = temp_back
-            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2],self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5],self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_left
-            self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2], self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5],self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = temp_front
+            self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2], \
+            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
+            self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_right
+            self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2], \
+            self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5], \
+            self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = temp_back
+            self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2], \
+            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
+            self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_left
+            self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2], \
+            self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5], \
+            self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = temp_front
 
-            self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2], self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5], self.face_colors['Top'][6], self.face_colors['Top'][7], self.face_colors['Top'][8] = self.face_colors['Top'][6], self.face_colors['Top'][3], self.face_colors['Top'][0],self.face_colors['Top'][7], self.face_colors['Top'][4], self.face_colors['Top'][1], self.face_colors['Top'][8], self.face_colors['Top'][5], self.face_colors['Top'][2]
+            self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2], self.face_colors['Top'][
+                3], self.face_colors['Top'][4], self.face_colors['Top'][5], self.face_colors['Top'][6], \
+            self.face_colors['Top'][7], self.face_colors['Top'][8] = self.face_colors['Top'][6], \
+            self.face_colors['Top'][3], self.face_colors['Top'][0], self.face_colors['Top'][7], self.face_colors['Top'][
+                4], self.face_colors['Top'][1], self.face_colors['Top'][8], self.face_colors['Top'][5], \
+            self.face_colors['Top'][2]
 
-            self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2], self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][5],self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8],self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][7], self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6]
+            self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2], \
+            self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][5], \
+            self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = \
+            self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8], \
+            self.face_colors['Bottom'][1], self.face_colors['Bottom'][4], self.face_colors['Bottom'][7], \
+            self.face_colors['Bottom'][0], self.face_colors['Bottom'][3], self.face_colors['Bottom'][6]
 
         elif move == 'Yi':
             self.apply_move('Y')
@@ -917,7 +944,6 @@ class CubeDisplay(QWidget):
 
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
-
 
 # if __name__ == '__main__':
 # # Initialize face colors to all white
