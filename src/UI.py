@@ -282,7 +282,7 @@ class CubeDisplay(QWidget):
         self.timer.start(10)
         i = 0
         for move in moves_list[2]:
-            input(moves_list[0][i])
+            print(moves_list[0][i])
             for sub_move in move:
                 control.do_move(sub_move)
                 self.actual_move = self.actual_move + 1
