@@ -74,7 +74,7 @@ def colorofsquare(leframe):
 def faceofdacube(image):
     # Check if a picture has to be taken with the camera or if a saved image will be used, for unit testing purposes
     if image == '':
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(0)
         ret, frame_test = cap.read()
 
         ret, avg_frame = cap.read()
