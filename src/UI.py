@@ -280,33 +280,18 @@ class CubeDisplay(QWidget):
         self.progress_bar.setRange(0, self.total_moves)
         self.start_time = QTime.currentTime()
         self.timer.start(10)
-        # i = 0
-        # for move in moves_list[2]:
-        #     print(moves_list[0][i])
-        #     for sub_move in move:
-        #         control.do_move(sub_move)
-        #         self.actual_move = self.actual_move + 1
-        #         self.update_timer()
-        #     self.apply_move(moves_list[0][i])
-        #     self.can_change_colors = True
-        #     self.update_face_colors(self.face_colors)
-        #     self.can_change_colors = False
-        #     i = i + 1
-        for move_sequence, face in zip(moves_list[2], moves_list[0]):
-            print(face)
-            for move in move_sequence:
-                for sub_move in move:
-                    control.do_move(sub_move)
-                    self.actual_move += 1
-                    self.update_timer()
-
-                # Apply the move to the cube
-                self.apply_move(face)
-
-                # Update the face colors
-                self.can_change_colors = True
-                self.update_face_colors(self.face_colors)
-                self.can_change_colors = False
+        i = 0
+        self.can_change_colors = True
+        for move in moves_list[2]:
+            print(moves_list[0][i])
+            self.apply_move(moves_list[0][i])
+            for sub_move in move:
+                control.do_move(sub_move)
+                self.actual_move = self.actual_move + 1
+                self.update_timer()
+            self.update_face_colors(self.face_colors)
+            i = i + 1
+        self.can_change_colors = False
         print('Done solving')
         self.stop_timer()
 
