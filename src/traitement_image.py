@@ -3,20 +3,20 @@ import numpy as np
 import cv2
 
 # Setting the lower and upper limits for each color of the rubik's cube
-YellowL_limit = np.array([16, 10, 0])
+YellowL_limit = np.array([21, 10, 0])
 YellowU_limit = np.array([35, 255, 235])
 
 BlueL_limit = np.array([100, 0, 0])
 BlueU_limit = np.array([110, 255, 230])
 
-RedL_limit_high = np.array([140, 0, 0])
+RedL_limit_high = np.array([160, 0, 0])
 RedU_limit_high = np.array([180, 255, 230])
 
 RedL_limit_low = np.array([0, 0, 0])
-RedU_limit_low = np.array([3, 255, 230])
+RedU_limit_low = np.array([8, 255, 230])
 
-OrangeL_limit = np.array([4, 0, 0])
-OrangeU_limit = np.array([15, 255, 230])
+OrangeL_limit = np.array([9, 0, 0])
+OrangeU_limit = np.array([20, 255, 230])
 
 GreenL_limit = np.array([45, 0, 0])
 GreenU_limit = np.array([95, 255, 230])
@@ -30,7 +30,6 @@ def colorofsquare(leframe):
     #Checks the amount of pixels which are a certain color, for each color
     Y_mask = cv2.inRange(leframe, YellowL_limit, YellowU_limit)
     yellow_pixel_count = cv2.countNonZero(Y_mask)
-    cv2.imshow('Yellow pixel count', Y_mask)
 
     B_mask = cv2.inRange(leframe, BlueL_limit, BlueU_limit)
     blue_pixel_count = cv2.countNonZero(B_mask)
