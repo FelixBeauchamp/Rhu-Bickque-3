@@ -297,6 +297,7 @@ class CubeDisplay(QWidget):
             self.update_face_colors(self.face_colors)
             i = i + 1
         self.update_face_colors(self.face_colors)
+        self.update_timer()
         self.stop_timer()
         self.audio_timer.start(1000)
         print('Done solving')
