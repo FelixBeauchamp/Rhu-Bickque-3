@@ -332,7 +332,7 @@ class CubeDisplay(QWidget):
             self.apply_move('R')
             self.apply_move('R')
 
-        if move == 'r':
+        elif move == 'r':
             temp_top = [self.face_colors['Top'][2], self.face_colors['Top'][5], self.face_colors['Top'][8]]
             temp_front = [self.face_colors['Front'][2], self.face_colors['Front'][5], self.face_colors['Front'][8]]
             temp_bottom = [self.face_colors['Bottom'][2], self.face_colors['Bottom'][5], self.face_colors['Bottom'][8]]
