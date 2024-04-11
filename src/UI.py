@@ -905,7 +905,7 @@ class CubeDisplay(QWidget):
         # print("Move applied successfully")
         return True
 
-    def play_audio_timer(self):
+    def play_audio_file(self):
         self.audio_timer.stop()
         self.update_face_colors(self.face_colors)
         pygame.init()
