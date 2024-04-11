@@ -115,9 +115,9 @@ class CubeDisplay(QWidget):
 
     def apply_changes(self):
         if self.can_change_colors:
-            # print("Initial face colors array after applying changes:")
+            print("Initial face colors array after applying changes:")
             for face_name, colors in self.face_colors.items():
-                # print(f"{face_name}: {colors}")
+                print(f"{face_name}: {colors}")
 
     def stop(self):
         global stop_flag
@@ -905,7 +905,7 @@ class CubeDisplay(QWidget):
         # print("Move applied successfully")
         return True
 
-    def play_audio_file(self):
+    def play_audio_timer(self):
         self.audio_timer.stop()
         self.update_face_colors(self.face_colors)
         pygame.init()
