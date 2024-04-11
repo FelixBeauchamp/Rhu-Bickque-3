@@ -70,10 +70,10 @@ def colorofsquare(leframe):
         return "W"
 
 # This function analyses a picture and isolates each square of the face of the cube
-def faceofdacube(image):
+def faceofdacube(image, camnumber):
     # Check if a picture has to be taken with the camera or if a saved image will be used, for unit testing purposes
     if image == '':
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(camnumber)
         ret, frame_test = cap.read()
 
         ret, avg_frame = cap.read()
@@ -154,7 +154,7 @@ def faceofdacube(image):
 
 if __name__ == '__main__':
     while 1:
-        print(faceofdacube('frame_cube.png'))
+        print(faceofdacube('frame_cube.png', 1))
         #Press esc to close the program
         if cv2.waitKey(3000) == 27:
             break
