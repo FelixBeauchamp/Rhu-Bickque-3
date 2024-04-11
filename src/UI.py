@@ -321,7 +321,7 @@ class CubeDisplay(QWidget):
             self.apply_move('R')
             self.apply_move('R')
             self.apply_move('R')
-        elif move == 'duoR'or move =='duoRi':
+        elif move == 'duoR' or move == 'duoRi':
             self.apply_move('R')
             self.apply_move('R')
 
@@ -347,7 +347,7 @@ class CubeDisplay(QWidget):
             self.apply_move('L')
             self.apply_move('L')
             self.apply_move('L')
-        elif move == 'duoL'or move =='duoLi':
+        elif move == 'duoL' or move == 'duoLi':
             self.apply_move('L')
             self.apply_move('L')
 
@@ -373,7 +373,7 @@ class CubeDisplay(QWidget):
             self.apply_move('U')
             self.apply_move('U')
             self.apply_move('U')
-        elif move == 'duoU'or move =='duoUi':
+        elif move == 'duoU' or move == 'duoUi':
             self.apply_move('U')
             self.apply_move('U')
 
@@ -399,7 +399,7 @@ class CubeDisplay(QWidget):
             self.apply_move('D')
             self.apply_move('D')
             self.apply_move('D')
-        elif move == 'duoD'or move =='duoDi':
+        elif move == 'duoD' or move == 'duoDi':
             self.apply_move('D')
             self.apply_move('D')
 
@@ -426,7 +426,7 @@ class CubeDisplay(QWidget):
             self.apply_move('F')
             self.apply_move('F')
             self.apply_move('F')
-        elif move == 'duoF'or move =='duoFi':
+        elif move == 'duoF' or move == 'duoFi':
             self.apply_move('F')
             self.apply_move('F')
 
@@ -452,7 +452,7 @@ class CubeDisplay(QWidget):
             self.apply_move('B')
             self.apply_move('B')
             self.apply_move('B')
-        elif move == 'duoB'or move =='duoBi':
+        elif move == 'duoB' or move == 'duoBi':
             self.apply_move('B')
             self.apply_move('B')
 
@@ -476,7 +476,7 @@ class CubeDisplay(QWidget):
             self.apply_move('M')
             self.apply_move('M')
             self.apply_move('M')
-        elif move == 'duoM'or move =='duoMi':
+        elif move == 'duoM' or move == 'duoMi':
             self.apply_move('M')
             self.apply_move('M')
 
@@ -497,7 +497,7 @@ class CubeDisplay(QWidget):
             self.apply_move('E')
             self.apply_move('E')
             self.apply_move('E')
-        elif move == 'duoE'or move =='duoEi':
+        elif move == 'duoE' or move == 'duoEi':
             self.apply_move('E')
             self.apply_move('E')
 
@@ -522,12 +522,12 @@ class CubeDisplay(QWidget):
             self.apply_move('S')
             self.apply_move('S')
             self.apply_move('S')
-        elif move == 'duoS'or move =='duoSi':
+        elif move == 'duoS' or move == 'duoSi':
             self.apply_move('S')
             self.apply_move('S')
 
 
-        elif move in ['X', 'Xi', 'duoX', 'duoXi', "Y", 'Yi', 'duoY', 'duoYi', 'Z', "Zi", 'duoZ', 'duoZi', ]:
+        elif move in ['X', 'Xi', 'duoX', 'duoXi', "Y", 'Yi', 'duoY', 'duoYi', 'Z', "Zi", 'duoZ', 'duoZi']:
             self.rotate_cube(move)
 
         else:
@@ -554,17 +554,17 @@ class CubeDisplay(QWidget):
 
             self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2], self.face_colors['Top'][
                 3], self.face_colors['Top'][4], self.face_colors['Top'][5], self.face_colors['Top'][6], \
-            self.face_colors['Top'][7], self.face_colors['Top'][8] = temp_front
+                self.face_colors['Top'][7], self.face_colors['Top'][8] = temp_front
             self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2], \
-            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
-            self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_bottom
+                self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
+                self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_bottom
             self.face_colors['Bottom'][0], self.face_colors['Bottom'][1], self.face_colors['Bottom'][2], \
-            self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][5], \
-            self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = temp_back[
-                                                                                                          ::-1]
+                self.face_colors['Bottom'][3], self.face_colors['Bottom'][4], self.face_colors['Bottom'][5], \
+                self.face_colors['Bottom'][6], self.face_colors['Bottom'][7], self.face_colors['Bottom'][8] = temp_back[
+                                                                                                              ::-1]
             self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2], \
-            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
-            self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_top[::-1]
+                self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
+                self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_top[::-1]
 
             self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2], \
                 self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5], \
@@ -584,7 +584,7 @@ class CubeDisplay(QWidget):
             self.rotate_cube('X')
             self.rotate_cube('X')
             self.rotate_cube('X')
-        elif rotation == 'duoX'or rotation =='duoXi':
+        elif rotation == 'duoX' or rotation == 'duoXi':
             self.rotate_cube('X')
             self.rotate_cube('X')
 
@@ -605,7 +605,7 @@ class CubeDisplay(QWidget):
 
             self.face_colors['Top'][2], self.face_colors['Top'][5], self.face_colors['Top'][8], self.face_colors['Top'][
                 1], self.face_colors['Top'][4], self.face_colors['Top'][7], self.face_colors['Top'][0], \
-            self.face_colors['Top'][3], self.face_colors['Top'][6] = temp_left
+                self.face_colors['Top'][3], self.face_colors['Top'][6] = temp_left
             self.face_colors['Right'][2], self.face_colors['Right'][5], self.face_colors['Right'][8], \
                 self.face_colors['Right'][1], self.face_colors['Right'][4], self.face_colors['Right'][7], \
                 self.face_colors['Right'][0], self.face_colors['Right'][3], self.face_colors['Right'][6] = temp_top
@@ -633,7 +633,7 @@ class CubeDisplay(QWidget):
             self.rotate_cube('Z')
             self.rotate_cube('Z')
             self.rotate_cube('Z')
-        elif rotation == 'duoZ'or rotation =='duoZi':
+        elif rotation == 'duoZ' or rotation == 'duoZi':
             self.rotate_cube('Z')
             self.rotate_cube('Z')
 
@@ -653,17 +653,17 @@ class CubeDisplay(QWidget):
                          self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8]]
 
             self.face_colors['Front'][0], self.face_colors['Front'][1], self.face_colors['Front'][2], \
-            self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
-            self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_right
+                self.face_colors['Front'][3], self.face_colors['Front'][4], self.face_colors['Front'][5], \
+                self.face_colors['Front'][6], self.face_colors['Front'][7], self.face_colors['Front'][8] = temp_right
             self.face_colors['Right'][0], self.face_colors['Right'][1], self.face_colors['Right'][2], \
-            self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5], \
-            self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = temp_back
+                self.face_colors['Right'][3], self.face_colors['Right'][4], self.face_colors['Right'][5], \
+                self.face_colors['Right'][6], self.face_colors['Right'][7], self.face_colors['Right'][8] = temp_back
             self.face_colors['Back'][0], self.face_colors['Back'][1], self.face_colors['Back'][2], \
-            self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
-            self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_left
+                self.face_colors['Back'][3], self.face_colors['Back'][4], self.face_colors['Back'][5], \
+                self.face_colors['Back'][6], self.face_colors['Back'][7], self.face_colors['Back'][8] = temp_left
             self.face_colors['Left'][0], self.face_colors['Left'][1], self.face_colors['Left'][2], \
-            self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5], \
-            self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = temp_front
+                self.face_colors['Left'][3], self.face_colors['Left'][4], self.face_colors['Left'][5], \
+                self.face_colors['Left'][6], self.face_colors['Left'][7], self.face_colors['Left'][8] = temp_front
 
             self.face_colors['Top'][0], self.face_colors['Top'][1], self.face_colors['Top'][2], \
                 self.face_colors['Top'][3], self.face_colors['Top'][4], self.face_colors['Top'][5], \
@@ -682,7 +682,7 @@ class CubeDisplay(QWidget):
             self.rotate_cube('Y')
             self.rotate_cube('Y')
             self.rotate_cube('Y')
-        elif rotation == 'duoY'or rotation =='duoYi':
+        elif rotation == 'duoY' or rotation == 'duoYi':
             self.rotate_cube('Y')
             self.rotate_cube('Y')
 
