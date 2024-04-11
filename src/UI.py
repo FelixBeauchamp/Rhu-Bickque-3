@@ -42,7 +42,7 @@ class CubeDisplay(QWidget):
         layout.addWidget(self.apply_button, alignment=Qt.AlignHCenter)  # Align button to center
 
         # Add timer widgets
-        self.timer_label = QLabel("Time elapsed: 0:00.00")
+        self.timer_label = QLabel("Time elapsed: 0:00")
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_timer)
         self.start_clamping_button = QPushButton("Start Clamping")
@@ -130,7 +130,7 @@ class CubeDisplay(QWidget):
             # self.close()  # Close the UI when stop button is pressed
 
     def reset_timer(self):
-        self.timer_label.setText("Time elapsed: 0:00.00")
+        self.timer_label.setText("Time elapsed: 0:00")
         if hasattr(self, 'timer'):
             self.timer.stop()
             self.elapsed_time = 0  # Reset elapsed time
@@ -146,8 +146,9 @@ class CubeDisplay(QWidget):
         self.elapsed_time = self.start_time.msecsTo(current_time)
         minutes = self.elapsed_time // 60000
         seconds = (self.elapsed_time % 60000) // 1000
-        milliseconds = self.elapsed_time % 1000
-        self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}.{milliseconds:02}")
+        # milliseconds = self.elapsed_time % 1000
+        # self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}.{milliseconds:02}")
+        self.timer_label.setText(f"Time elapsed: {minutes}:{seconds:02}")
         self.timer_label.update()
         QApplication.processEvents()
 
@@ -184,7 +185,7 @@ class CubeDisplay(QWidget):
         self.enable_buttons()
 
     def update_face_colors(self, modified_dict):
-        print('Let s update my friends')
+        print('Starting UI update')
         if self.can_change_colors:
             face_order = [("Top", 0, 1), ("Left", 1, 0), ("Front", 1, 1), ("Right", 1, 2), ("Bottom", 2, 1),
                           ("Back", 1, 3)]
@@ -198,7 +199,7 @@ class CubeDisplay(QWidget):
                         button.setStyleSheet(f"background-color: {next_color}; border: 1px solid black;")
                         # Update the stored color in the face_colors dictionary
                         self.face_colors[face_name][seg_idx] = next_color
-        print('The Ui is now Juicy')
+        print('The Ui is now updated')
 
     def start_mapping(self):
         global mapping_array
@@ -280,6 +281,7 @@ class CubeDisplay(QWidget):
         self.progress_bar.setRange(0, self.total_moves)
         self.start_time = QTime.currentTime()
         self.timer.start(10)
+        self.update_timer()
         i = 0
         self.can_change_colors = True
         for move in moves_list[2]:
@@ -288,7 +290,6 @@ class CubeDisplay(QWidget):
             for sub_move in move:
                 control.do_move(sub_move)
                 self.actual_move = self.actual_move + 1
-                self.update_timer()
             self.update_face_colors(self.face_colors)
             i = i + 1
         self.can_change_colors = False
