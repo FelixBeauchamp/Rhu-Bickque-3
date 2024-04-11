@@ -13,10 +13,10 @@ RedL_limit_high = np.array([160, 0, 0])
 RedU_limit_high = np.array([180, 255, 230])
 
 RedL_limit_low = np.array([0, 0, 0])
-RedU_limit_low = np.array([6, 255, 230])
+RedU_limit_low = np.array([5, 255, 230])
 
 OrangeL_limit = np.array([8, 0, 0])
-OrangeU_limit = np.array([17, 255, 230])
+OrangeU_limit = np.array([15, 255, 230])
 
 GreenL_limit = np.array([45, 0, 0])
 GreenU_limit = np.array([95, 255, 230])
