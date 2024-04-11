@@ -908,7 +908,6 @@ class CubeDisplay(QWidget):
 
     def play_audio_file(self):
         self.audio_timer.stop()
-        self.update_face_colors(self.face_colors)
         pygame.init()
         pygame.mixer.init()
         pygame.mixer.music.load("Happy_Victory_Song.mp3")
@@ -916,6 +915,10 @@ class CubeDisplay(QWidget):
 
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
+            current_time = pygame.mixer.music.get_pos()/1000
+            if current_time >= 65:
+                pygame.mixer.music.stop()
+                break
 
 # if __name__ == '__main__':
 # # Initialize face colors to all white
