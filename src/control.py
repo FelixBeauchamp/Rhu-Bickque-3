@@ -14,8 +14,8 @@ sys.path.append(algo_cube_path)
 
 from Algo_CFOP import solver, cube
 
-port_Arduino = 'COM7'
-port_OpenRB = 'COM6'
+port_Arduino = 'COM'
+port_OpenRB = 'COM'
 
 
 def initialisation():
