@@ -45,7 +45,7 @@ def mapping_sequence():
             OpenRBCom.sendmessage(move)
         elif move[0] == 'S':
             print('SNAP')
-            temp = traitement_image.faceofdacube()
+            temp = traitement_image.faceofdacube('')
             mapp.extend(temp)
         else:
             ArduinoCom.sendmessage(move)

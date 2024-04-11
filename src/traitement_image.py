@@ -2,31 +2,32 @@
 import numpy as np
 import cv2
 
-YellowL_limit = np.array([15, 10, 0])  # setting the yellow lower limit
-YellowU_limit = np.array([35, 255, 200])  # setting the yellow upper limit
+# Setting the lower and upper limits for each color of the rubik's cube
+YellowL_limit = np.array([16, 10, 0])
+YellowU_limit = np.array([35, 255, 235])
 
-BlueL_limit = np.array([100, 0, 0])  # setting the blue lower limit
-BlueU_limit = np.array([110, 255, 220])
+BlueL_limit = np.array([100, 0, 0])
+BlueU_limit = np.array([110, 255, 230])
 
-RedL_limit_high = np.array([140, 0, 0])  # setting the red lower limit
-RedU_limit_high = np.array([178, 255, 220])
+RedL_limit_high = np.array([140, 0, 0])
+RedU_limit_high = np.array([180, 255, 230])
 
-#RedL_limit_low = np.array([0, 0, 0])  # setting the red lower limit
-#RedU_limit_low = np.array([5, 255, 255])
+RedL_limit_low = np.array([0, 0, 0])
+RedU_limit_low = np.array([3, 255, 230])
 
-OrangeL_limit = np.array([2, 0, 0])  # setting the orange lower limit
-OrangeU_limit = np.array([15, 255, 220])
+OrangeL_limit = np.array([4, 0, 0])
+OrangeU_limit = np.array([15, 255, 230])
 
-GreenL_limit = np.array([45, 0, 0])  # setting the green lower limit
-GreenU_limit = np.array([95, 255, 220])
+GreenL_limit = np.array([45, 0, 0])
+GreenU_limit = np.array([95, 255, 230])
 
-WhiteL_limit = np.array([0, 0, 90])  # setting the white lower limit
+WhiteL_limit = np.array([0, 0, 90])
 WhiteU_limit = np.array([180, 75, 255])
 
-
-# frames = np.array([[1,1,1],[1,1,1],[1,1,1]])
+#This function finds the color of a square
 def colorofsquare(leframe):
 
+    #Checks the amount of pixels which are a certain color, for each color
     Y_mask = cv2.inRange(leframe, YellowL_limit, YellowU_limit)
     yellow_pixel_count = cv2.countNonZero(Y_mask)
     cv2.imshow('Yellow pixel count', Y_mask)
@@ -34,9 +35,10 @@ def colorofsquare(leframe):
     B_mask = cv2.inRange(leframe, BlueL_limit, BlueU_limit)
     blue_pixel_count = cv2.countNonZero(B_mask)
 
+    # Red can be found on both ends of the HSV color range, hence why two color ranges are checked here
     R_mask = cv2.inRange(leframe, RedL_limit_high, RedU_limit_high)
-#   R_mask_2 = cv2.inRange(leframe, RedL_limit_low, RedU_limit_low)
-    red_pixel_count = cv2.countNonZero(R_mask) #+ cv2.countNonZero(R_mask_2)
+    R_mask_2 = cv2.inRange(leframe, RedL_limit_low, RedU_limit_low)
+    red_pixel_count = cv2.countNonZero(R_mask) + cv2.countNonZero(R_mask_2)
 
     O_mask = cv2.inRange(leframe, OrangeL_limit, OrangeU_limit)
     orange_pixel_count = cv2.countNonZero(O_mask)
@@ -47,11 +49,14 @@ def colorofsquare(leframe):
     W_mask = cv2.inRange(leframe, WhiteL_limit, WhiteU_limit)
     white_pixel_count = cv2.countNonZero(W_mask)
 
-    print("Blue:", blue_pixel_count, "Red:",red_pixel_count, "Orange:",orange_pixel_count, "Green:",green_pixel_count, "Yellow:",yellow_pixel_count,
-          "White:",white_pixel_count)
+    # Can be used to print the amount of pixels corresponding to each colors, used for debugging
+    #print("Blue:", blue_pixel_count, "Red:",red_pixel_count, "Orange:",orange_pixel_count, "Green:",green_pixel_count, "Yellow:",yellow_pixel_count,
+    #     "White:",white_pixel_count)
+
 
     couleur = max(blue_pixel_count, red_pixel_count, orange_pixel_count, green_pixel_count, yellow_pixel_count,
                   white_pixel_count)
+    # Returns the color with the highest color count
     if couleur == blue_pixel_count:
         return "B"
     elif couleur == red_pixel_count:
@@ -65,38 +70,24 @@ def colorofsquare(leframe):
     elif couleur == white_pixel_count:
         return "W"
 
+# This function analyses a picture and isolates each square of the face of the cube
+def faceofdacube(image):
+    # Check if a picture has to be taken with the camera or if a saved image will be used, for unit testing purposes
+    if image == '':
+        cap = cv2.VideoCapture(1)
+        ret, frame_test = cap.read()
 
+        ret, avg_frame = cap.read()
+    else:
+        avg_frame = cv2.imread(image)
 
-
-def faceofdacube():
-    cap = cv2.VideoCapture(0)
-    ret, frame_test = cap.read()
-    # Number of frames to capture
-    num_frames =1
-    frames = []
-
-    #Capture frames
-    for i in range(num_frames):
-        ret, frame = cap.read()
-        if not ret:
-           break
-        frames.append(frame)
-
-    #Average the frames
-    #avg_frame = sum(frames) // len(frames)
-    ret, avg_frame = cap.read()
-
-    width = np.size(avg_frame, 1)
-    height = np.size(avg_frame, 0)
-
-    #coin_sup_gauche = [0, 0]
-    #coin_inf_droit = [width, height]
-
+    # Constants used to crop each square
     cote_cube = 85
     frame_loose = 6
     length_pince = 55
     edge_width = 15
-    # Barre horizontales
+
+    # Variables used to crop each square, vertical
     haut_1_x = 100
     bas_1_x = haut_1_x+cote_cube
 
@@ -106,7 +97,7 @@ def faceofdacube():
     haut_3_x = haut_2_x + cote_cube + edge_width
     bas_3_x = haut_3_x + cote_cube
 
-    # Barres verticales
+    # Variables used to crop each square, horizontal
     gauche_x_1 = 210
     droite_x_1 = gauche_x_1+cote_cube
 
@@ -116,44 +107,30 @@ def faceofdacube():
     gauche_x_3 = gauche_x_2 + cote_cube +edge_width
     droite_x_3 = gauche_x_3 + cote_cube
 
-    cv2.imshow('Vision initiale', avg_frame)
+    #Gaussianblur used to get rid of extremes and uniform pixels
     filtered_avg = cv2.GaussianBlur(avg_frame, (5, 5), cv2.BORDER_DEFAULT)
-    cv2.imshow('Face du cube avg nor', filtered_avg)
 
+    #Changing color format from RGB to HSV
     into_hsv_filtered_avg = cv2.cvtColor(filtered_avg, cv2.COLOR_BGR2HSV)
+    # Framing the face
     frame_cube_avg = into_hsv_filtered_avg[haut_1_x:bas_3_x, gauche_x_1:droite_x_3].copy()
-    cv2.imshow('Face du cube avg', frame_cube_avg)
 
+    # Cropping out each square
     frame_1_1 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
-    cv2.imshow('Face 1_1', frame_1_1)
-    #cv2.imwrite('frame_11.png', frame_1_1)
     frame_2_1 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_1+length_pince:droite_x_1-frame_loose].copy()
-    cv2.imshow('Face 2_1', frame_2_1)
-    #cv2.imwrite('frame_21.png',frame_2_1)
     frame_3_1 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
-    cv2.imshow('Face 3_1', frame_3_1)
-    #cv2.imwrite('frame_31.png',frame_3_1)
+
 
     frame_1_2 = into_hsv_filtered_avg[haut_1_x+length_pince:bas_1_x-frame_loose, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
-    cv2.imshow('Face 1_2', frame_1_2)
-    #cv2.imwrite('frame_12.png',frame_1_2)
     frame_2_2 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
-    cv2.imshow('Face 2_2', frame_2_2)
-    #cv2.imwrite('frame_22.png',frame_2_2)
     frame_3_2 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-length_pince, gauche_x_2+frame_loose:droite_x_2-frame_loose].copy()
-    cv2.imshow('Face 3_2', frame_3_2)
-    #cv2.imwrite('frame_32.png',frame_3_2)
+
 
     frame_1_3 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-frame_loose].copy()
-    cv2.imshow('Face 1_3', frame_1_3)
-    #cv2.imwrite('frame_13.png',frame_1_3)
     frame_2_3 = into_hsv_filtered_avg[haut_2_x+frame_loose:bas_2_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-length_pince].copy()
-    cv2.imshow('Face 2_3', frame_2_3)
-    #cv2.imwrite('frame_23.png',frame_2_3)
     frame_3_3 = into_hsv_filtered_avg[haut_3_x+frame_loose:bas_3_x-frame_loose, gauche_x_3+frame_loose:droite_x_3-frame_loose].copy()
-    cv2.imshow('Face 3_3', frame_3_3)
-    #cv2.imwrite('frame_33.png',frame_3_3)
 
+    # Detecting the color of each square
     square1_1 = colorofsquare(frame_1_1)
     square2_1 = colorofsquare(frame_2_1)
     square3_1 = colorofsquare(frame_3_1)
@@ -166,16 +143,20 @@ def faceofdacube():
     square2_3 = colorofsquare(frame_2_3)
     square3_3 = colorofsquare(frame_3_3)
 
+    # If the camera was used, close it
+    if image == '':
+        cap.release()
+
+    # Returning the results
     daresults = [square1_1, square1_2, square1_3, square2_1, square2_2, square2_3, square3_1, square3_2, square3_3]
 
-    cap.release()
-    # cv2.destroyAllWindows()
     return daresults
 
 
 if __name__ == '__main__':
     while 1:
-        print(faceofdacube())
+        print(faceofdacube(''))
+        #Press esc to close the program
         if cv2.waitKey(3000) == 27:
             break
     # this function will be triggered when the ESC key is pressed
