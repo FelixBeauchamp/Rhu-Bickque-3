@@ -914,6 +914,7 @@ class CubeDisplay(QWidget):
         pygame.mixer.init()
         pygame.mixer.music.load("ytmp3free.cc_jetta-id-love-to-change-the-world-matstubs-remix-youtubemp3free.org.mp3")
         pygame.mixer.music.play(start=55)
+        pygame.mixer.music.play(stop=65)
 
         while pygame.mixer.music.get_busy():
             pygame.time.Clock().tick(10)
