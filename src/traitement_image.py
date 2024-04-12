@@ -113,7 +113,7 @@ def faceofdacube(image, camnumber):
     into_hsv_filtered_avg = cv2.cvtColor(filtered_avg, cv2.COLOR_BGR2HSV)
     # Framing the face
     frame_cube_avg = into_hsv_filtered_avg[haut_1_x:bas_3_x, gauche_x_1:droite_x_3].copy()
-    # cv2.imshow('frame', frame_cube_avg)
+    cv2.imshow('frame', frame_cube_avg)
 
     # Cropping out each square
     frame_1_1 = into_hsv_filtered_avg[haut_1_x+frame_loose:bas_1_x-frame_loose, gauche_x_1+frame_loose:droite_x_1-frame_loose].copy()
