@@ -34,10 +34,8 @@ Those libraries will be in the External Libraries-> site-packages
 There the documentation on each librairy and funciton will be available.
 
 
-### Use Pycharm as ArduinoIDE ###
-
-The link explains very well how to set up PyCharm to use .ino files :
-https://samclane.dev/Pycharm-Arduino/#:~:text=This%20can%20be%20accomplished%20through,done%20this%20correctly%2C%20then%20your%20.
+### Use ArduinoIDE ###
+To upload the code, it is necessary to use the ArduinoIDE. The dynamixels and Servo-motors require the push command from ArduinoIDE. To use those codes or modify them, it is necessary to upload on ArduinoIDE the libraries that are listed at the top of those files.
 
 
 ### Main ###
